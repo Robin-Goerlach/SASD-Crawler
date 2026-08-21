@@ -1,0 +1,209 @@
+{
+  "generated_at": "2026-08-21",
+  "files": [
+    {
+      "path": ".codex/README.md",
+      "bytes": 1802
+    },
+    {
+      "path": ".codex/rules/default.rules",
+      "bytes": 7933
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 496
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 8536
+    },
+    {
+      "path": "BASELINE-AND-CHANGE-CONTROL.md",
+      "bytes": 3788
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1216
+    },
+    {
+      "path": "CURRENT-CHECKLIST.md",
+      "bytes": 684
+    },
+    {
+      "path": "DECISION-LOG.md",
+      "bytes": 1098
+    },
+    {
+      "path": "PROJECT-STATUS.md",
+      "bytes": 2625
+    },
+    {
+      "path": "README.md",
+      "bytes": 5925
+    },
+    {
+      "path": "REQUIREMENTS-STATUS.md",
+      "bytes": 23145
+    },
+    {
+      "path": "ROADMAP.md",
+      "bytes": 25324
+    },
+    {
+      "path": "RULES.md",
+      "bytes": 8544
+    },
+    {
+      "path": "docs/DOCUMENTATION-INDEX.md",
+      "bytes": 3477
+    },
+    {
+      "path": "docs/EVIDENCE-TEMPLATE.md",
+      "bytes": 419
+    },
+    {
+      "path": "docs/GLOSSARY.md",
+      "bytes": 1624
+    },
+    {
+      "path": "docs/REPOSITORY-SETUP.md",
+      "bytes": 685
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0001-windows-forms-und-net-8-als-zielplattform.md",
+      "bytes": 731
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0002-modularer-desktop-monolith-mit-clean-architecture-und-mvp.md",
+      "bytes": 653
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0003-per-user-desktopbetrieb-als-standard.md",
+      "bytes": 699
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0004-sqlite-als-control-store.md",
+      "bytes": 592
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0005-lucene-net-hinter-search-abstraktion.md",
+      "bytes": 599
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0006-apache-tika-als-isolierter-referenzparser.md",
+      "bytes": 564
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0007-toxy-nur-als-benchmark-und-selektiver-fast-path.md",
+      "bytes": 575
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0008-tesseract-als-ocr-engine.md",
+      "bytes": 503
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0009-durable-queue-plus-bounded-channels.md",
+      "bytes": 581
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0010-reconciliation-ist-wahrheit-filesystemwatcher-nur-hinweis.md",
+      "bytes": 581
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0011-mediaid-plus-relativepath.md",
+      "bytes": 561
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0012-smb-ber-windows-unc-im-benutzerkontext.md",
+      "bytes": 570
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0013-index-und-extraction-cache-sind-rekonstruierbar.md",
+      "bytes": 549
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0014-kein-windows-service-im-desktop-mvp.md",
+      "bytes": 561
+    },
+    {
+      "path": "docs/architecture/adr/ADR-0015-shared-mode-als-separater-sp-terer-host.md",
+      "bytes": 608
+    },
+    {
+      "path": "docs/architecture/adr/README.md",
+      "bytes": 273
+    },
+    {
+      "path": "docs/baseline/ARCHITECTURE.md",
+      "bytes": 65882
+    },
+    {
+      "path": "docs/baseline/CR-2026-001-WINFORMS-NET8.md",
+      "bytes": 3241
+    },
+    {
+      "path": "docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md",
+      "bytes": 3298
+    },
+    {
+      "path": "docs/baseline/LASTENHEFT.md",
+      "bytes": 68998
+    },
+    {
+      "path": "docs/baseline/PFLICHTENHEFT.md",
+      "bytes": 30555
+    },
+    {
+      "path": "docs/codex/FIRST-TASK-0.0.1.md",
+      "bytes": 4223
+    },
+    {
+      "path": "docs/codex/PROMPT-0.0.1-AUTONOMOUS.md",
+      "bytes": 6447
+    },
+    {
+      "path": "docs/images/sasd-crawler-ui-concept.png",
+      "bytes": 1451784
+    },
+    {
+      "path": "docs/operations/DATA-BACKUP-MIGRATION-PLAN.md",
+      "bytes": 1346
+    },
+    {
+      "path": "docs/operations/OPERATIONS-DIAGNOSTICS-PLAN.md",
+      "bytes": 1056
+    },
+    {
+      "path": "docs/planning/DEVELOPMENT-PLAN.md",
+      "bytes": 2820
+    },
+    {
+      "path": "docs/planning/POC-PLAN.md",
+      "bytes": 2989
+    },
+    {
+      "path": "docs/planning/RELEASE-POLICY.md",
+      "bytes": 1137
+    },
+    {
+      "path": "docs/planning/RISK-REGISTER.md",
+      "bytes": 2603
+    },
+    {
+      "path": "docs/planning/TRACEABILITY-STRATEGY.md",
+      "bytes": 961
+    },
+    {
+      "path": "docs/security/SECURITY-PLAN.md",
+      "bytes": 1518
+    },
+    {
+      "path": "docs/testing/QUALITY-GATES.md",
+      "bytes": 1479
+    },
+    {
+      "path": "docs/testing/TEST-STRATEGY.md",
+      "bytes": 2631
+    }
+  ]
+}
