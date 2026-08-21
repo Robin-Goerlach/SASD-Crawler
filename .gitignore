@@ -11,6 +11,9 @@ TestResults/
 *.userosscache
 *.sln.docstates
 
+# Local Codex configuration
+.codex/
+
 # Rider / IDE
 .idea/
 *.DotSettings.user

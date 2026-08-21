@@ -18,6 +18,8 @@
 | Implementiert | 0/258 verifiziert |
 | Verifiziert | 0/258 verifiziert |
 
+> Milestone 0.0.1 ist ein Architektur-Spike und implementiert keine Produktanforderung. Deshalb wurde trotz grüner A1-Tests kein Eintrag unten auf `DONE` gesetzt. Evidence: `docs/evidence/0.0.1/`.
+
 ## Register
 
 | ID | Titel | Priorität | Zielrelease | Spezifikation | Implementierung | Verifikation | Evidence |

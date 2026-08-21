@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sasd.Crawler.Spike.A1.Core/Sasd.Crawler.Spike.A1.Core.csproj" />
+    <Project Path="src/Sasd.Crawler.Spike.A1.Infrastructure/Sasd.Crawler.Spike.A1.Infrastructure.csproj" />
+    <Project Path="src/Sasd.Crawler.Spike.A1.WinForms/Sasd.Crawler.Spike.A1.WinForms.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sasd.Crawler.Spike.A1.Tests/Sasd.Crawler.Spike.A1.Tests.csproj" />
+  </Folder>
+</Solution>

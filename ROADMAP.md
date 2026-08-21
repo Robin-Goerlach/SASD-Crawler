@@ -3,8 +3,8 @@
 **Stand:** 21. August 2026  
 **Roadmap-Version:** 0.1  
 **Ziel:** kontrollierbare Entwicklung vom Architektur-Spike bis zur stabilen Version 1.0 und danach  
-**Aktueller Status:** Vorentwicklung / Architekturvalidierung  
-**Aktuelles Gate:** G0 – Architecture Feasibility Gate
+**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 technisch abgeschlossen  
+**Aktuelles Gate:** A2 – Lucene.NET Spike
 
 ---
 
@@ -105,7 +105,7 @@ Das Pflichtenheft enthält noch .NET-10/Blazor-/Linux-/Shared-Server-Annahmen. D
 | Milestone | Ziel | Status | Gate danach |
 |---|---|---|---|
 | **0.0.0** | Dokument- und Baseline-Vorbereitung | IN PROGRESS | – |
-| **0.0.1** | WinForms Host Lifecycle Spike | NOT STARTED | A1 |
+| **0.0.1** | WinForms Host Lifecycle Spike | READY FOR REVIEW | A1: CONDITIONAL GO |
 | **0.0.2** | Lucene.NET Spike | NOT STARTED | A2 |
 | **0.0.3** | Tika Sidecar/Packaging Spike | NOT STARTED | A3 |
 | **0.0.4** | Windows Media Identity Spike | NOT STARTED | A4 |
@@ -137,7 +137,7 @@ Ohne G0 dürfen wir keinen großen Produktionscode schreiben.
 
 ## 5.1 Voraussetzungen
 
-- [ ] A1 WinForms/Generic Host erfolgreich.
+- [x] A1 WinForms/Generic Host technisch erfolgreich; manuelle UI-/Crash-Evidence vor finalem Review nachholen.
 - [ ] A2 Lucene.NET erfolgreich oder Fallback auf OpenSearch beschlossen.
 - [ ] A3 Tika Packaging/Isolation erfolgreich.
 - [ ] A4 Volume Identity ausreichend belastbar.
@@ -1156,8 +1156,8 @@ Zum aktuellen Stichtag ist die Antwort:
 - [ ] ADRs reviewen und akzeptieren.
 - [x] Change Request für die WinForms/.NET-8-Baseline erstellt.
 - [x] Pflichtenheft 0.2 erzeugt.
-- [ ] A1 Spike-Repository/Solution anlegen.
-- [ ] A1 Evidence dokumentieren.
+- [x] A1 Spike-Repository/Solution angelegt.
+- [x] A1 Evidence unter `docs/evidence/0.0.1/` dokumentiert.
 - [ ] A2 Lucene Benchmark aufsetzen.
 - [ ] A3 Tika Sidecar testen.
 - [ ] A4 reale USB-Medien testen.

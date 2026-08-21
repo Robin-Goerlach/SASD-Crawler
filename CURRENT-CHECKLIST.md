@@ -21,7 +21,7 @@
 
 ## Architektur-Spikes
 
-- [ ] A1 WinForms + Generic Host
+- [x] A1 WinForms + Generic Host – CONDITIONAL GO, manuelle Desktop-Evidence offen
 - [ ] A2 Lucene.NET
 - [ ] A3 Tika Sidecar
 - [ ] A4 Media Identity
