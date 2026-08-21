@@ -3,7 +3,7 @@
 **Datum:** 21. August 2026  
 **OS:** Windows 10.0.26200, win-x64  
 **Branch:** `codex/0.0.1-winforms-host-spike`  
-**Commit SHA:** wird nach dem Evidence-Commit mit `git rev-parse HEAD` bestimmt  
+**Implementierungs-Commit SHA:** `6c305e8ed416570876de25f67dd698df5f20b1f1`  
 **Gate-Entscheidung:** **CONDITIONAL GO**
 
 ## Laufzeit und SDK
