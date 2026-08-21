@@ -1,0 +1,13 @@
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.deps.json
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.dll
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.pdb
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.csproj.AssemblyReference.cache
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.AssemblyInfoInputs.cache
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.AssemblyInfo.cs
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.csproj.CoreCompileInputs.cache
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.sourcelink.json
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.dll
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\refint\Sasd.Crawler.Spike.A1.Core.dll
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.pdb
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Core\obj\Debug\net8.0\ref\Sasd.Crawler.Spike.A1.Core.dll

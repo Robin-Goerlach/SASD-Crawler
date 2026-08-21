@@ -1,0 +1,417 @@
+# SASD — high-autonomy Codex rules
+#
+# Goal:
+#   Routine development should continue without waiting for approval.
+#   Ask only at boundaries where a command can realistically destroy data,
+#   discard/rewrite history, expose credentials, or perform consequential
+#   GitHub/repository administration.
+#
+# Install as:
+#   <SASD-Project>/.codex/rules/high-autonomy.rules
+#
+# IMPORTANT:
+# - This is intentionally generous and is suitable only for a trusted repository.
+# - Codex applies the most restrictive matching rule:
+#     forbidden > prompt > allow
+# - AGENTS.md remains the semantic/governance boundary.
+
+# ===========================================================================
+# Broad autonomous development
+# ===========================================================================
+
+prefix_rule(
+    pattern = ["dotnet"],
+    decision = "allow",
+    justification = "Allow autonomous .NET development, builds, tests, migrations, runs and packaging for trusted SASD Project.",
+)
+
+prefix_rule(
+    pattern = ["git"],
+    decision = "allow",
+    justification = "Allow normal autonomous Git inspection, staging, commits, branches, merges, fetch/pull and normal pushes for SASD Project.",
+)
+
+prefix_rule(
+    pattern = ["gh"],
+    decision = "allow",
+    justification = "Allow routine GitHub CLI operations such as PR creation, CI inspection and release preparation for SASD Project.",
+)
+
+# ===========================================================================
+# Read-only / inspection commands commonly used by Codex on Windows
+# ===========================================================================
+
+prefix_rule(
+    pattern = ["Get-Content"],
+    decision = "allow",
+    justification = "Allow reading Project source, documentation, evidence and configuration without approval.",
+)
+
+prefix_rule(
+    pattern = ["Get-ChildItem"],
+    decision = "allow",
+    justification = "Allow repository/file-tree inspection without approval.",
+)
+
+prefix_rule(
+    pattern = ["Get-Item"],
+    decision = "allow",
+    justification = "Allow filesystem metadata inspection without approval.",
+)
+
+prefix_rule(
+    pattern = ["Test-Path"],
+    decision = "allow",
+    justification = "Allow existence/path checks without approval.",
+)
+
+prefix_rule(
+    pattern = ["Resolve-Path"],
+    decision = "allow",
+    justification = "Allow path resolution without approval.",
+)
+
+prefix_rule(
+    pattern = ["Get-FileHash"],
+    decision = "allow",
+    justification = "Allow checksum verification without approval.",
+)
+
+prefix_rule(
+    pattern = ["Select-String"],
+    decision = "allow",
+    justification = "Allow text searches in project files without approval.",
+)
+
+prefix_rule(
+    pattern = ["Get-Date"],
+    decision = "allow",
+    justification = "Allow timestamp/date inspection without approval.",
+)
+
+prefix_rule(
+    pattern = ["Measure-Object"],
+    decision = "allow",
+    justification = "Allow read-only measurement/counting in inspection pipelines.",
+)
+
+prefix_rule(
+    pattern = ["Sort-Object"],
+    decision = "allow",
+    justification = "Allow sorting inspection output without approval.",
+)
+
+prefix_rule(
+    pattern = ["Where-Object"],
+    decision = "allow",
+    justification = "Allow filtering inspection output without approval.",
+)
+
+prefix_rule(
+    pattern = ["ForEach-Object"],
+    decision = "allow",
+    justification = "Allow normal inspection/transformation pipelines without approval.",
+)
+
+prefix_rule(
+    pattern = ["ConvertTo-Json"],
+    decision = "allow",
+    justification = "Allow formatting inspection/result data as JSON.",
+)
+
+prefix_rule(
+    pattern = ["ConvertFrom-Json"],
+    decision = "allow",
+    justification = "Allow parsing JSON project/tool output.",
+)
+
+prefix_rule(
+    pattern = ["rg"],
+    decision = "allow",
+    justification = "Allow ripgrep searches throughout the trusted Project repository.",
+)
+
+prefix_rule(
+    pattern = ["where.exe"],
+    decision = "allow",
+    justification = "Allow executable-location inspection without approval.",
+)
+
+# ===========================================================================
+# .NET — ask only for destructive/security-sensitive operations
+# ===========================================================================
+
+prefix_rule(
+    pattern = ["dotnet", "ef", "database", "drop"],
+    decision = "prompt",
+    justification = "Dropping a database can destroy data.",
+)
+
+prefix_rule(
+    pattern = ["dotnet", "nuget", ["push", "delete", "sign", "trust"]],
+    decision = "prompt",
+    justification = "Publishing/deleting/signing packages or changing trust affects external or security-sensitive state.",
+)
+
+prefix_rule(
+    pattern = ["dotnet", "nuget", ["add", "remove", "update", "enable", "disable"], "source"],
+    decision = "prompt",
+    justification = "Changing NuGet sources changes package provenance and may affect credentials or supply-chain trust.",
+)
+
+prefix_rule(
+    pattern = ["dotnet", "workload", ["install", "update", "uninstall", "repair"]],
+    decision = "prompt",
+    justification = "Changing .NET workloads modifies the SDK installation outside the repository.",
+)
+
+prefix_rule(
+    pattern = ["dotnet", "user-secrets"],
+    decision = "prompt",
+    justification = "User-secrets commands can access or modify sensitive local secret material.",
+)
+
+prefix_rule(
+    pattern = ["dotnet", "dev-certs"],
+    decision = "prompt",
+    justification = "Development-certificate commands can modify the local certificate store.",
+)
+
+prefix_rule(
+    pattern = ["dotnet", "exec"],
+    decision = "prompt",
+    justification = "dotnet exec can launch an arbitrary managed assembly outside the normal project workflow.",
+)
+
+# Intentionally allowed by the broad dotnet rule:
+# - dotnet tool install/update/uninstall
+# - dotnet ef migrations add/remove
+# - dotnet ef database update
+# - dotnet run/build/test/restore/publish/pack/clean/format
+#
+# These are considered normal development operations in this trusted project.
+
+# ===========================================================================
+# Git — ask only when work/history/remote refs may be destroyed or rewritten
+# ===========================================================================
+
+prefix_rule(
+    pattern = ["git", ["reset", "clean", "rebase", "restore", "filter-branch", "update-ref", "replace"]],
+    decision = "prompt",
+    justification = "This Git operation can discard work, rewrite history or alter refs.",
+)
+
+prefix_rule(
+    pattern = ["git", "checkout", ["--", "-f", "--force"]],
+    decision = "prompt",
+    justification = "This checkout form can overwrite or discard working-tree content.",
+)
+
+prefix_rule(
+    pattern = ["git", "commit", "--amend"],
+    decision = "prompt",
+    justification = "Amending a commit rewrites history.",
+)
+
+prefix_rule(
+    pattern = ["git", "branch", ["-d", "-D"]],
+    decision = "prompt",
+    justification = "Deleting a branch can remove a recovery point.",
+)
+
+prefix_rule(
+    pattern = ["git", "tag", "-d"],
+    decision = "prompt",
+    justification = "Deleting a tag removes a named release/history reference.",
+)
+
+prefix_rule(
+    pattern = ["git", "stash", ["drop", "clear"]],
+    decision = "prompt",
+    justification = "Dropping or clearing stash entries can permanently discard recoverable work.",
+)
+
+prefix_rule(
+    pattern = ["git", "reflog", "expire"],
+    decision = "prompt",
+    justification = "Expiring reflog entries removes recovery information.",
+)
+
+prefix_rule(
+    pattern = ["git", "worktree", "remove"],
+    decision = "prompt",
+    justification = "Removing a worktree can discard files if used incorrectly.",
+)
+
+prefix_rule(
+    pattern = ["git", "switch", ["-C", "--discard-changes"]],
+    decision = "prompt",
+    justification = "This switch form can reset a branch or discard working-tree changes.",
+)
+
+prefix_rule(
+    pattern = ["git", "remote", ["add", "remove", "rename", "set-url"]],
+    decision = "prompt",
+    justification = "Changing remotes can redirect where source code is fetched from or pushed to.",
+)
+
+prefix_rule(
+    pattern = ["git", "config", ["--global", "--system"]],
+    decision = "prompt",
+    justification = "Changing global/system Git configuration affects repositories beyond Project.",
+)
+
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f", "--force-with-lease", "--delete", "-d", "--mirror", "--prune"]],
+    decision = "prompt",
+    justification = "This push form can rewrite or delete remote refs/history.",
+)
+
+prefix_rule(
+    pattern = ["git", "push", "origin", ["--force", "-f", "--force-with-lease", "--delete", "-d", "--mirror", "--prune"]],
+    decision = "prompt",
+    justification = "This push to origin can rewrite or delete Project remote refs/history.",
+)
+
+# Normal git add/commit/fetch/pull/push/switch/merge/tag/branch remain allowed.
+
+# ===========================================================================
+# GitHub CLI — allow milestone automation, stop at destructive/admin boundaries
+# ===========================================================================
+
+prefix_rule(
+    pattern = ["gh", "auth", "token"],
+    decision = "forbidden",
+    justification = "Do not print GitHub authentication tokens into Codex output; use 'gh auth status' instead.",
+)
+
+prefix_rule(
+    pattern = ["gh", "api"],
+    decision = "prompt",
+    justification = "gh api can perform arbitrary REST/GraphQL operations, including destructive writes.",
+)
+
+prefix_rule(
+    pattern = ["gh", "repo", ["create", "delete", "archive", "rename", "transfer", "edit"]],
+    decision = "prompt",
+    justification = "This operation creates, deletes or materially changes GitHub repository administration.",
+)
+
+# PR creation/checking is autonomous. Final acceptance into main remains a human gate.
+prefix_rule(
+    pattern = ["gh", "pr", ["merge", "close"]],
+    decision = "prompt",
+    justification = "Merging or closing a pull request changes the accepted shared repository state.",
+)
+
+prefix_rule(
+    pattern = ["gh", "release", "delete"],
+    decision = "prompt",
+    justification = "Deleting a GitHub release is destructive.",
+)
+
+prefix_rule(
+    pattern = ["gh", "run", ["cancel", "delete"]],
+    decision = "prompt",
+    justification = "Cancelling or deleting CI runs changes shared verification evidence/state.",
+)
+
+prefix_rule(
+    pattern = ["gh", "workflow", ["disable", "enable"]],
+    decision = "prompt",
+    justification = "Changing workflow enablement modifies repository automation.",
+)
+
+prefix_rule(
+    pattern = ["gh", "secret"],
+    decision = "prompt",
+    justification = "GitHub secret operations involve sensitive shared configuration.",
+)
+
+prefix_rule(
+    pattern = ["gh", "variable"],
+    decision = "prompt",
+    justification = "GitHub variable operations alter shared repository/environment/organization configuration.",
+)
+
+prefix_rule(
+    pattern = ["gh", "auth", ["login", "logout", "refresh", "switch", "setup-git"]],
+    decision = "prompt",
+    justification = "Changing GitHub authentication or Git credential integration requires explicit approval.",
+)
+
+prefix_rule(
+    pattern = ["gh", "config", "set"],
+    decision = "prompt",
+    justification = "Changing GitHub CLI configuration can affect future operations beyond the current milestone.",
+)
+
+prefix_rule(
+    pattern = ["gh", "extension", ["install", "upgrade", "remove"]],
+    decision = "prompt",
+    justification = "Changing GitHub CLI extensions alters executable third-party tooling.",
+)
+
+prefix_rule(
+    pattern = ["gh", "gist", "delete"],
+    decision = "prompt",
+    justification = "Deleting a gist is destructive.",
+)
+
+prefix_rule(
+    pattern = ["gh", "project", "delete"],
+    decision = "prompt",
+    justification = "Deleting a GitHub Project is destructive.",
+)
+
+# ===========================================================================
+# Explicitly destructive PowerShell/system operations
+# ===========================================================================
+
+prefix_rule(
+    pattern = ["Remove-Item"],
+    decision = "prompt",
+    justification = "Removing files/directories can permanently destroy untracked or external data.",
+)
+
+prefix_rule(
+    pattern = ["Clear-Content"],
+    decision = "prompt",
+    justification = "Clearing file content is destructive.",
+)
+
+prefix_rule(
+    pattern = ["Stop-Process"],
+    decision = "prompt",
+    justification = "Stopping arbitrary processes can interrupt unrelated work or system services.",
+)
+
+prefix_rule(
+    pattern = ["Restart-Computer"],
+    decision = "prompt",
+    justification = "Restarting the computer interrupts all running work.",
+)
+
+prefix_rule(
+    pattern = ["Stop-Computer"],
+    decision = "prompt",
+    justification = "Stopping the computer interrupts all running work.",
+)
+
+prefix_rule(
+    pattern = ["Format-Volume"],
+    decision = "forbidden",
+    justification = "Never format storage from an autonomous Project development session.",
+)
+
+prefix_rule(
+    pattern = ["Clear-Disk"],
+    decision = "forbidden",
+    justification = "Never clear storage devices from an autonomous Project development session.",
+)
+
+prefix_rule(
+    pattern = ["Remove-Partition"],
+    decision = "forbidden",
+    justification = "Never remove disk partitions from an autonomous Project development session.",
+)

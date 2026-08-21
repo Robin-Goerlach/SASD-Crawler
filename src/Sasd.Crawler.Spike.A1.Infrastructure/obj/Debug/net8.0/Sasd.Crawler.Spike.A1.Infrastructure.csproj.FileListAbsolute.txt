@@ -1,0 +1,16 @@
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.deps.json
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.dll
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.pdb
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.dll
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\bin\Debug\net8.0\Sasd.Crawler.Spike.A1.Core.pdb
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.csproj.AssemblyReference.cache
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.AssemblyInfoInputs.cache
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.AssemblyInfo.cs
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.sourcelink.json
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Cra.7FA4D722.Up2Date
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.dll
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\refint\Sasd.Crawler.Spike.A1.Infrastructure.dll
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\Sasd.Crawler.Spike.A1.Infrastructure.pdb
+C:\Data\Users\Documents\Source\repositories\SASD\NT\_onProgress\SASD-Crawler\GitHub\src\Sasd.Crawler.Spike.A1.Infrastructure\obj\Debug\net8.0\ref\Sasd.Crawler.Spike.A1.Infrastructure.dll
