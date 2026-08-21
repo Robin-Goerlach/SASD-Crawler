@@ -1,0 +1,47 @@
+# Build output
+**/bin/
+**/obj/
+artifacts/
+TestResults/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / IDE
+.idea/
+*.DotSettings.user
+
+# Local app/runtime data
+.local/
+data/
+index/
+cache/
+logs/
+runtime/
+backups/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+~$*
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
+secrets.json
+appsettings.Local.json
+
+# Benchmark / evidence generated artifacts
+BenchmarkDotNet.Artifacts/
+docs/evidence/**/raw/
