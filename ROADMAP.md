@@ -3,8 +3,8 @@
 **Stand:** 21. August 2026  
 **Roadmap-Version:** 0.1  
 **Ziel:** kontrollierbare Entwicklung vom Architektur-Spike bis zur stabilen Version 1.0 und danach  
-**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 und A2 mit CONDITIONAL GO
-**Aktuelles Gate:** A3 – Tika Sidecar/Packaging Spike
+**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 bis A3 mit CONDITIONAL GO
+**Aktuelles Gate:** A4 – Windows Media Identity Spike
 
 ---
 
@@ -107,7 +107,7 @@ Das Pflichtenheft enthält noch .NET-10/Blazor-/Linux-/Shared-Server-Annahmen. D
 | **0.0.0** | Dokument- und Baseline-Vorbereitung | IN PROGRESS | – |
 | **0.0.1** | WinForms Host Lifecycle Spike | READY FOR REVIEW | A1: CONDITIONAL GO |
 | **0.0.2** | Lucene.NET Spike | READY FOR REVIEW | A2: CONDITIONAL GO |
-| **0.0.3** | Tika Sidecar/Packaging Spike | NOT STARTED | A3 |
+| **0.0.3** | Tika Sidecar/Packaging Spike | READY FOR REVIEW | A3: CONDITIONAL GO |
 | **0.0.4** | Windows Media Identity Spike | NOT STARTED | A4 |
 | **0.0.5** | Tika-vs-Toxy Parser Benchmark | NOT STARTED | **G0** |
 | **0.1.0** | lokaler vertikaler Slice | NOT STARTED | G1 |
@@ -306,22 +306,22 @@ Die Entscheidung wird nicht nach „funktioniert bei 100 Dateien“ getroffen.
 
 ## 9.1 Spike-Funktionen
 
-- [ ] Tika-Prozess starten.
-- [ ] Health prüfen.
-- [ ] lokalen IPC/HTTP-Endpunkt verwenden.
-- [ ] DOCX extrahieren.
-- [ ] XLSX extrahieren.
-- [ ] PPTX extrahieren.
-- [ ] PDF extrahieren.
-- [ ] Metadaten erhalten.
-- [ ] Timeout erzwingen.
-- [ ] hängenden Parser beenden.
-- [ ] Parser neu starten.
-- [ ] keine LAN-Bindung.
-- [ ] Logcapture.
-- [ ] JRE-Version erfassen.
-- [ ] Packaging-Größe messen.
-- [ ] Lizenz-/SBOM-Folgen dokumentieren.
+- [x] Tika-Prozess starten.
+- [x] Health prüfen.
+- [x] lokalen IPC/HTTP-Endpunkt verwenden.
+- [x] DOCX extrahieren.
+- [x] XLSX extrahieren.
+- [x] PPTX extrahieren.
+- [x] PDF extrahieren.
+- [x] Metadaten erhalten.
+- [x] Timeout erzwingen.
+- [x] hängenden Parser beenden.
+- [x] Parser neu starten.
+- [x] keine LAN-Bindung.
+- [x] Logcapture.
+- [x] JRE-Version erfassen.
+- [x] Packaging-Größe messen.
+- [x] Lizenz-/SBOM-Folgen dokumentieren.
 - [ ] Antiviren-/SmartScreen-Verhalten beobachten.
 
 ## 9.2 Gate A3

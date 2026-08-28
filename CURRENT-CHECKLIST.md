@@ -23,7 +23,7 @@
 
 - [x] A1 WinForms + Generic Host – CONDITIONAL GO, manuelle Desktop-Evidence offen
 - [x] A2 Lucene.NET – CONDITIONAL GO; Full-Disk-/Realkorpus-Evidence offen
-- [ ] A3 Tika Sidecar
+- [x] A3 Tika Sidecar – CONDITIONAL GO; Packaging-/AV-Evidence offen
 - [ ] A4 Media Identity
 - [ ] A5 Tika vs. Toxy
 - [ ] G0 Decision
