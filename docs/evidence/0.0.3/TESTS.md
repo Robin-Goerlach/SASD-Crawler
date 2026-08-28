@@ -11,8 +11,9 @@ dotnet test Sasd.Crawler.sln --configuration Release
 ```text
 Sasd.Crawler.Spike.A1.Tests: 9 passed
 Sasd.Crawler.Spike.A2.Tests: 8 passed
-Sasd.Crawler.Spike.A3.Tests: 4 passed
-Gesamt: 21 passed, 0 failed, 0 skipped
+Sasd.Crawler.Spike.A3.Tests: 6 passed
+Sasd.Crawler.Spike.A4.Tests: 13 passed
+Gesamt: 36 passed, 0 failed, 0 skipped
 ```
 
 ## Echter Sidecar-Probe
@@ -33,3 +34,12 @@ dotnet run --project tools/Sasd.Crawler.Spike.A3.Probe/Sasd.Crawler.Spike.A3.Pro
 ```
 
 Ergebnis: 26 Module, 62,0 MiB; vollständiger A3-Probe erfolgreich.
+
+## Partielles CycloneDX-Inventar
+
+```powershell
+dotnet run --project tools/Sasd.Crawler.Spike.A3.Probe/Sasd.Crawler.Spike.A3.Probe.csproj --configuration Release -- --inventory --jar <verified-tika-jar> --output <temporary-bom.json>
+```
+
+Ergebnis: 122 eindeutige Komponenten, 5 LICENSE-/NOTICE-Einträge, verifizierter JAR-Hash.
+Zwei automatisierte Tests prüfen Deduplizierung, Hash/JSON und Nicht-Überschreiben.

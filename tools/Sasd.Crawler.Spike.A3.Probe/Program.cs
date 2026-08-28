@@ -13,8 +13,15 @@ if (args.Length == 5 && args[0] == "--build-runtime" && args[1] == "--java-home"
     return;
 }
 
+if (args.Length == 5 && args[0] == "--inventory" && args[1] == "--jar" && args[3] == "--output")
+{
+    var inventory = await TikaJarInventoryBuilder.BuildAsync(args[2], args[4]);
+    Console.WriteLine(JsonSerializer.Serialize(inventory, new JsonSerializerOptions { WriteIndented = true }));
+    return;
+}
+
 if (args.Length < 2 || args[0] != "--jar")
-    throw new ArgumentException("Usage: --jar <path> [--java <path>] OR --build-runtime --java-home <jdk> --output <path>");
+    throw new ArgumentException("Usage: --jar <path> [--java <path>] OR --build-runtime --java-home <jdk> --output <path> OR --inventory --jar <path> --output <bom.json>");
 
 var jarPath = Path.GetFullPath(args[1]);
 var javaPath = args.Length >= 4 && args[2] == "--java" ? Path.GetFullPath(args[3]) : "java.exe";

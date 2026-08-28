@@ -79,6 +79,20 @@ Der identische Probe bestand zusätzlich mit der reduzierten 62,0-MiB-Runtime: a
 Formate, Metadaten, Loopback, Restart, malformed PDF, Größenlimit, Timeout und Cleanup waren
 grün. Damit ist eine gebündelte Runtime technisch nachgewiesen, aber noch kein Installer.
 
+## Komponenten-Inventar
+
+Der `--inventory`-Modus erzeugte aus den eingebetteten Maven-`pom.properties` ein als
+unvollständig gekennzeichnetes CycloneDX-1.5-Inventar:
+
+- 122 eindeutige Maven-Komponenten/PURLs;
+- 5 eingebettete LICENSE-/NOTICE-Einträge;
+- 26.387 Byte JSON;
+- JAR-SHA-512 identisch zur offiziellen Apache-Prüfsumme.
+
+Das Inventar ist reproduzierbar und maschinenlesbar, aber absichtlich **keine behauptete
+finale SBOM**: Komponenten ohne Maven-Metadaten, konkrete Lizenzzuordnung, Runtime-Module,
+Installerdateien und CVE-Auswertung müssen im Packaging-Gate ergänzt werden.
+
 Die Werte sind Cold-/PoC-Werte auf synthetischen Minimaldateien und keine Produkt-SLOs.
 
 ## Offene Evidence und Grenzen
@@ -87,7 +101,8 @@ Die Werte sind Cold-/PoC-Werte auf synthetischen Minimaldateien und keine Produk
   bewertet werden.
 - Produktentscheidung „gebündelte Runtime versus Voraussetzung“ ist noch formal offen;
   eine funktionierende reduzierte Runtime ist technisch nachgewiesen.
-- SBOM, NOTICE-Sammlung, CVE-Scan, Signierung und komprimierte Installergröße fehlen.
+- finales SBOM/NOTICE-Mapping, CVE-Scan, Signierung und komprimierte Installergröße fehlen;
+  ein partielles 122-Komponenten-Inventar ist technisch nachgewiesen.
 - OS-Sandbox/Job-Object, Low-Integrity-Token und Netzwerk-Firewall-Isolation sind noch
   nicht implementiert; Loopback-Bindung allein verhindert ausgehende Parserverbindungen
   nicht auf Betriebssystemebene.
