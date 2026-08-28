@@ -30,7 +30,7 @@ Der vollständige Readiness-Audit steht unter `docs/evidence/0.0/G0-decision.md`
 Milestone 0.1 ausdrücklich gesperrt.
 
 1. A2-Rest-Evidence: Full-Disk-Fehlerprobe und realistischer Korpus.
-2. A3-Rest-Evidence: Minimal-JRE/Installer, SBOM/CVE und AV/SmartScreen.
+2. A3-Rest-Evidence: Installer, SBOM/CVE, Signierung und AV/SmartScreen; 62-MiB-Runtime ist verifiziert.
 3. A4-Rest-Evidence: physische NTFS/exFAT/FAT32-Medien, Letter-Wechsel und Clone-Ambiguität.
 4. A1: manueller Tray-/Second-Launch-/Forced-Kill-Smoke mit Screenshots ist noch nachzuholen; automatisierte Lifecycle-Evidence ist grün.
 5. Pflichtenheft 0.2, CR-2026-001 und Amendment 0.1a müssen formal reviewed/angenommen werden.

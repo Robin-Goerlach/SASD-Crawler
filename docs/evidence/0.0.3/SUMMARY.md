@@ -17,13 +17,17 @@ Apache-Download bezogen und nur unter `.tmp/` abgelegt. Es ist nicht Teil des Co
 | Server-JAR | 76.497.574 Byte (73,0 MiB) |
 | SHA-512 | `fb1f2fe57ac458b09d44d41d816f582e1d2fc93488acff6275caf414d8d5ef94e42166edc0b488dc2fb6ef3aa21fab62b107c43b9060385ff6d675e393c2c9e9` |
 | Installiertes vollständiges Corretto-JDK | 343.740.447 Byte (327,8 MiB) |
+| Nachgewiesene reduzierte Laufzeit | 65.018.144 Byte (62,0 MiB), 214 Dateien, 26 Module |
+| JAR + reduzierte Laufzeit | 141.515.718 Byte (135,0 MiB) vor Installer-Kompression |
 
 Der lokale SHA-512-Wert stimmt exakt mit der Apache-Prüfsummendatei überein. Tika 3.3.2
 und seine Distribution stehen unter Apache License 2.0; NOTICE-/Drittlizenztexte müssen
 bei einer späteren Bündelung mitgeliefert werden. Für Corretto/JRE ist vor Packaging eine
-separate Lizenz- und Komponentenliste erforderlich. Eine reduzierte `jlink`-Runtime ist
-noch nicht nachgewiesen: `jdeps` konnte die Modulliste des Fat-JARs wegen nicht auflösbarer
-Modulmetadaten (`com.fasterxml.jackson.annotation`) nicht direkt ableiten.
+separate Lizenz- und Komponentenliste erforderlich. `jdeps` konnte die Modulliste des
+Fat-JARs wegen nicht auflösbarer Modulmetadaten (`com.fasterxml.jackson.annotation`) nicht
+direkt ableiten. Deshalb wurde eine konservative 26-Modul-Liste erstellt und praktisch mit
+dem vollständigen A3-Probe validiert. Der `--build-runtime`-Modus des A3-Probes reproduziert
+diesen Aufbau ohne Änderung der lokalen PowerShell-Ausführungsrichtlinie.
 
 Offizielle Quellen:
 
@@ -71,14 +75,19 @@ Weitere Ergebnisse:
 - stdout/stderr-Logcapture war aktiv;
 - Dispose beendete den Java-Prozess und Temp-Cleanup gelang.
 
+Der identische Probe bestand zusätzlich mit der reduzierten 62,0-MiB-Runtime: alle vier
+Formate, Metadaten, Loopback, Restart, malformed PDF, Größenlimit, Timeout und Cleanup waren
+grün. Damit ist eine gebündelte Runtime technisch nachgewiesen, aber noch kein Installer.
+
 Die Werte sind Cold-/PoC-Werte auf synthetischen Minimaldateien und keine Produkt-SLOs.
 
 ## Offene Evidence und Grenzen
 
 - SmartScreen-/Antivirus-Verhalten kann ohne signiertes Installationspaket nicht sinnvoll
   bewertet werden.
-- Entscheidung und Nachweis für gebündelte Minimal-JRE versus Voraussetzung fehlen.
-- SBOM, NOTICE-Sammlung, CVE-Scan und Installergröße fehlen bis zum Packaging-Prototyp.
+- Produktentscheidung „gebündelte Runtime versus Voraussetzung“ ist noch formal offen;
+  eine funktionierende reduzierte Runtime ist technisch nachgewiesen.
+- SBOM, NOTICE-Sammlung, CVE-Scan, Signierung und komprimierte Installergröße fehlen.
 - OS-Sandbox/Job-Object, Low-Integrity-Token und Netzwerk-Firewall-Isolation sind noch
   nicht implementiert; Loopback-Bindung allein verhindert ausgehende Parserverbindungen
   nicht auf Betriebssystemebene.

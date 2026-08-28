@@ -16,7 +16,7 @@ sind. Dieser Bericht ist ein Readiness-Audit, keine Freigabe.
 |---|---|---|
 | A1 WinForms/Host | CONDITIONAL GO, 9 Tests | interaktive Tray-/Second-Launch-/Forced-Kill-Smokes |
 | A2 Lucene.NET | CONDITIONAL GO, 8 Tests, 1M-Lauf | Full-Disk-Fehler und realistischer Korpus |
-| A3 Tika Sidecar | CONDITIONAL GO, 4 Tests + Formatprobe | Minimal-JRE/Installer, SBOM/CVE, AV/SmartScreen |
+| A3 Tika Sidecar | CONDITIONAL GO, 4 Tests + Formatprobe + 62-MiB-Runtime | Installer, SBOM/CVE, Signierung, AV/SmartScreen |
 | A4 Media Identity | CONDITIONAL GO, 13 Tests + Hostprobe | physische NTFS/exFAT/FAT32-Medien und Letter-Wechsel |
 | A5 Tika/Toxy | Tika bleibt Default | vollständiger realer/Legacy/verschlüsselter Korpus |
 

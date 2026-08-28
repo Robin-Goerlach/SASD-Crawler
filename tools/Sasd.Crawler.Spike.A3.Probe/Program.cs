@@ -6,8 +6,15 @@ using System.Text;
 using System.Text.Json;
 using Sasd.Crawler.Spike.A3.Tika;
 
+if (args.Length == 5 && args[0] == "--build-runtime" && args[1] == "--java-home" && args[3] == "--output")
+{
+    var build = await TikaRuntimeBuilder.BuildAsync(args[2], args[4]);
+    Console.WriteLine(JsonSerializer.Serialize(build, new JsonSerializerOptions { WriteIndented = true }));
+    return;
+}
+
 if (args.Length < 2 || args[0] != "--jar")
-    throw new ArgumentException("Usage: --jar <path> [--java <path>]");
+    throw new ArgumentException("Usage: --jar <path> [--java <path>] OR --build-runtime --java-home <jdk> --output <path>");
 
 var jarPath = Path.GetFullPath(args[1]);
 var javaPath = args.Length >= 4 && args[2] == "--java" ? Path.GetFullPath(args[3]) : "java.exe";

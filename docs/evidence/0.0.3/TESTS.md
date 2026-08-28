@@ -24,3 +24,12 @@ dotnet run --project tools/Sasd.Crawler.Spike.A3.Probe/Sasd.Crawler.Spike.A3.Pro
 Der Runner schlägt mit Nicht-Null-Exit fehl, sobald Formatmarker, Metadaten, Loopback,
 Restart, malformed-PDF-Behandlung, Eingabegrenze, Timeout-Kill oder Cleanup nicht bestehen.
 Der erfolgreiche Lauf und seine Messwerte sind in `SUMMARY.md` festgehalten.
+
+## Reduzierte Runtime
+
+```powershell
+dotnet run --project tools/Sasd.Crawler.Spike.A3.Probe/Sasd.Crawler.Spike.A3.Probe.csproj --configuration Release -- --build-runtime --java-home <jdk> --output <temporary-runtime>
+dotnet run --project tools/Sasd.Crawler.Spike.A3.Probe/Sasd.Crawler.Spike.A3.Probe.csproj --configuration Release -- --jar <verified-tika-jar> --java <temporary-runtime>/bin/java.exe
+```
+
+Ergebnis: 26 Module, 62,0 MiB; vollständiger A3-Probe erfolgreich.
