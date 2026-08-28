@@ -9,13 +9,15 @@
 ## Reproduzierbarer Runner
 
 Der A5-Runner erzeugt denselben synthetischen OOXML-/PDF-Korpus wie A3 und ergänzt HTML,
-RTF, TXT sowie ein malformed PDF. Er führt beide Parser im selben Lauf aus und erfasst:
+RTF, TXT, Legacy-XLS, eine 5-MiB-Textdatei sowie ein malformed PDF. Er führt beide Parser
+im selben Lauf aus und erfasst:
 
 - Parserfolg;
 - Vorhandensein eines eindeutigen Vollständigkeitsmarkers;
 - Textlänge;
 - Metadatenfeldzahl beziehungsweise Metadatenfehler;
 - verstrichene Zeit;
+- den Working Set des jeweiligen Parserprozesses nach der Extraktion;
 - Fehlerklasse und -text;
 - Prozess-/Cancellation-Eigenschaften als Architekturmerkmal.
 
@@ -23,18 +25,26 @@ RTF, TXT sowie ein malformed PDF. Er führt beide Parser im selben Lauf aus und 
 
 | Format | Tika Text/Marker | Tika Metadaten | Tika ms | Toxy Text/Marker | Toxy Metadaten | Toxy ms |
 |---|---|---:|---:|---|---:|---:|
-| DOCX | ja/ja | 5 | 2.362 | ja/ja | 0 | 159 |
-| XLSX | ja/ja | 6 | 121 | ja/ja | 0 | 80 |
-| PPTX | ja/ja | 6 | 60 | ja/ja | 0 | 126 |
-| PDF | ja/ja | 29 | 596 | ja/ja | nicht unterstützt | 391 |
-| HTML | ja/ja | 9 | 148 | ja/ja | nicht unterstützt | 2 |
-| RTF | ja/ja | 5 | 56 | ja/ja | nicht unterstützt | 25 |
-| TXT | ja/ja | 8 | 87 | ja/ja | nicht unterstützt | 1 |
-| malformed PDF | kontrolliert abgewiesen | – | 65 | kontrolliert abgewiesen | – | 4 |
+| DOCX | ja/ja | 5 | 1.490 | ja/ja | 0 | 108 |
+| XLSX | ja/ja | 6 | 78 | ja/ja | 0 | 53 |
+| PPTX | ja/ja | 6 | 62 | ja/ja | 0 | 95 |
+| PDF | ja/ja | 29 | 478 | ja/ja | nicht unterstützt | 242 |
+| HTML | ja/ja | 9 | 134 | ja/ja | nicht unterstützt | 2 |
+| RTF | ja/ja | 5 | 49 | ja/ja | nicht unterstützt | 16 |
+| TXT | ja/ja | 8 | 33 | ja/ja | nicht unterstützt | < 1 |
+| XLS | ja/ja | 5 | 185 | ja/ja | 0 | 47 |
+| 5-MiB-TXT | ja/ja | 8 | 257 | ja/ja | nicht unterstützt | 22 |
+| malformed PDF | kontrolliert abgewiesen | – | 16 | kontrolliert abgewiesen | – | 2 |
 
 Die DOCX-Zeit enthält bei beiden Implementierungen Cold-Initialisierung und ist nicht als
 Steady-State-Durchsatz zu interpretieren. Die Minimaldateien beweisen nur den eindeutigen
 Marker, nicht Layout-, Tabellen-, Header-/Footer- oder Metadatenvollständigkeit realer Dateien.
+
+Der Tika-Sidecar lag nach den erfolgreichen Extraktionen bei rund 108 MB Working Set. Der
+Benchmark-Host mit dem eingebetteten Toxy stieg nach der 5-MiB-Datei auf rund 170 MB. Das sind
+Momentaufnahmen nach dem jeweiligen Lauf, keine Peak- oder Delta-Messungen. Die Werte sind zudem
+nicht direkt gleichzusetzen: Der Toxy-Wert enthält Runner und Fixture-Verwaltung, während der
+Tika-Wert ausschließlich den isolierten Java-Sidecar beschreibt.
 
 ## Architektur- und Robustheitsvergleich
 
@@ -67,9 +77,10 @@ durch das gesamte Toxy-Abhängigkeitsset verarbeitet werden.
 
 ## Offene Evidence
 
-- Legacy DOC/XLS/PPT fehlen;
+- Legacy DOC/PPT fehlen; ein synthetisches Legacy-XLS ist abgedeckt;
 - komplexe reale DOCX/XLSX/PPTX/PDF-Dateien fehlen;
-- verschlüsselte, große und gezielt bösartige Dateien fehlen;
+- verschlüsselte und gezielt bösartige Dateien fehlen; die Großdatei-Evidence beschränkt sich
+  auf eine synthetische 5-MiB-Textdatei;
 - Tabellen-/Blatt-/Folienvollständigkeit und Metadatenqualität sind nicht fachlich bewertet;
 - wiederholte Warm-Läufe, Peak-RAM und Parallelitäts-/Crash-Korpus fehlen;
 - vollständige Lizenz-/CVE-Auswertung aller Toxy-Transitivabhängigkeiten fehlt.

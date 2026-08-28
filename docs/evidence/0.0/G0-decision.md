@@ -18,7 +18,7 @@ sind. Dieser Bericht ist ein Readiness-Audit, keine Freigabe.
 | A2 Lucene.NET | **TECHNICAL GO**, 9 Tests, 1M + Realkorpus + Crash + Full-Disk | formale ADR-0005-Annahme im G0-Review |
 | A3 Tika Sidecar | CONDITIONAL GO, 6 Tests + Formatprobe + 62-MiB-Runtime + Teilinventar | Installer, finales SBOM/CVE, Signierung, AV/SmartScreen |
 | A4 Media Identity | CONDITIONAL GO, 13 Tests + Hostprobe | physische NTFS/exFAT/FAT32-Medien und Letter-Wechsel |
-| A5 Tika/Toxy | Tika bleibt Default | vollständiger realer/Legacy/verschlüsselter Korpus |
+| A5 Tika/Toxy | Tika bleibt Default; synthetisches Legacy-XLS und 5-MiB-TXT verifiziert | realer, DOC/PPT-Legacy- und verschlüsselter Korpus |
 
 Gesamtsuite: 37 Tests, 0 Fehler, 0 übersprungen.
 

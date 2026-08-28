@@ -6,9 +6,11 @@
 dotnet run --project tools/Sasd.Crawler.Spike.A5.Benchmark/Sasd.Crawler.Spike.A5.Benchmark.csproj --configuration Release -- --jar <verified-tika-jar> --java <java.exe>
 ```
 
-Der erfolgreiche Lauf verglich sieben valide Formate und ein malformed PDF. Beide Parser
-mussten Marker-/Fehlerergebnisse strukturiert ausgeben; der vollständige Ergebnisstand ist in
-`SUMMARY.md` dokumentiert.
+Der erfolgreiche Lauf verglich neun valide Eingaben (DOCX, XLSX, PPTX, PDF, HTML, RTF, TXT,
+Legacy-XLS und 5-MiB-TXT) sowie ein malformed PDF. Beide Parser mussten Marker-, Fehler- und
+Working-Set-Ergebnisse strukturiert ausgeben; der vollständige Ergebnisstand ist in
+`SUMMARY.md` dokumentiert. Die Working-Set-Werte sind Prozess-Momentaufnahmen und keine
+Peak-Messungen.
 
 ```powershell
 dotnet publish tools/Sasd.Crawler.Spike.A5.Benchmark/Sasd.Crawler.Spike.A5.Benchmark.csproj --configuration Release --output <temporary-output>
