@@ -1,6 +1,6 @@
 # Current Checklist
 
-**Stichtag:** 21. August 2026  
+**Stichtag:** 28. August 2026
 **Aktueller Fokus:** Milestone 0.0.x
 
 ## Vor dem Coding
@@ -22,7 +22,7 @@
 ## Architektur-Spikes
 
 - [x] A1 WinForms + Generic Host – CONDITIONAL GO, manuelle Desktop-Evidence offen
-- [ ] A2 Lucene.NET
+- [x] A2 Lucene.NET – CONDITIONAL GO; Full-Disk-/Realkorpus-Evidence offen
 - [ ] A3 Tika Sidecar
 - [ ] A4 Media Identity
 - [ ] A5 Tika vs. Toxy

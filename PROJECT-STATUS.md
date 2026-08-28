@@ -1,9 +1,9 @@
 # SASD-Crawler – Projektstatus
 
-**Stichtag:** 21. August 2026  
-**Gesamtstatus:** 🟡 A1 technisch verifiziert; manuelle Desktop-Evidence vor finalem A1-GO offen  
-**Aktueller Meilenstein:** 0.0.2 – Lucene.NET Spike  
-**Nächster Gate:** A2 – Lucene.NET
+**Stichtag:** 28. August 2026
+**Gesamtstatus:** 🟡 A1 und A2 mit CONDITIONAL GO; Rest-Evidence offen
+**Aktueller Meilenstein:** 0.0.3 – Tika Sidecar/Packaging Spike
+**Nächster Gate:** A3 – Tika Sidecar/Packaging
 
 ## 1. Executive Snapshot
 
@@ -17,16 +17,16 @@
 | WinForms/.NET-8-Architektur | ✅ DRAFT COMPLETE | 129 Architekturkapitel; noch durch PoCs zu validieren |
 | ADR-Baseline | 🟡 CREATED | erste ADRs in diesem Dokumentationspaket |
 | Roadmap | ✅ CREATED | ausführliche steuernde Roadmap vorhanden |
-| PoC-Spikes | 🟡 IN PROGRESS | A1 CONDITIONAL GO; A2–A5 offen |
+| PoC-Spikes | 🟡 IN PROGRESS | A1 und A2 CONDITIONAL GO; A3–A5 offen |
 | Repository/Solution | ✅ VERIFIED FOR A1 | .NET-8-WinForms-Spike-Solution baut ohne Warnungen |
-| automatisierte Tests | ✅ A1 VERIFIED | 9/9 A1-Tests bestanden |
+| automatisierte Tests | ✅ A1+A2 VERIFIED | 17/17 Spike-Tests bestanden |
 | Milestone 0.1 | ⬜ NOT STARTED | wartet auf G0 |
 | MVP 0.5 | ⬜ FUTURE | nicht begonnen |
 | 1.0 | ⬜ FUTURE | nicht begonnen |
 
 ## 2. Aktuell offene Blocker/Entscheidungen
 
-1. Lucene.NET muss unter .NET 8 praktisch validiert werden.
+1. A2-Rest-Evidence: Full-Disk-Fehlerprobe und realistischer Korpus.
 2. Tika-Sidecar muss Packaging-/Security-PoC bestehen.
 3. Windows Volume Identity muss für das Offline-Medienmodell belastbar sein.
 4. A1: manueller Tray-/Second-Launch-/Forced-Kill-Smoke mit Screenshots ist noch nachzuholen; automatisierte Lifecycle-Evidence ist grün.

@@ -3,8 +3,8 @@
 **Stand:** 21. August 2026  
 **Roadmap-Version:** 0.1  
 **Ziel:** kontrollierbare Entwicklung vom Architektur-Spike bis zur stabilen Version 1.0 und danach  
-**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 technisch abgeschlossen  
-**Aktuelles Gate:** A2 – Lucene.NET Spike
+**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 und A2 mit CONDITIONAL GO
+**Aktuelles Gate:** A3 – Tika Sidecar/Packaging Spike
 
 ---
 
@@ -106,7 +106,7 @@ Das Pflichtenheft enthält noch .NET-10/Blazor-/Linux-/Shared-Server-Annahmen. D
 |---|---|---|---|
 | **0.0.0** | Dokument- und Baseline-Vorbereitung | IN PROGRESS | – |
 | **0.0.1** | WinForms Host Lifecycle Spike | READY FOR REVIEW | A1: CONDITIONAL GO |
-| **0.0.2** | Lucene.NET Spike | NOT STARTED | A2 |
+| **0.0.2** | Lucene.NET Spike | READY FOR REVIEW | A2: CONDITIONAL GO |
 | **0.0.3** | Tika Sidecar/Packaging Spike | NOT STARTED | A3 |
 | **0.0.4** | Windows Media Identity Spike | NOT STARTED | A4 |
 | **0.0.5** | Tika-vs-Toxy Parser Benchmark | NOT STARTED | **G0** |
@@ -260,28 +260,28 @@ GO, wenn Lifecycle und Shutdown reproduzierbar stabil sind.
 
 ## 8.1 Testumfang
 
-- [ ] `net8.0-windows` build.
-- [ ] Index create/open.
-- [ ] 100.000 synthetische Dokumente.
-- [ ] 1.000.000 synthetische Dokumente.
-- [ ] UpdateDocument.
-- [ ] Delete.
-- [ ] phrase search.
-- [ ] Boolean.
-- [ ] fuzzy.
-- [ ] wildcard/prefix.
-- [ ] German analyzer.
-- [ ] English analyzer.
-- [ ] highlight.
-- [ ] faceting/filter.
-- [ ] concurrent readers.
-- [ ] koordinierter einzelner Writer.
-- [ ] process kill während Updates.
-- [ ] reopen/recovery.
-- [ ] full rebuild.
-- [ ] Speicherbedarf.
-- [ ] Indexgröße.
-- [ ] p50/p95 Query-Latenz.
+- [x] `net8.0-windows` build.
+- [x] Index create/open.
+- [x] 100.000 synthetische Dokumente.
+- [x] 1.000.000 synthetische Dokumente.
+- [x] UpdateDocument.
+- [x] Delete.
+- [x] phrase search.
+- [x] Boolean.
+- [x] fuzzy.
+- [x] wildcard/prefix.
+- [x] German analyzer.
+- [x] English analyzer.
+- [x] highlight.
+- [x] faceting/filter.
+- [x] concurrent readers.
+- [x] koordinierter einzelner Writer.
+- [x] process kill während Updates.
+- [x] reopen/recovery.
+- [x] full rebuild.
+- [x] Speicherbedarf.
+- [x] Indexgröße.
+- [x] p50/p95 Query-Latenz.
 
 ## 8.2 Entscheidung
 
