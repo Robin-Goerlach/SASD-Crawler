@@ -116,6 +116,26 @@ public sealed class LuceneSearchIndexTests : IAsyncLifetime
         Assert.ThrowsAny<Exception>(() => new LuceneSearchIndex(file));
     }
 
+    [Fact]
+    public async Task IDX_008_Disk_full_failure_rolls_back_to_last_complete_commit()
+    {
+        var physical = Lucene.Net.Store.FSDirectory.Open(new DirectoryInfo(indexPath));
+        var failing = new FailingDirectory(physical);
+        await using (var index = new LuceneSearchIndex(failing))
+        {
+            await index.UpsertAsync(Document("committed", "Safe", "last complete commit", "en", "text"));
+            await index.CommitAsync();
+            failing.FailAfter(32);
+
+            await Assert.ThrowsAsync<IOException>(() => index.UpsertAsync(Document("partial", "Partial", new string('x', 100_000), "en", "text")));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => index.UpsertAsync(Document("blocked", "Blocked", "must not write", "en", "text")));
+        }
+
+        await using var reopened = new LuceneSearchIndex(indexPath);
+        Assert.Single((await reopened.SearchAsync(new("complete"))).Hits);
+        Assert.Empty((await reopened.SearchAsync(new("partial"))).Hits);
+    }
+
     private static SearchDocument Document(string id, string title, string content, string language, string category) =>
         new(id, title, content, language, category, DateTimeOffset.UtcNow);
 }

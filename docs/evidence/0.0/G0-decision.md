@@ -15,12 +15,12 @@ sind. Dieser Bericht ist ein Readiness-Audit, keine Freigabe.
 | Spike | Technisches Ergebnis | Fehlende Evidence |
 |---|---|---|
 | A1 WinForms/Host | CONDITIONAL GO, 9 Tests | interaktive Tray-/Second-Launch-/Forced-Kill-Smokes |
-| A2 Lucene.NET | CONDITIONAL GO, 8 Tests, 1M-Lauf | Full-Disk-Fehler und realistischer Korpus |
+| A2 Lucene.NET | CONDITIONAL GO, 9 Tests, 1M-Lauf + Full-Disk-Rollback | realistischer Korpus |
 | A3 Tika Sidecar | CONDITIONAL GO, 6 Tests + Formatprobe + 62-MiB-Runtime + Teilinventar | Installer, finales SBOM/CVE, Signierung, AV/SmartScreen |
 | A4 Media Identity | CONDITIONAL GO, 13 Tests + Hostprobe | physische NTFS/exFAT/FAT32-Medien und Letter-Wechsel |
 | A5 Tika/Toxy | Tika bleibt Default | vollständiger realer/Legacy/verschlüsselter Korpus |
 
-Gesamtsuite: 36 Tests, 0 Fehler, 0 übersprungen.
+Gesamtsuite: 37 Tests, 0 Fehler, 0 übersprungen.
 
 ## G0-Kriterienaudit
 

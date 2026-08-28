@@ -16,11 +16,12 @@ namespace Sasd.Crawler.Spike.A2.Search;
 public sealed class LuceneSearchIndex : ISearchIndex
 {
     private const LuceneVersion Version = LuceneVersion.LUCENE_48;
-    private readonly FSDirectory directory;
+    private readonly Lucene.Net.Store.Directory directory;
     private readonly Analyzer analyzer;
     private readonly IndexWriter writer;
     private readonly SemaphoreSlim writeGate = new(1, 1);
     private bool disposed;
+    private bool writeFailed;
 
     public LuceneSearchIndex(string indexPath)
     {
@@ -28,10 +29,14 @@ public sealed class LuceneSearchIndex : ISearchIndex
         System.IO.Directory.CreateDirectory(indexPath);
         directory = FSDirectory.Open(new DirectoryInfo(indexPath));
         analyzer = CreateAnalyzer();
-        writer = new IndexWriter(directory, new IndexWriterConfig(Version, analyzer)
-        {
-            OpenMode = OpenMode.CREATE_OR_APPEND
-        });
+        writer = CreateWriter(directory, analyzer);
+    }
+
+    internal LuceneSearchIndex(Lucene.Net.Store.Directory directory)
+    {
+        this.directory = directory ?? throw new ArgumentNullException(nameof(directory));
+        analyzer = CreateAnalyzer();
+        writer = CreateWriter(directory, analyzer);
     }
 
     public async Task UpsertAsync(SearchDocument document, CancellationToken cancellationToken = default)
@@ -42,7 +47,9 @@ public sealed class LuceneSearchIndex : ISearchIndex
         try
         {
             ThrowIfDisposed();
-            writer.UpdateDocument(new Term("id", document.Id), ToLuceneDocument(document));
+            EnsureWritable();
+            try { writer.UpdateDocument(new Term("id", document.Id), ToLuceneDocument(document)); }
+            catch (IOException) { writeFailed = true; throw; }
         }
         finally
         {
@@ -57,7 +64,9 @@ public sealed class LuceneSearchIndex : ISearchIndex
         try
         {
             ThrowIfDisposed();
-            writer.DeleteDocuments(new Term("id", documentId));
+            EnsureWritable();
+            try { writer.DeleteDocuments(new Term("id", documentId)); }
+            catch (IOException) { writeFailed = true; throw; }
         }
         finally
         {
@@ -71,7 +80,9 @@ public sealed class LuceneSearchIndex : ISearchIndex
         try
         {
             ThrowIfDisposed();
-            writer.Commit();
+            EnsureWritable();
+            try { writer.Commit(); }
+            catch (IOException) { writeFailed = true; throw; }
         }
         finally
         {
@@ -91,7 +102,9 @@ public sealed class LuceneSearchIndex : ISearchIndex
         try
         {
             ThrowIfDisposed();
-            writer.Commit();
+            EnsureWritable();
+            try { writer.Commit(); }
+            catch (IOException) { writeFailed = true; throw; }
             using var reader = DirectoryReader.Open(directory);
             var searcher = new IndexSearcher(reader);
             var parser = new MultiFieldQueryParser(Version, new[] { "title", "content_de", "content_en", "content_other" }, analyzer)
@@ -135,15 +148,35 @@ public sealed class LuceneSearchIndex : ISearchIndex
 
     public async ValueTask DisposeAsync()
     {
+        if (disposed) return;
         await writeGate.WaitAsync().ConfigureAwait(false);
         try
         {
             if (disposed) return;
-            writer.Commit();
-            writer.Dispose();
-            analyzer.Dispose();
-            directory.Dispose();
-            disposed = true;
+            try
+            {
+                if (writeFailed) writer.Rollback();
+                else
+                {
+                    try
+                    {
+                        writer.Commit();
+                        writer.Dispose();
+                    }
+                    catch (IOException)
+                    {
+                        writeFailed = true;
+                        writer.Rollback();
+                        throw;
+                    }
+                }
+            }
+            finally
+            {
+                analyzer.Dispose();
+                directory.Dispose();
+                disposed = true;
+            }
         }
         finally
         {
@@ -159,6 +192,9 @@ public sealed class LuceneSearchIndex : ISearchIndex
             ["content_de"] = new GermanAnalyzer(Version),
             ["content_en"] = new EnglishAnalyzer(Version)
         });
+
+    private static IndexWriter CreateWriter(Lucene.Net.Store.Directory directory, Analyzer analyzer) =>
+        new(directory, new IndexWriterConfig(Version, analyzer) { OpenMode = OpenMode.CREATE_OR_APPEND });
 
     private static Document ToLuceneDocument(SearchDocument source)
     {
@@ -201,4 +237,10 @@ public sealed class LuceneSearchIndex : ISearchIndex
     }
 
     private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(disposed, this);
+
+    private void EnsureWritable()
+    {
+        ThrowIfDisposed();
+        if (writeFailed) throw new InvalidOperationException("The Lucene writer encountered an I/O failure and must be disposed and reopened.");
+    }
 }

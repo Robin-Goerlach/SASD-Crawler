@@ -51,10 +51,23 @@ Damit sind Lock-Freigabe und Recovery des letzten vollständigen Commits nach ha
 Prozessabbruch praktisch nachgewiesen. Nicht committed Änderungen dürfen verloren gehen;
 die spätere persistente Work Queue muss sie erneut zustellen.
 
+## Simulierter voller Datenträger
+
+Ein `FilterDirectory` begrenzte den nächsten Lucene-Schreibpfad auf 32 Byte. Der große
+Upsert brach reproduzierbar mit `IOException` ab. Danach:
+
+- lehnte der Adapter weitere Writes explizit ab;
+- führte Dispose ein Writer-Rollback statt eines erneuten Commits aus;
+- ließ sich derselbe physische Index normal wieder öffnen;
+- blieb das zuvor committed Dokument suchbar;
+- war das teilweise geschriebene Dokument nicht sichtbar.
+
+Damit ist der geforderte Full-Disk-/Write-Failure-Fall ohne Manipulation realer Volumes oder
+Benutzerdaten praktisch nachgewiesen.
+
 ## Offene Evidence und Grenzen
 
 - Ein realistischer, lizenzkonform versionierbarer Dokumentkorpus wurde noch nicht gemessen.
-- Voller Datenträger/Write-Failure wurde noch nicht kontrolliert simuliert.
 - Facetten werden im Spike über die zurückgegebenen Top-Hits aggregiert, nicht über die
   vollständige Treffermenge. Für Produktcode ist Lucene-Faceting oder eine zweite Aggregation nötig.
 - Near-real-time Reader-/Searcher-Wiederverwendung ist noch nicht optimiert.

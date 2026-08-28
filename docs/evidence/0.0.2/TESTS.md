@@ -12,13 +12,17 @@ dotnet test Sasd.Crawler.sln --configuration Release
 
 ```text
 Sasd.Crawler.Spike.A1.Tests: 9 passed, 0 failed, 0 skipped
-Sasd.Crawler.Spike.A2.Tests: 8 passed, 0 failed, 0 skipped
-Gesamt: 17 passed, 0 failed, 0 skipped
+Sasd.Crawler.Spike.A2.Tests: 9 passed, 0 failed, 0 skipped
+Sasd.Crawler.Spike.A3.Tests: 6 passed, 0 failed, 0 skipped
+Sasd.Crawler.Spike.A4.Tests: 13 passed, 0 failed, 0 skipped
+Gesamt: 37 passed, 0 failed, 0 skipped
 ```
 
 Die A2-Tests belegen Query-Varianten, Sprach-Stemming, Update/Delete ohne Alt-Treffer,
 Highlight/Facetten/Filter, persistente Wiederöffnung, koordinierte parallele Updates,
 Lesen während Updates und explizites Versagen bei ungültigem Indexpfad.
+Zusätzlich simuliert ein Byte-budgetierter Lucene-Directory-Wrapper einen vollen Datenträger
+und verifiziert Writer-Sperre, Rollback sowie Wiederöffnung des letzten vollständigen Commits.
 
 ## Reproduzierbarer Benchmark
 
