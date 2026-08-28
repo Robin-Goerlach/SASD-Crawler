@@ -1,9 +1,9 @@
 # SASD-Crawler – Projektstatus
 
 **Stichtag:** 28. August 2026
-**Gesamtstatus:** 🟡 A1–A4 mit CONDITIONAL GO; Rest-Evidence offen
-**Aktueller Meilenstein:** 0.0.5 – Tika-vs-Toxy Parser Benchmark
-**Nächster Gate:** A5 – Parser Benchmark
+**Gesamtstatus:** 🟡 A1–A5 technisch bearbeitet, jeweils Rest-Evidence/formaler Review offen
+**Aktueller Meilenstein:** G0 – Architecture Feasibility Readiness
+**Nächster Gate:** G0 – derzeit noch nicht GO-fähig
 
 ## 1. Executive Snapshot
 
@@ -17,7 +17,7 @@
 | WinForms/.NET-8-Architektur | ✅ DRAFT COMPLETE | 129 Architekturkapitel; noch durch PoCs zu validieren |
 | ADR-Baseline | 🟡 CREATED | erste ADRs in diesem Dokumentationspaket |
 | Roadmap | ✅ CREATED | ausführliche steuernde Roadmap vorhanden |
-| PoC-Spikes | 🟡 IN PROGRESS | A1–A4 CONDITIONAL GO; A5 offen |
+| PoC-Spikes | 🟡 READY FOR REVIEW | A1–A5 mit CONDITIONAL/Rest-Evidence |
 | Repository/Solution | ✅ VERIFIED FOR A1 | .NET-8-WinForms-Spike-Solution baut ohne Warnungen |
 | automatisierte Tests | ✅ A1–A4 VERIFIED | 34/34 Spike-Tests bestanden |
 | Milestone 0.1 | ⬜ NOT STARTED | wartet auf G0 |

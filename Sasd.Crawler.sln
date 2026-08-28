@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Probe", "tools\Sasd.Crawler.Spike.A4.Probe\Sasd.Crawler.Spike.A4.Probe.csproj", "{B2F78457-C660-48EE-85D9-2B130143D254}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A5.Benchmark", "tools\Sasd.Crawler.Spike.A5.Benchmark\Sasd.Crawler.Spike.A5.Benchmark.csproj", "{05750556-FF3D-4BBD-8B5B-2C1CC45B7839}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,10 @@ Global
 		{B2F78457-C660-48EE-85D9-2B130143D254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2F78457-C660-48EE-85D9-2B130143D254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2F78457-C660-48EE-85D9-2B130143D254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05750556-FF3D-4BBD-8B5B-2C1CC45B7839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05750556-FF3D-4BBD-8B5B-2C1CC45B7839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05750556-FF3D-4BBD-8B5B-2C1CC45B7839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05750556-FF3D-4BBD-8B5B-2C1CC45B7839}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{80364448-B9B6-4A57-B586-A485EF65AC9B} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}

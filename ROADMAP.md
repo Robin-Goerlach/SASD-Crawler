@@ -3,8 +3,8 @@
 **Stand:** 21. August 2026  
 **Roadmap-Version:** 0.1  
 **Ziel:** kontrollierbare Entwicklung vom Architektur-Spike bis zur stabilen Version 1.0 und danach  
-**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 bis A4 mit CONDITIONAL GO
-**Aktuelles Gate:** A5 – Tika-vs-Toxy Parser Benchmark
+**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 bis A5 technisch bearbeitet, Rest-Evidence offen
+**Aktuelles Gate:** G0 – noch nicht GO-fähig
 
 ---
 
@@ -109,7 +109,7 @@ Das Pflichtenheft enthält noch .NET-10/Blazor-/Linux-/Shared-Server-Annahmen. D
 | **0.0.2** | Lucene.NET Spike | READY FOR REVIEW | A2: CONDITIONAL GO |
 | **0.0.3** | Tika Sidecar/Packaging Spike | READY FOR REVIEW | A3: CONDITIONAL GO |
 | **0.0.4** | Windows Media Identity Spike | READY FOR REVIEW | A4: CONDITIONAL GO |
-| **0.0.5** | Tika-vs-Toxy Parser Benchmark | NOT STARTED | **G0** |
+| **0.0.5** | Tika-vs-Toxy Parser Benchmark | READY FOR REVIEW | A5: Tika bleibt Default; Realkorpus offen |
 | **0.1.0** | lokaler vertikaler Slice | NOT STARTED | G1 |
 | **0.2.0** | USB/Offline + SMB | NOT STARTED | G2 |
 | **0.3.0** | Webcrawler | NOT STARTED | G3 |

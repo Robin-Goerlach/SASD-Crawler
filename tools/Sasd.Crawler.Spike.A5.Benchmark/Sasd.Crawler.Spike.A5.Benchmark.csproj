@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Toxy" Version="2.6.0" />
+    <ProjectReference Include="../Sasd.Crawler.Spike.A3.Probe/Sasd.Crawler.Spike.A3.Probe.csproj" />
+  </ItemGroup>
+</Project>

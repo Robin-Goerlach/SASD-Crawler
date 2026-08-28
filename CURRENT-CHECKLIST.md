@@ -25,7 +25,7 @@
 - [x] A2 Lucene.NET – CONDITIONAL GO; Full-Disk-/Realkorpus-Evidence offen
 - [x] A3 Tika Sidecar – CONDITIONAL GO; Packaging-/AV-Evidence offen
 - [x] A4 Media Identity – CONDITIONAL GO; physische Hardware-Evidence offen
-- [ ] A5 Tika vs. Toxy
+- [x] A5 Tika vs. Toxy – Entscheidung getroffen; vollständiger Realkorpus offen
 - [ ] G0 Decision
 
 ## Erst danach

@@ -122,7 +122,7 @@ static string GetJavaVersion(string javaPath)
     return version;
 }
 
-internal static class FixtureFactory
+public static class FixtureFactory
 {
     public const string Marker = "SASD_A3_MARKER_2026";
 
