@@ -4,7 +4,7 @@
 **OS:** Windows 10.0.26200, win-x64
 **Runtime:** .NET 8.0.30
 **Lucene.NET:** 4.8.0-beta00018
-**Gate-Entscheidung:** **CONDITIONAL GO**
+**Gate-Entscheidung:** **TECHNICAL GO**
 
 ## Ergebnis
 
@@ -40,6 +40,25 @@ Ein separater 100.000-Dokument-Lauf mit 1.000 Mutationen ergab:
 Die Zahlen sind PoC-Messwerte und noch keine Produkt-SLOs. Der Runner öffnet pro Query
 einen Reader und misst damit bewusst eine konservative Implementierung ohne NRT-Tuning.
 
+## Realistischer kleiner Textkorpus
+
+Der versionierte `docs/`-Bestand wurde als realer deutsch/englischer Projektkorpus verwendet:
+
+| Metrik | Ergebnis |
+|---|---:|
+| Markdown-/Textdokumente | 48 |
+| Indexrate | 73,0 Dokumente/s |
+| Indexgröße | 255.744 Byte / 5.328 Byte je Dokument |
+| Update | 25,85 ms/Dokument (10 % des Korpus) |
+| Delete | 4,11 ms/Dokument (10 % des Korpus) |
+| Query p50 / p95 | 23,9 ms / 52,8 ms |
+| minimale Trefferzahl je Query | 17 |
+| Peak Working Set | 67,9 MB |
+
+Der Runner bricht ab, wenn eine Benchmarkquery keine Treffer liefert. Dieser Korpus ersetzt
+keinen späteren Golden-Document-Korpus, belegt für A2 aber reale, unterschiedlich lange
+Inhalte, Dateinamen und deutsch/englische Architekturbegriffe statt synthetischer Wiederholung.
+
 ## Crash-/Recovery-Probe
 
 1. Ein persistenter Index mit 100.000 committed Dokumenten wurde erstellt.
@@ -65,9 +84,7 @@ Upsert brach reproduzierbar mit `IOException` ab. Danach:
 Damit ist der geforderte Full-Disk-/Write-Failure-Fall ohne Manipulation realer Volumes oder
 Benutzerdaten praktisch nachgewiesen.
 
-## Offene Evidence und Grenzen
-
-- Ein realistischer, lizenzkonform versionierbarer Dokumentkorpus wurde noch nicht gemessen.
+## Grenzen
 - Facetten werden im Spike über die zurückgegebenen Top-Hits aggregiert, nicht über die
   vollständige Treffermenge. Für Produktcode ist Lucene-Faceting oder eine zweite Aggregation nötig.
 - Near-real-time Reader-/Searcher-Wiederverwendung ist noch nicht optimiert.
@@ -75,7 +92,7 @@ Benutzerdaten praktisch nachgewiesen.
 
 ## Entscheidung
 
-**CONDITIONAL GO.** Es wurde kein Blocker für Lucene.NET als eingebettetes Desktop-Backend
-gefunden. A3 darf beginnen. Ein uneingeschränktes A2-GO und die Annahme von ADR-0005 bleiben
-bis zur Full-Disk-Fehlerprobe und einem realistischen Korpus offen. OpenSearch bleibt eine
-spätere Shared-/Vector-Option und wird nicht in den Desktop-MVP vorgezogen.
+**TECHNICAL GO.** Es wurde kein Blocker für Lucene.NET als eingebettetes Desktop-Backend
+gefunden. Synthetische 1M-, reale Korpus-, Crash-, Full-Disk-, Recovery- und Funktionsproben
+sind grün. Die formale Annahme von ADR-0005 bleibt Teil des übergeordneten G0-Reviews.
+OpenSearch bleibt eine spätere Shared-/Vector-Option und wird nicht in den Desktop-MVP vorgezogen.

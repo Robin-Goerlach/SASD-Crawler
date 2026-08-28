@@ -22,7 +22,7 @@
 ## Architektur-Spikes
 
 - [x] A1 WinForms + Generic Host – CONDITIONAL GO, manuelle Desktop-Evidence offen
-- [x] A2 Lucene.NET – CONDITIONAL GO; realistischer Realkorpus offen
+- [x] A2 Lucene.NET – TECHNICAL GO
 - [x] A3 Tika Sidecar – CONDITIONAL GO; Packaging-/AV-Evidence offen
 - [x] A4 Media Identity – CONDITIONAL GO; physische Hardware-Evidence offen
 - [x] A5 Tika vs. Toxy – Entscheidung getroffen; vollständiger Realkorpus offen

@@ -35,3 +35,11 @@ Der Crash-Modus wird absichtlich mit einem Nicht-Null-Exit beendet:
 ```powershell
 dotnet run --project tools/Sasd.Crawler.Spike.A2.Benchmark/Sasd.Crawler.Spike.A2.Benchmark.csproj --configuration Release -- --index <existing-path> --documents 1000 --queries 1 --crash-after 1000
 ```
+
+Der reale Repository-Korpus ist ebenfalls reproduzierbar:
+
+```powershell
+dotnet run --project tools/Sasd.Crawler.Spike.A2.Benchmark/Sasd.Crawler.Spike.A2.Benchmark.csproj --configuration Release -- --index <temporary-index> --corpus docs --queries 100
+```
+
+Ergebnis am Evidence-Datum: 48 Dokumente, mindestens 17 Treffer/Query, p95 52,8 ms.

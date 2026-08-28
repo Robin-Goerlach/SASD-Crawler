@@ -1,7 +1,7 @@
 # SASD-Crawler – Projektstatus
 
 **Stichtag:** 28. August 2026
-**Gesamtstatus:** 🟡 A1–A5 technisch bearbeitet, jeweils Rest-Evidence/formaler Review offen
+**Gesamtstatus:** 🟡 A2 TECHNICAL GO; A1/A3/A4/A5 mit Rest-Evidence, formaler Review offen
 **Aktueller Meilenstein:** G0 – Architecture Feasibility Readiness
 **Nächster Gate:** G0 – derzeit noch nicht GO-fähig
 
@@ -29,7 +29,7 @@
 Der vollständige Readiness-Audit steht unter `docs/evidence/0.0/G0-decision.md` und hält
 Milestone 0.1 ausdrücklich gesperrt.
 
-1. A2-Rest-Evidence: realistischer Korpus; Full-Disk-Rollback ist verifiziert.
+1. A2 ist technisch GO; formale Annahme von ADR-0005 bleibt im G0-Review offen.
 2. A3-Rest-Evidence: finales SBOM/CVE, Installer, Signierung und AV/SmartScreen; 62-MiB-Runtime und 122-Komponenten-Inventar sind verifiziert.
 3. A4-Rest-Evidence: physische NTFS/exFAT/FAT32-Medien, Letter-Wechsel und Clone-Ambiguität.
 4. A1: manueller Tray-/Second-Launch-/Forced-Kill-Smoke mit Screenshots ist noch nachzuholen; automatisierte Lifecycle-Evidence ist grün.

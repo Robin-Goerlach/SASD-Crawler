@@ -106,7 +106,7 @@ Das Pflichtenheft enthält noch .NET-10/Blazor-/Linux-/Shared-Server-Annahmen. D
 |---|---|---|---|
 | **0.0.0** | Dokument- und Baseline-Vorbereitung | IN PROGRESS | – |
 | **0.0.1** | WinForms Host Lifecycle Spike | READY FOR REVIEW | A1: CONDITIONAL GO |
-| **0.0.2** | Lucene.NET Spike | READY FOR REVIEW | A2: CONDITIONAL GO |
+| **0.0.2** | Lucene.NET Spike | READY FOR REVIEW | A2: TECHNICAL GO |
 | **0.0.3** | Tika Sidecar/Packaging Spike | READY FOR REVIEW | A3: CONDITIONAL GO |
 | **0.0.4** | Windows Media Identity Spike | READY FOR REVIEW | A4: CONDITIONAL GO |
 | **0.0.5** | Tika-vs-Toxy Parser Benchmark | READY FOR REVIEW | A5: Tika bleibt Default; Realkorpus offen |
