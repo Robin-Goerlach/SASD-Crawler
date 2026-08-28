@@ -1,9 +1,9 @@
 # SASD-Crawler – Projektstatus
 
 **Stichtag:** 28. August 2026
-**Gesamtstatus:** 🟡 A1–A3 mit CONDITIONAL GO; Rest-Evidence offen
-**Aktueller Meilenstein:** 0.0.4 – Windows Media Identity Spike
-**Nächster Gate:** A4 – Windows Media Identity
+**Gesamtstatus:** 🟡 A1–A4 mit CONDITIONAL GO; Rest-Evidence offen
+**Aktueller Meilenstein:** 0.0.5 – Tika-vs-Toxy Parser Benchmark
+**Nächster Gate:** A5 – Parser Benchmark
 
 ## 1. Executive Snapshot
 
@@ -17,9 +17,9 @@
 | WinForms/.NET-8-Architektur | ✅ DRAFT COMPLETE | 129 Architekturkapitel; noch durch PoCs zu validieren |
 | ADR-Baseline | 🟡 CREATED | erste ADRs in diesem Dokumentationspaket |
 | Roadmap | ✅ CREATED | ausführliche steuernde Roadmap vorhanden |
-| PoC-Spikes | 🟡 IN PROGRESS | A1–A3 CONDITIONAL GO; A4–A5 offen |
+| PoC-Spikes | 🟡 IN PROGRESS | A1–A4 CONDITIONAL GO; A5 offen |
 | Repository/Solution | ✅ VERIFIED FOR A1 | .NET-8-WinForms-Spike-Solution baut ohne Warnungen |
-| automatisierte Tests | ✅ A1–A3 VERIFIED | 21/21 Spike-Tests bestanden |
+| automatisierte Tests | ✅ A1–A4 VERIFIED | 34/34 Spike-Tests bestanden |
 | Milestone 0.1 | ⬜ NOT STARTED | wartet auf G0 |
 | MVP 0.5 | ⬜ FUTURE | nicht begonnen |
 | 1.0 | ⬜ FUTURE | nicht begonnen |
@@ -28,7 +28,7 @@
 
 1. A2-Rest-Evidence: Full-Disk-Fehlerprobe und realistischer Korpus.
 2. A3-Rest-Evidence: Minimal-JRE/Installer, SBOM/CVE und AV/SmartScreen.
-3. Windows Volume Identity muss für das Offline-Medienmodell belastbar sein.
+3. A4-Rest-Evidence: physische NTFS/exFAT/FAT32-Medien, Letter-Wechsel und Clone-Ambiguität.
 4. A1: manueller Tray-/Second-Launch-/Forced-Kill-Smoke mit Screenshots ist noch nachzuholen; automatisierte Lifecycle-Evidence ist grün.
 5. Pflichtenheft 0.2, CR-2026-001 und Amendment 0.1a müssen formal reviewed/angenommen werden.
 
