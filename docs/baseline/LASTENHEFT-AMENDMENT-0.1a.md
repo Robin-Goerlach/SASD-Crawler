@@ -1,9 +1,10 @@
 # Lastenheft-Amendment 0.1a – Desktop-/WinForms-Baseline
 
-**Status:** DRAFT  
+**Status:** ACCEPTED  
 **Bezug:** Lastenheft 0.1  
 **Change Request:** CR-2026-001  
-**Datum:** 21. August 2026
+**Datum:** 21. August 2026  
+**Formal angenommen:** 6. Oktober 2026
 
 Dieses Amendment ändert ausschließlich die Punkte, die der später gewählten Windows-Forms-Desktoparchitektur widersprechen. Alle übrigen 258 Anforderungen bleiben unverändert, sofern hier nicht ausdrücklich anders bestimmt.
 
@@ -110,4 +111,4 @@ und nicht als vollständiger zentraler Multiuser-Server.
 
 ## Gültigkeit
 
-Nach formaler Annahme von CR-2026-001 gilt dieses Amendment gemeinsam mit Lastenheft 0.1 als fachliche Baseline.
+CR-2026-001 ist angenommen. Dieses Amendment gilt gemeinsam mit Lastenheft 0.1 als fachliche Baseline.
