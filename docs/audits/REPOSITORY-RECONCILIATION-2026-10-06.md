@@ -64,18 +64,37 @@ Apache Tika 4.1.0 is current while 3.3.2 remains a supported maintenance line. A
 ### F-010 old A1 remote branch
 The remote `codex/0.0.1-winforms-host-spike` was still visible during this audit even though PR #1 is merged. It is safe to delete after this reconciliation; branch deletion is intentionally not hidden inside documentation cleanup.
 
-## 3. Code changes deliberately not made
+## 3. Cross-chat strategy reconciliation
+
+Additional SASD-Crawler discussions outside the main strategy thread were checked as well.
+
+### Enterprise Information Discovery – preserved, not promoted into 1.0
+A future enterprise direction with central administration, distributed crawler agents, shared search/index services, ACL-aware retrieval, scheduler/job control, audit/retention, monitoring/HA, APIs and further connectors had been discussed. This is now preserved in `docs/planning/ENTERPRISE-VISION.md` as explicitly non-normative future direction.
+
+### Shared SASD Enterprise Foundation – preserved as candidate
+A possible cross-project foundation for logging, configuration, health, jobs, API/CLI conventions, security, migrations, backup/restore, packaging, diagnostics, versioning, SBOM and signed builds had been discussed. It is recorded as a future candidate only; SASD-Crawler 1.0 does not depend on its existence.
+
+### Optional JS7 orchestration – preserved as integration concept
+A prior architecture discussion proposed an external orchestrator such as JS7 for schedules, dependencies, retries, restart and monitoring while keeping all business logic in SASD-Crawler. That boundary is now documented in the Enterprise Vision. No JS7 dependency is introduced into the desktop product.
+
+### Code-health/architecture metrics – preserved for hardening
+Long-term trend metrics such as complexity, coverage, duplication, analyzer warnings, maintainability and forbidden dependency directions are documented as later Quality/0.8 concerns, not as a pre-A2 distraction.
+
+### Proposed `.sasd/project.yaml` convention – deliberately not adopted
+A SASD-wide project metadata convention using `.sasd/project.yaml` had been proposed in a prior discussion. It was **not an explicit accepted Crawler decision**, and no stable cross-project schema currently exists in this repository. This reconciliation therefore does not invent a project-specific schema. Adopt it later only through an explicit SASD-wide standard/change decision.
+
+## 4. Code changes deliberately not made
 
 A1 source is not refactored into production namespaces yet. It is still a spike and should remain evidence of the architecture experiment until G0 determines the production skeleton.
 
 No Lucene/Tika/OCR/real crawler implementation is added by this reconciliation. Those belong to their planned spikes/slices.
 
-## 4. Current truth after this reconciliation
+## 5. Current truth after this reconciliation
 
 - A1: **CONDITIONAL GO**, implementation/automated verification complete; manual desktop evidence pending.
 - A2: **READY / NEXT**.
 - Product quality maturity: **Q0 Architecture Validation**.
 - Active UI/platform baseline: WinForms / .NET 8 / Windows-first / per-user Desktop.
 - MIT license is active.
-- CI baseline exists.
+- CI baseline exists; because the workflow is introduced by this PR, its first default-branch `push` validation is expected immediately after merge.
 - 0.1 production slice must still wait for G0.
