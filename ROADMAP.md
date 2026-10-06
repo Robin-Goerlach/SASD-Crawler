@@ -1,9 +1,9 @@
 # SASD-Crawler – Roadmap
 
-**Stand:** 21. August 2026  
-**Roadmap-Version:** 0.1  
+**Stand:** 6. Oktober 2026  
+**Roadmap-Version:** 0.2  
 **Ziel:** kontrollierbare Entwicklung vom Architektur-Spike bis zur stabilen Version 1.0 und danach  
-**Aktueller Status:** Vorentwicklung / Architekturvalidierung – A1 technisch abgeschlossen  
+**Aktueller Status:** Q0 Architekturvalidierung – A1 CONDITIONAL GO, A2 READY  
 **Aktuelles Gate:** A2 – Lucene.NET Spike
 
 ---
@@ -67,20 +67,21 @@ DONE verlangt die in dieser Roadmap genannten Nachweise.
 | Produkt-/Funktionsanalyse | DONE |
 | auditierte Produktanalyse | DONE |
 | Lastenheft 0.1 | DONE als fachliche Baseline |
-| Pflichtenheft 0.1 | DONE als ältere technische Spezifikation, aber revisionsbedürftig |
-| WinForms/.NET-8-Architektur 0.1 | DONE als Architekturentwurf |
+| Pflichtenheft 0.1 | historische/superseded technische Spezifikation |
+| Pflichtenheft 0.2 | ACTIVE technische Baseline |
+| WinForms/.NET-8-Architektur 0.1 | ACTIVE; A1 teilweise PoC-bestätigt |
 | Baseline-/Change-Control | DONE |
 | Roadmap | DONE |
 | PoC-Plan | DONE als Plan |
 | Teststrategie | DONE als Plan |
 | Risk Register | DONE als initiale Baseline |
-| ADR-Grundsatzentscheidungen | CREATED, Review ausstehend |
+| ADR-Grundsatzentscheidungen | teilweise ACCEPTED; PoC-abhängige ADRs bleiben Proposed |
 
 ## 3.2 Noch nicht als umgesetzt zu betrachten
 
-- Repository-Solution;
-- WinForms-Shell;
-- SQLite-Schema;
+- Produktions-Solution/-Namespaces nach G0 (A1-Spike-Solution ist vorhanden);
+- produktive WinForms Search Shell (A1 Lifecycle-UI ist vorhanden);
+- produktives SQLite Control-Schema (A1 Heartbeat-Store ist vorhanden);
 - Lucene-Index;
 - Dateisystemcrawler;
 - USB-Detection;
@@ -92,11 +93,9 @@ DONE verlangt die in dieser Roadmap genannten Nachweise.
 - Installer;
 - automatisierte E2E-Tests.
 
-## 3.3 Aktuelle kritische Lücke
+## 3.3 Aktuelle kritische Punkte
 
-Das Pflichtenheft enthält noch .NET-10/Blazor-/Linux-/Shared-Server-Annahmen. Die neue Architektur definiert WinForms/.NET 8/Windows-first.
-
-**Vor Milestone 0.1 MUSS diese Divergenz formal geschlossen werden.**
+Die frühere normative Dokumentkollision ist durch CR-2026-001, Amendment 0.1a und Pflichtenheft 0.2 geschlossen. Offen bleiben die **technischen PoC-Entscheidungen A2–A5** sowie der .NET-8-Lifecycle: Support endet am 10.11.2026, deshalb muss G0 einen Upgradezeitpunkt vor produktiver 1.0 festlegen.
 
 ---
 
@@ -105,8 +104,8 @@ Das Pflichtenheft enthält noch .NET-10/Blazor-/Linux-/Shared-Server-Annahmen. D
 | Milestone | Ziel | Status | Gate danach |
 |---|---|---|---|
 | **0.0.0** | Dokument- und Baseline-Vorbereitung | IN PROGRESS | – |
-| **0.0.1** | WinForms Host Lifecycle Spike | READY FOR REVIEW | A1: CONDITIONAL GO |
-| **0.0.2** | Lucene.NET Spike | NOT STARTED | A2 |
+| **0.0.1** | WinForms Host Lifecycle Spike | **CONDITIONAL GO** | A1 – manuelle Desktop-Evidence offen |
+| **0.0.2** | Lucene.NET Spike | **READY / NEXT** | A2 |
 | **0.0.3** | Tika Sidecar/Packaging Spike | NOT STARTED | A3 |
 | **0.0.4** | Windows Media Identity Spike | NOT STARTED | A4 |
 | **0.0.5** | Tika-vs-Toxy Parser Benchmark | NOT STARTED | **G0** |
@@ -137,16 +136,16 @@ Ohne G0 dürfen wir keinen großen Produktionscode schreiben.
 
 ## 5.1 Voraussetzungen
 
-- [x] A1 WinForms/Generic Host technisch erfolgreich; manuelle UI-/Crash-Evidence vor finalem Review nachholen.
+- [x] A1 WinForms/Generic Host automatisiert erfolgreich; CONDITIONAL GO, manuelle Desktop-Evidence offen.
 - [ ] A2 Lucene.NET erfolgreich oder Fallback auf OpenSearch beschlossen.
 - [ ] A3 Tika Packaging/Isolation erfolgreich.
 - [ ] A4 Volume Identity ausreichend belastbar.
 - [ ] A5 Parservergleich dokumentiert.
-- [ ] Pflichtenheft 0.2 oder äquivalente Änderungsmatrix erstellt.
+- [x] Pflichtenheft 0.2 aktive Baseline; CR-2026-001 + Amendment 0.1a angenommen.
 - [ ] ADR-0001 bis ADR-0014 reviewed.
-- [ ] .NET-8-Lifecycle-Risiko explizit akzeptiert oder Migrationsplan beschlossen.
-- [ ] Repository-/Solution-Konventionen definiert.
-- [ ] CI-Minimum definiert.
+- [ ] .NET-8-Lifecycle: aktuelles Servicing genutzt; G0 muss Migration vor produktiver 1.0 terminieren (Supportende 10.11.2026).
+- [x] Repository-/Solution-Konventionen für Spikes definiert; `Sasd.Crawler.sln` kanonisch.
+- [x] CI-Minimum definiert: Windows restore / format / Release build / tests.
 
 ## 5.2 Go-Kriterien
 
@@ -198,7 +197,7 @@ docs/evidence/0.0/
 - [x] Pflichtenheft 0.2 WinForms/.NET 8 als Draft erstellt.
 - [x] Change Request CR-2026-001 als Draft erstellt.
 - [x] Lastenheft-Amendment 0.1a als Draft erstellt.
-- [ ] CR-2026-001 + Amendment 0.1a + Pflichtenheft 0.2 formal reviewed/angenommen.
+- [x] CR-2026-001 + Amendment 0.1a + Pflichtenheft 0.2 im Reconciliation-Review als aktive Baseline angenommen.
 - [ ] finaler Dokumentreview.
 
 ## 6.2 Exit-Kriterium
@@ -228,18 +227,18 @@ WinForms MainForm
 
 ## 7.2 Muss-Szenarien
 
-- [ ] App startet ohne UI-Blockade.
-- [ ] BackgroundService startet.
-- [ ] Service schreibt periodisch Status in SQLite.
-- [ ] UI liest Status über Application Service.
-- [ ] UI bleibt responsive.
-- [ ] Minimize-to-Tray funktioniert.
-- [ ] App kann aus Tray geöffnet werden.
-- [ ] Shutdown cancelt Worker.
-- [ ] SQLite bleibt konsistent.
-- [ ] erzwungener Crash hinterlässt beim Neustart reparierbaren Zustand.
-- [ ] Single-Instance-Mutex funktioniert.
-- [ ] zweite Instanz kann bestehende Instanz aktivieren.
+- [x] App-/Host-Lifecycle automatisiert ohne Architekturblocker; sichtbare Responsiveness manuell offen.
+- [x] BackgroundService startet.
+- [x] Service schreibt periodisch Status in SQLite.
+- [x] Presenter liest Status über abstrahierten Store/State.
+- [ ] sichtbare UI-Responsiveness in interaktiver Session noch manuell belegen.
+- [ ] Tray-Interaktion manuell belegen (Code vorhanden).
+- [ ] Tray Open manuell belegen (Code vorhanden).
+- [x] Shutdown/Cancellation automatisiert getestet.
+- [x] SQLite Wiederöffnen/Persistenz automatisiert getestet.
+- [ ] echter Forced-Kill/Restart manuell noch belegen; Recovery-Grundlogik automatisiert.
+- [x] Single-Instance-Mutex automatisiert getestet.
+- [x] IPC-Aktivierung automatisiert getestet; sichtbarer Fokus/Restore manuell offen.
 
 ## 7.3 Nicht im Spike
 
@@ -250,7 +249,7 @@ WinForms MainForm
 
 ## 7.4 Gate A1
 
-GO, wenn Lifecycle und Shutdown reproduzierbar stabil sind.
+**Aktueller Stand: CONDITIONAL GO.** Automatisierte Architekturhypothese bestätigt; vier interaktive Windows-Smokes bleiben für uneingeschränktes GO offen.
 
 ---
 
@@ -326,7 +325,7 @@ Die Entscheidung wird nicht nach „funktioniert bei 100 Dateien“ getroffen.
 
 ## 9.2 Gate A3
 
-Tika darf den WinForms-Hauptprozess bei Parserfehlern nicht mitreißen.
+Tika darf den WinForms-Hauptprozess bei Parserfehlern nicht mitreißen. A3 muss zusätzlich die dann aktuelle Tika-4.x-Linie gegen die gepflegte 3.3.x-Maintenance-Linie hinsichtlich Packaging, Java-Anforderung, Upgradepfad und Sicherheitswartung bewerten.
 
 ---
 
@@ -422,10 +421,10 @@ Ein Benutzer kann:
 
 ## 12.2 Technische Deliverables
 
-- [ ] Solution-Struktur.
-- [ ] WinForms Shell.
+- [ ] Produktions-Solution-Struktur nach G0.
+- [ ] WinForms Search Shell.
 - [ ] MVP Presenters.
-- [ ] SQLite Schema v1.
+- [ ] SQLite Control-Schema v1.
 - [ ] `Source`.
 - [ ] `Document`.
 - [ ] `CrawlJob`.
@@ -435,7 +434,7 @@ Ein Benutzer kann:
 - [ ] ScanRunId.
 - [ ] Reconciliation.
 - [ ] SHA-256 bei Änderung.
-- [ ] Lucene Index.
+- [ ] gewähltes Search Backend.
 - [ ] SearchService.
 - [ ] einfache Query.
 - [ ] Snippet.
@@ -1147,19 +1146,19 @@ Nicht bei jedem kleinen Commit umschreiben.
 
 Zum aktuellen Stichtag ist die Antwort:
 
-> Die fachliche und technische Planung ist weit fortgeschritten. Die neue WinForms/.NET-8-Zielarchitektur ist ausführlich beschrieben, aber noch nicht durch die entscheidenden Architektur-Spikes praktisch bestätigt. Die Implementation darf deshalb noch nicht als begonnen oder Architektur als final freigegeben gelten. Der nächste operative Schritt ist Milestone 0.0.x mit den A1–A5-Spikes und anschließend Gate G0.
+> Die fachliche und technische Planung ist weit fortgeschritten. A1 ist implementiert, gemerged und automatisiert verifiziert, bleibt wegen vier manueller Desktop-Smokes auf CONDITIONAL GO. A2 ist READY und der nächste operative Schritt. A2–A5 entscheiden die noch offenen Technologiepfade vor Gate G0; der eigentliche Produkt-Vertical-Slice 0.1 beginnt erst danach.
 
 ---
 
 # 39. Unmittelbare nächste Aufgaben
 
-- [ ] ADRs reviewen und akzeptieren.
+- [x] Grundsatz-ADRs konsolidiert; PoC-abhängige ADRs werden erst nach A2–A5 finalisiert.
 - [x] Change Request für die WinForms/.NET-8-Baseline erstellt.
 - [x] Pflichtenheft 0.2 erzeugt.
-- [x] A1 Spike-Repository/Solution angelegt.
+- [x] A1 Spike-Solution umgesetzt und nach `main` gemerged.
 - [x] A1 Evidence unter `docs/evidence/0.0.1/` dokumentiert.
-- [ ] A2 Lucene Benchmark aufsetzen.
-- [ ] A3 Tika Sidecar testen.
+- [ ] **A2 Lucene.NET Benchmark jetzt ausführen – nächster Schritt.**
+- [ ] A3 Tika Sidecar nach A2; Tika 4.1.0 vs 3.3.2 Maintenance explizit entscheiden.
 - [ ] A4 reale USB-Medien testen.
 - [ ] A5 Tika/Toxy Benchmark.
 - [ ] G0-Entscheidung dokumentieren.
@@ -1181,5 +1180,14 @@ Letzte Änderung:
 Abgeschlossene Checklisten bleiben zur Historie erhalten. Sie werden nicht gelöscht, sondern mit Evidence verlinkt.
 
 ---
+
+# 41. Reconciliation-Stand 2026-10-06
+
+- A1 ist in `main` integriert; 9/9 Tests und Build/Format sind grün, Gate bleibt wegen manueller Desktop-Smokes `CONDITIONAL GO`.
+- A2 ist der nächste aktive Spike.
+- CR-2026-001, Amendment 0.1a und Pflichtenheft 0.2 bilden nun die aktive WinForms/.NET-8-Baseline.
+- Windows-CI und Repository-Hygiene werden mit dem Reconciliation-Update eingeführt.
+- Quality Maturity bleibt Q0 bis G0 bestanden und der 0.1-Vertical-Slice beginnt.
+- Langfristige Enterprise-Ideen sind in `docs/planning/ENTERPRISE-VISION.md` konserviert, aber ausdrücklich nicht 1.0-scopeverbindlich.
 
 **Ende der Roadmap**
