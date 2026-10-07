@@ -1,117 +1,96 @@
 # Baseline- und Änderungssteuerung
 
-**Stand:** 21. August 2026  
-**Status:** aktiv
+**Stand:** 6. Oktober 2026  
+**Status:** ACTIVE
 
-## 1. Problemstellung
+## 1. Gültige Baseline
 
-Im bisherigen Projektverlauf wurde die technische Zielarchitektur wesentlich geändert:
+Die frühere technische Annahme `.NET 10 + Blazor + Windows/Linux + Shared-Server-first` wurde durch die explizite Produktentscheidung **Windows Forms auf .NET 8, Desktop-first** ersetzt.
 
-- vorherige Pflichtenheftannahme: .NET 10, ASP.NET Core/Blazor, Windows + Linux, serverorientierter;
-- aktuelle explizite Architekturvorgabe: **Windows Forms auf .NET 8**, Desktop-first.
+Diese Rebaselining-Entscheidung ist nicht mehr nur ein Draft: Sie wurde anschließend als A1 tatsächlich umgesetzt und verifiziert. Bei diesem Reconciliation-Stand wird CR-2026-001 deshalb formal als **ACCEPTED** geführt.
 
-Beide Dokumente existieren. Ohne formale Regel wäre bei einer späteren Implementierung unklar, welche Aussage gilt.
+## 2. Dokumentrangfolge
 
-## 2. Aktuelle Dokumentbaseline
+### Fachlich normativ
 
-### Fachlich führend
+1. `docs/baseline/LASTENHEFT.md`
+2. `docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md`
 
-`docs/baseline/02-LASTENHEFT.md`
+### Technisch normativ
 
-Es definiert das Produktziel und die fachlichen Anforderungen.
+3. akzeptierte ADRs
+4. `docs/baseline/ARCHITECTURE.md`
+5. `docs/baseline/PFLICHTENHEFT.md` (Pflichtenheft 0.2)
 
-### Technisch führend
+### Steuernd / nicht selbst scope-ändernd
 
-`docs/baseline/04-ARCHITECTURE-WINFORMS-NET8.md`
+6. `ROADMAP.md`
+7. `PROJECT-STATUS.md`
+8. Planungs-, Test-, Security- und Operations-Dokumente
 
-Es ersetzt widersprechende technische Annahmen des älteren Pflichtenhefts bezüglich:
+Eine Roadmap oder Implementierung darf keine MUSS-Anforderung stillschweigend abschaffen.
 
-- .NET 10 → .NET 8,
-- Blazor → Windows Forms,
-- Windows/Linux-1.0 → Windows-first,
-- Shared-Server-first → per-user Desktop-first,
-- Web-UI-Accessibility → native Windows-Accessibility.
+## 3. Superseded-Dokumente
 
-### Teilweise gültig
+Pflichtenheft 0.1 bleibt historische Referenz außerhalb der aktuellen Repository-Baseline. Widersprechende technische Aussagen aus 0.1 gelten nicht mehr.
 
-`docs/baseline/03-PFLICHTENHEFT.md`
+## 4. CR-2026-001 – WinForms/.NET 8
 
-Alle technischen Inhalte, die **nicht** der aktuellen Architektur widersprechen, bleiben als Konkretisierung verwendbar.
+**Status:** ACCEPTED / recorded 2026-10-06
 
-Eine revidierte Fassung liegt jetzt als `docs/baseline/07-PFLICHTENHEFT-0.2-WINFORMS-NET8.md` vor. Sie ist noch als **DRAFT** markiert und muss gemeinsam mit CR-2026-001 und Amendment 0.1a formal reviewed/angenommen werden.
+Verbindlich für 1.0:
 
-## 3. Rangfolge bei Widersprüchen
+- Windows Forms Primär-UI,
+- `net8.0-windows` als derzeit gewünschtes Entwicklungs-Target,
+- Windows-first,
+- per-user Desktopbetrieb,
+- SQLite Control Store,
+- Search Backend Abstraction,
+- kein zwingender Windows Service im Desktop-MVP,
+- späterer Shared/Service Mode als Erweiterung.
 
-1. explizit freigegebene Change Requests;
-2. Lastenheft für fachliche Ziele;
-3. freigegebene ADRs für einzelne Architekturentscheidungen;
-4. aktuelle Architektur;
-5. aktuelles Pflichtenheft, soweit nicht superseded;
-6. Roadmap/Planungsdokumente;
-7. ältere Analyseunterlagen.
+PoC-abhängig bleiben:
 
-Ein Roadmap-Eintrag darf keine MUSS-Anforderung stillschweigend abschaffen.
+- Lucene.NET als konkretes v1 Search Backend (A2),
+- Tika-Version/Packaging (A3),
+- Media Identity Details (A4),
+- Toxy-Rolle (A5).
 
-## 4. Change-Request-Verfahren
+## 5. .NET-8-Lifecycle
 
-Jede Änderung mit Auswirkung auf Scope, Architektur, Datenformat, Security oder Releaseziel erhält eine ID:
+Die Produktentscheidung für .NET 8 bleibt für die aktuellen Spikes bestehen. Sie ist jedoch zeitlich begrenzt: Hersteller-Support endet am 10.11.2026.
 
-```text
-CR-YYYY-NNN
-```
+Daher gilt:
 
-Ein Change Request enthält mindestens:
+- A2–A5 dürfen auf aktuell gepatchtem .NET 8 laufen;
+- G0 MUSS den Zeitpunkt für die Migration auf eine unterstützte LTS-Version festlegen;
+- eine produktive 1.0 darf nicht versehentlich auf einer ungeprüften, aus dem Support gefallenen Runtime veröffentlicht werden.
 
-- Ausgangslage,
-- vorgeschlagene Änderung,
-- betroffene Anforderungen,
-- betroffene ADRs,
-- Nutzen,
-- Kosten,
-- Risiken,
-- Migration,
-- Testfolgen,
-- Releaseauswirkung,
-- Entscheidung,
-- Datum.
+Ein Framework-Upgrade soll die Architektur nicht ändern; das Target ist zentral zu halten.
 
-## 5. Architekturänderungen
+## 6. Change-Request-Verfahren
 
-Architekturänderungen mit langfristiger Wirkung erhalten zusätzlich ein ADR.
+Langfristige Änderungen an Scope, Architektur, Datenformat, Security oder Releaseziel erhalten `CR-YYYY-NNN` und bei Architekturwirkung zusätzlich ein ADR.
 
-Beispiel:
+Ein Change Request enthält mindestens Ausgangslage, Änderung, Requirements, Nutzen, Kosten, Risiken, Migration, Tests, Releaseauswirkung und Entscheidung.
 
-```text
-CR-2026-001: Desktop-first WinForms statt Blazor
-ADR-0001: Windows Forms und .NET 8 als Zielplattform
-```
+## 7. Gate vor Milestone 0.1
 
-## 6. Status der aktuellen Architekturänderung
-
-| Punkt | Status |
-|---|---|
-| WinForms als Primär-UI | entschieden |
-| .NET 8 als gewünschtes Target | entschieden, Lifecycle-Risiko dokumentiert |
-| Windows-first 1.0 | Architekturentscheidung, Lastenheftabgleich erforderlich |
-| Linux-1.0-MUSS | **Konflikt – formal zu ändern** |
-| responsive Web-UI als 1.0-SOLL | **Konflikt – formal zu ändern** |
-| lokale Mehrbenutzerkonten in Desktop 1.0 | **neu zu bewerten** |
-| HTTP Search API als 1.0-MUSS | intern als Application Contract erhalten; öffentliche Hostpflicht neu zu bewerten |
-| Containerbetrieb 1.0 | für Desktop nicht primär; späterer Service-Host |
-
-## 7. Baseline-Gate vor Implementierung 0.1
-
-Milestone 0.1 darf erst starten, wenn:
-
-- [ ] Architektur-Spikes A1–A4 erfolgreich oder mit dokumentiertem Fallback abgeschlossen sind.
-- [x] Pflichtenheft 0.2 als Draft liegt vor.
-- [ ] Pflichtenheft 0.2 / CR-2026-001 / Amendment 0.1a formal angenommen.
-- [ ] betroffene Lastenheftanforderungen PLAT/UI/AUTH/API bewertet sind.
-- [ ] ADRs 0001–0014 mindestens reviewed sind.
-- [ ] Roadmap und Requirement-Status auf die freigegebene Baseline zeigen.
+- [x] CR-2026-001 angenommen.
+- [x] Amendment 0.1a angenommen.
+- [x] Pflichtenheft 0.2 aktive technische Baseline.
+- [x] A1 automatisiert erfolgreich; manuelle Rest-Evidence dokumentiert.
+- [ ] A2 abgeschlossen.
+- [ ] A3 abgeschlossen.
+- [ ] A4 abgeschlossen.
+- [ ] A5 abgeschlossen.
+- [ ] ADR-Entscheidungen nach PoCs aktualisiert.
+- [ ] .NET-8-Migrationszeitpunkt beschlossen.
+- [ ] G0 formal GO.
 
 ## 8. Änderungsprotokoll
 
 | Datum | Änderung | Status |
 |---|---|---|
-| 2026-08-21 | Dokumentbaseline und Supersession-Regeln erstmalig definiert | aktiv |
+| 2026-08-21 | Dokumentbaseline und Supersession-Regeln erstmalig definiert | historisch |
+| 2026-10-06 | Repository/Chats/A1-Code abgeglichen; CR-2026-001 + Amendment 0.1a + Pflichtenheft 0.2 als aktive Baseline konsolidiert | active |

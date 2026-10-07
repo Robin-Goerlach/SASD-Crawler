@@ -1,7 +1,7 @@
 # Pflichtenheft 0.2 – SASD-Crawler WinForms/.NET 8
 
-**Status:** DRAFT – technische Rebaselining-Fassung  
-**Stand:** 21. August 2026  
+**Status:** ACTIVE BASELINE – WinForms/.NET-8-Rebaselining  
+**Stand:** 6. Oktober 2026  
 **Supersedes:** Pflichtenheft 0.1 in allen widersprechenden technischen Aussagen  
 **Bezug:** Lastenheft 0.1 + Amendment 0.1a + CR-2026-001 + Architektur 0.1
 
@@ -79,7 +79,7 @@ Lucene.NET ist v1-Referenzbackend, sofern PoC A2 bestanden wird.
 
 ## 2.7 Parsing
 
-Tika Sidecar ist Referenzparser. Toxy bleibt optionaler, getesteter Fast Path.
+Tika Sidecar ist Referenzparser. Toxy bleibt optionaler, getesteter Fast Path. Die konkrete Tika-Haupt-/Maintenance-Linie wird durch A3 festgelegt und nicht allein durch diese historische Spezifikationsfassung eingefroren.
 
 ## 2.8 OCR
 
@@ -521,6 +521,6 @@ Eine Requirement gilt nicht als erfüllt, bevor:
 
 # 17. Schlussfolgerung
 
-Pflichtenheft 0.2 ist die technische Desktop-Rebaselining-Fassung.
+Pflichtenheft 0.2 ist die aktive technische Desktop-Rebaselining-Fassung.
 
-Die ausführliche Komponenten- und Klassensicht verbleibt im Architekturdokument 0.1. Dieses Pflichtenheft stellt sicher, dass die 258 fachlichen Anforderungen auf die neue Windows-Forms-/NET-8-Baseline abgebildet sind, ohne die alte Blazor-/Linux-Architektur weiterzutragen.
+Die ausführliche Komponenten- und Klassensicht verbleibt im Architekturdokument 0.1. Dieses Pflichtenheft stellt sicher, dass die 258 fachlichen Anforderungen auf die Windows-Forms-/NET-8-Baseline abgebildet sind, ohne die alte Blazor-/Linux-Architektur weiterzutragen. PoC-abhängige Komponentenentscheidungen werden nach A2–A5 über ADRs und Baseline-Updates konkretisiert.

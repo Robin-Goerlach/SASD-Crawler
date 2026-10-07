@@ -11,8 +11,7 @@ TestResults/
 *.userosscache
 *.sln.docstates
 
-# Local Codex configuration
-.codex/
+# Project Codex configuration under .codex/ is versioned intentionally.
 
 # Rider / IDE
 .idea/

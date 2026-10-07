@@ -1,25 +1,28 @@
 # ADR-0013: Index und Extraction Cache sind rekonstruierbar
 
-**Status:** Proposed  
-**Datum:** 21. August 2026
+**Status:** Accepted  
+**Datum:** 21. August 2026  
+**Accepted:** 6. Oktober 2026
 
 ## Kontext
 
-Suchindex darf nicht einzige Source of Truth sein.
+Ein Suchindex darf nicht die einzige Quelle für fachlichen Lebenszyklus-, Quellen- oder Medienzustand sein. Indexschema und Parser ändern sich im Produktverlauf.
 
 ## Entscheidung
 
-SQLite/Originalquellen führen; Index/Cache können neu aufgebaut werden.
+SQLite/Control Store und die Originalquellen führen den dauerhaften fachlichen Zustand. Lucene/OpenSearch-Index und Extraction-/Preview-Caches sind abgeleitete Artefakte und müssen grundsätzlich neu aufgebaut werden können.
 
 ## Positive Folgen
 
-- Recovery
-- Migration
+- sichere Indexmigration und Recovery,
+- Search Backend bleibt austauschbar,
+- Parser-/Analyzerschema kann über Rebuild aktualisiert werden.
 
 ## Negative Folgen / Trade-offs
 
-- Rebuild kann lange dauern
+- Rebuild kann zeit- und ressourcenintensiv sein,
+- Offline-Medien benötigen Extraction Cache oder späteren Wiederanschluss für vollständiges Reprocessing.
 
 ## Verifikation
 
-Die Entscheidung gilt erst als `Accepted`, wenn die zugehörigen PoC-/Gate-Anforderungen erfüllt oder bewusst als Architekturentscheidung akzeptiert wurden.
+A2 prüft Index-Reopen/Recovery/Rebuild. Spätere Milestones prüfen Rebuild aus dem echten Document Registry und aus Offline-Caches.

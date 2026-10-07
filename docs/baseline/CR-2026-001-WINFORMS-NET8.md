@@ -1,7 +1,8 @@
 # CR-2026-001 – WinForms/.NET-8-Rebaselining
 
-**Status:** DRAFT – zur formalen Annahme vorgesehen  
+**Status:** ACCEPTED – im Repository-Reconciliation-Review bestätigt  
 **Datum:** 21. August 2026  
+**Formal angenommen:** 6. Oktober 2026  
 **Betroffene Baseline:** Lastenheft 0.1, Pflichtenheft 0.1, Architektur 0.1
 
 ## 1. Ausgangslage
@@ -28,8 +29,8 @@ Die technische Baseline wird geändert auf:
 - Windows-first für Version 1.0;
 - per-user Desktopbetrieb als Standard;
 - SQLite Control Store;
-- Lucene.NET hinter `ISearchIndex`;
-- Tika Sidecar;
+- Lucene.NET hinter `ISearchIndex` als PoC-abhängiger v1-Kandidat;
+- Tika Sidecar als PoC-abhängiger Referenzparser;
 - Tesseract OCR;
 - Hintergrundworker im WinForms-/Generic-Host-Lifecycle;
 - kein zwingender Windows Service im Desktop-MVP;
@@ -61,26 +62,26 @@ Besonders betroffen:
 - `AUTH-002` bis `AUTH-009` soweit sie einen zentralen Mehrbenutzerbetrieb voraussetzen;
 - `API-001` bis `API-007` hinsichtlich öffentlichem HTTP-Host versus internem Application Contract.
 
-## 5. Entscheidungsvorschlag
+## 5. Entscheidung
 
 ### PLAT-002
-Von MUSS 1.0 zu:
-> Core- und Application-Layer sollen portierbar bleiben; ein Linux-Host ist nach 1.0 möglich, aber keine 1.0-Desktopanforderung.
+Core- und Application-Layer sollen portierbar bleiben; ein Linux-Host ist nach 1.0 möglich, aber keine 1.0-Desktopanforderung.
 
 ### PLAT-003
-Containerbetrieb auf späteren Service/Shared Mode verschieben.
+Containerbetrieb wird auf einen späteren Service/Shared Mode verschoben.
 
 ### UI-013
-Durch native WinForms-UI mit High-DPI-/Accessibility-Anforderung ersetzen.
+Die 1.0-Baseline verwendet native WinForms-UI mit High-DPI-/Accessibility-Anforderungen anstelle einer verpflichtenden Weboberfläche.
 
 ### AUTH
-Version 1.0 Desktop:
+Für Version 1.0 Desktop gilt:
+
 > Windows-Identität und per-user Index sind Standard-Sicherheitsgrenze.
 
 Shared-Mode-ACLs bleiben Architekturvorbereitung und spätere Funktion.
 
 ### API
-Internes Application Contract bleibt verbindlich. Ein öffentlicher HTTP-API-Host wird nicht zur Voraussetzung der Desktop-UI.
+Ein stabiles Application Contract bleibt verbindlich. Ein öffentlicher HTTP-API-Host ist keine Voraussetzung der Desktop-UI.
 
 ## 6. Auswirkungen
 
@@ -110,10 +111,11 @@ Internes Application Contract bleibt verbindlich. Ein öffentlicher HTTP-API-Hos
 - [x] Pflichtenheft 0.2 erstellt.
 - [x] Roadmap angepasst.
 - [x] ADRs erstellt.
-- [ ] menschlicher Review/Annahme.
-- [ ] PoC-Gate G0 erfolgreich.
+- [x] menschliche Produktentscheidung liegt vor: WinForms/.NET 8 wurde explizit beauftragt und A1 entsprechend umgesetzt.
+- [ ] PoC-Gate G0 erfolgreich – betrifft die verbleibenden Technologieentscheidungen, nicht die Annahme dieses Change Requests.
 
-## 9. Entscheidung
+## 9. Beschluss
 
-**Vorgeschlagen:** ACCEPT  
-**Formal angenommen:** noch offen
+**ACCEPTED am 6. Oktober 2026.**
+
+Die Rebaselining-Entscheidung ist aktive Projektbaseline. PoC-abhängig bleiben Lucene.NET (A2), Tika-Linie/Packaging (A3), Media Identity Details (A4) und Toxy-Rolle (A5).

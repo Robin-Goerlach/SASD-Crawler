@@ -1,12 +1,12 @@
 # SASD Crawler
 
-Native Windows desktop crawler and full-text search application for local folders, USB/offline media, SMB shares and websites.
+Native Windows desktop crawler and full-text search application for local folders, USB/offline media, SMB/UNC shares and websites.
 
-> **Project status:** planning / architecture validation. The product architecture and requirements are extensively specified; production implementation is intentionally not treated as complete until the PoC and quality gates in the roadmap are passed.
+> **Current status (6 October 2026):** architecture validation. Milestone **0.0.1 / A1** is merged on `main` with **CONDITIONAL GO** (build clean, 9/9 automated tests, manual interactive desktop smoke evidence still pending). **0.0.2 / A2 – Lucene.NET** is the next active spike.
 
 ## UI concept
 
-The following screenshot is a **design concept**, not a screenshot of an already implemented build.
+The following image is a **design concept**, not a screenshot of the implemented A1 spike.
 
 ![SASD Crawler UI concept](docs/images/sasd-crawler-ui-concept.png)
 
@@ -14,7 +14,7 @@ The intended desktop experience is search-first: a native Windows Forms applicat
 
 ## Product idea
 
-SASD Crawler should make information searchable **without forcing users to move documents into a new document-management repository**.
+SASD Crawler makes information searchable **without forcing users to move documents into a document-management repository**.
 
 Planned source types include:
 
@@ -23,13 +23,11 @@ Planned source types include:
 - SMB/UNC network shares,
 - websites and linked documents.
 
-The crawler is intended to index the contents of relevant document formats, including Office files and PDF, with OCR for scanned documents.
+The crawler is intended to index relevant document contents, including Office files and PDF, with OCR for scanned documents.
 
-A key product goal is **offline media awareness**: an indexed document should remain discoverable even while its USB disk is disconnected. The result should identify the missing medium and known relative path rather than silently disappearing.
+A key product goal is **offline media awareness**: an indexed document remains discoverable while its USB disk is disconnected. Results identify the missing medium and known relative path rather than silently disappearing.
 
-## Target architecture
-
-Current architecture baseline:
+## Architecture baseline
 
 ```text
 Windows Forms / .NET 8
@@ -52,96 +50,97 @@ Apache Tika  Tesseract
   Sidecar       OCR
 ```
 
-Architectural principles:
+Core principles:
 
 - WinForms is the **presentation layer**, not the crawler implementation.
-- Domain and application logic remain UI-independent.
+- Domain/application logic remain UI-independent.
 - SQLite is the durable control/metadata store.
-- Lucene.NET is the preferred v1 embedded search backend behind an abstraction and must pass a dedicated PoC.
-- Apache Tika is the reference document parser, isolated from the UI process.
-- Tesseract provides local OCR.
-- File-system watchers are hints only; full reconciliation decides removals.
+- Lucene.NET is the preferred embedded v1 search backend behind `ISearchIndex`; A2 must prove it.
+- Apache Tika is the reference parser family, isolated from the UI process; A3 must choose the concrete supported line/package strategy.
+- Tesseract is the planned local OCR engine.
+- File-system watchers are hints only; successful full reconciliation decides source-wide removals.
 - removable media use a stable internal `MediaId` plus relative paths.
 - the default v1 security model is per-Windows-user, with data under the user's profile.
 
-## Current phase
+## Verified implementation so far
 
-The immediate work is **Milestone 0.0.x – architecture feasibility**:
+A1 has established a real .NET 8 WinForms spike with:
 
-1. WinForms + Generic Host lifecycle spike.
-2. Lucene.NET performance/recovery spike.
-3. Apache Tika sidecar/packaging spike.
-4. Windows removable-media identity spike.
-5. Tika vs. Toxy parser benchmark.
-6. G0 architecture feasibility decision.
+- Generic Host and DI,
+- cancellable `BackgroundService`,
+- SQLite heartbeat persistence in `%LOCALAPPDATA%`,
+- MVP/presenter boundary and UI-thread marshalling,
+- tray commands (Open, Pause/Resume, Exit),
+- per-user single-instance mutex plus named-pipe activation,
+- 9/9 automated tests.
 
-Only after G0 should Milestone 0.1 begin.
+Evidence: [`docs/evidence/0.0.1/SUMMARY.md`](docs/evidence/0.0.1/SUMMARY.md).
 
-See [`ROADMAP.md`](ROADMAP.md) for the detailed status and gates.
+A1 remains **CONDITIONAL GO** until the manual interactive Windows smokes for tray behavior, visible responsiveness, second-launch focus and forced-kill/restart are recorded.
+
+## Current work: A2 Lucene.NET
+
+The next spike validates Lucene.NET 4.8.0-beta00018 on .NET 8 with 100k/1M-document workloads, updates/deletes, NRT search, German/English analyzers, phrase/Boolean/fuzzy/prefix queries, highlighting, facets, concurrent readers, coordinated writing and crash/reopen recovery.
+
+See:
+
+- [`docs/codex/FIRST-TASK-0.0.2.md`](docs/codex/FIRST-TASK-0.0.2.md)
+- [`docs/codex/PROMPT-0.0.2-AUTONOMOUS.md`](docs/codex/PROMPT-0.0.2-AUTONOMOUS.md)
+
+## Technology watch
+
+The project intentionally separates **chosen product architecture** from **current dependency versions**.
+
+- .NET 8 remains the requested development target, but reaches Microsoft end of support on **10 November 2026**. The repository pins the current .NET 8 servicing SDK and the migration decision must be revisited at G0/before production release.
+- Lucene.NET 4.8.0-beta00018 remains the current 4.8 beta line and explicitly supports .NET 8; A2 exists because its formal status is still Beta.
+- Apache Tika 4.1.0 is now current, while 3.3.2 remains a supported maintenance line. A3 will compare the packaging/migration/security trade-offs rather than assuming the older line forever.
+- Tesseract 5.5.3 remains the current release line for the planned OCR PoC.
+
+## Roadmap
+
+```text
+0.0.1  A1 WinForms host lifecycle     CONDITIONAL GO
+0.0.2  A2 Lucene.NET                  READY / next
+0.0.3  A3 Tika sidecar/packaging      NOT STARTED
+0.0.4  A4 Windows media identity      NOT STARTED
+0.0.5  A5 Tika vs. Toxy               NOT STARTED
+        G0 Architecture Feasibility
+0.1.0   Local vertical slice
+0.2.0   USB/offline + SMB
+0.3.0   Web crawler
+0.4.0   Office/PDF/archive
+0.5.0   OCR + core search = MVP
+...
+1.0.0   Stable
+```
+
+The authoritative details and gates are in [`ROADMAP.md`](ROADMAP.md).
 
 ## Documentation
-
-Start here:
 
 | Document | Purpose |
 |---|---|
 | [`docs/baseline/LASTENHEFT.md`](docs/baseline/LASTENHEFT.md) | functional/product requirements |
-| [`docs/baseline/PFLICHTENHEFT.md`](docs/baseline/PFLICHTENHEFT.md) | technical requirements for the WinForms/.NET 8 baseline |
-| [`docs/baseline/ARCHITECTURE.md`](docs/baseline/ARCHITECTURE.md) | detailed software architecture |
-| [`ROADMAP.md`](ROADMAP.md) | milestones, gates, dependencies and current progress |
-| [`PROJECT-STATUS.md`](PROJECT-STATUS.md) | concise current project snapshot |
-| [`REQUIREMENTS-STATUS.md`](REQUIREMENTS-STATUS.md) | implementation/verification status for all requirement IDs |
-| [`docs/planning/POC-PLAN.md`](docs/planning/POC-PLAN.md) | mandatory architecture spikes |
-| [`docs/testing/QUALITY-GATES.md`](docs/testing/QUALITY-GATES.md) | release and milestone acceptance gates |
-| [`docs/security/SECURITY-PLAN.md`](docs/security/SECURITY-PLAN.md) | security boundaries and controls |
-| [`AGENTS.md`](AGENTS.md) | instructions for autonomous coding agents |
-| [`RULES.md`](RULES.md) | command and safety rules for Codex |
+| [`docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md`](docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md) | accepted desktop amendment |
+| [`docs/baseline/PFLICHTENHEFT.md`](docs/baseline/PFLICHTENHEFT.md) | active WinForms/.NET 8 technical baseline |
+| [`docs/baseline/ARCHITECTURE.md`](docs/baseline/ARCHITECTURE.md) | detailed architecture |
+| [`ROADMAP.md`](ROADMAP.md) | milestones, gates and progress |
+| [`PROJECT-STATUS.md`](PROJECT-STATUS.md) | concise current snapshot |
+| [`REQUIREMENTS-STATUS.md`](REQUIREMENTS-STATUS.md) | status of all requirement IDs |
+| [`docs/QUALITY-LEVEL.md`](docs/QUALITY-LEVEL.md) | quality maturity model and current level |
+| [`docs/planning/POC-PLAN.md`](docs/planning/POC-PLAN.md) | architecture spikes |
+| [`docs/testing/QUALITY-GATES.md`](docs/testing/QUALITY-GATES.md) | release/milestone gates |
+| [`docs/security/SECURITY-PLAN.md`](docs/security/SECURITY-PLAN.md) | security boundaries |
+| [`docs/audits/REPOSITORY-RECONCILIATION-2026-10-06.md`](docs/audits/REPOSITORY-RECONCILIATION-2026-10-06.md) | current repository/chat/code reconciliation |
+| [`AGENTS.md`](AGENTS.md) | autonomous agent instructions |
+| [`RULES.md`](RULES.md) | command/safety policy |
 
-The documentation baseline and conflict-resolution rules are defined in [`BASELINE-AND-CHANGE-CONTROL.md`](BASELINE-AND-CHANGE-CONTROL.md).
+`specified ≠ implemented ≠ verified ≠ released` remains a project invariant.
 
-## Requirements status
+## Continuous integration
 
-The project currently separates three states:
-
-```text
-specified ≠ implemented ≠ verified
-```
-
-The requirements register must never mark work as complete simply because it has been documented.
-
-## Development approach
-
-Development should proceed in **vertical, testable slices**.
-
-The first real slice after the architecture PoCs is intentionally small:
-
-```text
-Local folder
-  → discover TXT/HTML
-  → persistent document registry
-  → Lucene index
-  → WinForms search
-  → snippet
-  → open original
-  → update/delete reconciliation
-```
-
-Office/PDF, USB, SMB, web crawling and OCR are added only after the preceding gates are stable.
-
-## Repository automation
-
-Codex may work autonomously on routine repository-local development. The project explicitly permits safe PowerShell, `dotnet`, Git and selected GitHub CLI operations without requesting confirmation each time.
-
-See:
-
-- [`AGENTS.md`](AGENTS.md)
-- [`RULES.md`](RULES.md)
-- [`.codex/rules/default.rules`](.codex/rules/default.rules)
-- [`docs/codex/PROMPT-0.0.1-AUTONOMOUS.md`](docs/codex/PROMPT-0.0.1-AUTONOMOUS.md)
-- [`docs/codex/FIRST-TASK-0.0.1.md`](docs/codex/FIRST-TASK-0.0.1.md)
-
-Destructive filesystem/system commands, force-pushes, repository deletion, secret changes and privilege elevation are not permitted autonomously.
+The Windows CI workflow restores, verifies formatting, builds and runs tests on pull requests and pushes to `main`. CI does not replace manual hardware/desktop evidence where the gate explicitly requires it.
 
 ## License
 
-No project license has been selected in this starter package. Add a `LICENSE` only after the intended licensing model has been explicitly decided.
+Licensed under the [MIT License](LICENSE).

@@ -1,126 +1,107 @@
 # PoC- und Architektur-Spike-Plan
 
-**Stand:** 21. August 2026  
-**Ziel:** die risikoreichsten Architekturannahmen vor Milestone 0.1 praktisch bestätigen
+**Stand:** 6. Oktober 2026  
+**Aktueller Spike:** A2 – Lucene.NET
 
 ## 1. Grundsatz
 
-Die Spikes sind keine Produktfeatures. Ihr Ergebnis ist eine **Entscheidung mit Messdaten**.
-
-Spike-Code darf verworfen werden.
-
-Produktionscode darf nur übernommen werden, wenn er zusätzlich die normalen Qualitätsanforderungen erfüllt.
+Spikes liefern eine **Entscheidung mit Messdaten**, keine versteckte Produktimplementierung. Spike-Code darf verworfen werden. Produktionsübernahme verlangt weiterhin normale Qualitätsanforderungen.
 
 ## 2. A1 – WinForms/Host Lifecycle
 
-### Hypothese
-WinForms, `Microsoft.Extensions.Hosting`, BackgroundServices, SQLite, Tray und Single-Instance-Lifecycle lassen sich stabil kombinieren.
+**Status:** **CONDITIONAL GO**  
+**Evidence:** `docs/evidence/0.0.1/`
 
-### Mess-/Testfälle
-- Startzeit.
-- MainForm responsiveness.
-- Worker start/stop.
-- Cancellation.
-- Tray.
-- Single instance.
-- second-instance activation via named pipe.
-- SQLite write during background work.
-- clean shutdown.
-- forced kill/restart.
+Automatisiert bestätigt:
 
-### Go
-Keine DB-Korruption; kein hängender Prozess; UI bleibt responsive.
+- Generic Host/DI,
+- BackgroundService + Cancellation,
+- SQLite/WAL,
+- MVP/Presenter + UI-Marshalling,
+- Single Instance + Named Pipe,
+- Shutdown/Recovery-Grundlogik,
+- 9/9 Tests, Build/Format grün.
 
-### Evidence
-Screenshots, logs, test report, exact .NET SDK/runtime.
+Manuell offen:
+
+- Tray in interaktiver Session,
+- sichtbare Responsiveness,
+- Second-Launch-Fokus,
+- realer Forced-Kill/Restart.
+
+Diese Restpunkte verhindern `GO`, aber nicht A2.
 
 ## 3. A2 – Lucene.NET
 
-### Hypothese
-Lucene.NET ist für den Desktopindex ausreichend stabil und performant.
-
-### Daten
-Synthetisch 1M plus realistischer kleiner Dokumentkorpus.
-
-### Benchmarks
-- indexing docs/s,
-- index bytes/doc,
-- RAM,
-- query p50/p95,
-- update latency,
-- delete latency,
-- reopen/recovery.
-
-### Suchfunktionen
-Phrase, Boolean, fuzzy, prefix, GermanAnalyzer, EnglishAnalyzer, highlighting, facets.
-
-### Negative Tests
-Process kill während Write; ungültiger Indexpfad; voller Datenträger simulieren.
-
-## 4. A3 – Tika Sidecar
+**Status:** READY / NEXT
 
 ### Hypothese
-Tika kann kontrolliert als lokaler Sidecar betrieben und paketiert werden.
+Lucene.NET 4.8.0-beta00018 ist für den eingebetteten Desktopindex stabil, ausreichend schnell und recovery-fähig.
 
-### Tests
-- process spawn,
-- loopback only,
-- health,
-- DOCX/XLSX/PPTX/PDF,
-- malformed PDF,
-- timeout,
-- restart,
-- max size,
-- parser error,
-- temporary files,
-- clean shutdown.
+### Muss-Nachweise
 
-### Security
-Keine externe Bindung, keine beliebigen Fetcher, restricted temp.
+- .NET 8 Build,
+- create/open/reopen,
+- 100.000 und 1.000.000 synthetische Dokumente,
+- `UpdateDocument`/Delete,
+- NRT Search,
+- German/English analyzers,
+- phrase/Boolean/fuzzy/prefix/wildcard,
+- highlighting,
+- faceting/filter,
+- concurrent readers + koordinierter Writer,
+- kill/reopen recovery,
+- full rebuild,
+- index size/RAM/indexing throughput,
+- query p50/p95.
+
+### Entscheidungsoptionen
+
+- **GO:** Lucene.NET bleibt v1 embedded backend.
+- **CONDITIONAL GO:** Desktop ja, Shared/Vector später OpenSearch.
+- **NO-GO:** OpenSearch wird früher primär.
+
+Details: `docs/codex/FIRST-TASK-0.0.2.md`.
+
+## 4. A3 – Tika Sidecar/Packaging
+
+**Status:** NOT STARTED
+
+Seit der ursprünglichen Planung hat sich die Lage geändert: **Tika 4.1.0** ist aktuell; die **3.3.2**-Linie bleibt unterstützt.
+
+A3 muss daher zusätzlich entscheiden:
+
+1. Tika 4.1.0 als neuer Major (Java 17, neue Distribution/Out-of-process-Architektur),
+2. Tika 3.3.2 Maintenance als konservativer Pfad,
+3. Packaging, Startzeit, RAM, Sandbox, Upgradepfad, Lizenz/SBOM,
+4. DOCX/XLSX/PPTX/PDF, malformed input, timeout/restart,
+5. loopback-only / keine unnötigen Fetcher.
+
+Keine Version wird nur deshalb gewählt, weil sie im Pflichtenheft ursprünglich genannt wurde.
 
 ## 5. A4 – Windows Media Identity
 
-### Hypothese
-Medien können mit ausreichend hoher Sicherheit wiedererkannt werden.
+**Status:** NOT STARTED
 
-### Geräte
-NTFS, exFAT, FAT32, USB flash, external SSD.
+Test: NTFS/exFAT/FAT32, USB Flash/externe SSD, detach/attach, anderer Laufwerksbuchstabe, gleiches Label, Klon/Ambiguität, Neustart offline.
 
-### Fälle
-detach/attach, drive letter change, same label, cloned content, app restart offline.
-
-### Fallback
-Bei Ambiguität user-assisted binding, niemals aggressives Auto-Merge.
+Fallback bei Ambiguität: user-assisted binding; niemals aggressives Auto-Merge.
 
 ## 6. A5 – Tika vs. Toxy
 
-### Ziel
-Nicht „wer ist schneller?“, sondern pro Format feststellen, ob Toxy bei geringerem Betriebsaufwand gleichwertig ist.
+**Status:** NOT STARTED
 
-### Bewertungsmatrix
-| Kriterium | Gewicht |
-|---|---:|
-| Textvollständigkeit | 25 |
-| Parserrobustheit | 20 |
-| Formatbreite | 15 |
-| Metadaten | 10 |
-| Performance | 10 |
-| Memory | 5 |
-| Packaging | 5 |
-| Security Isolation | 5 |
-| Maintenance/Lizenz | 5 |
+Verglichen wird Toxy gegen die in A3 gewählte Tika-Linie, nicht gegen eine veraltete Annahme.
 
-### Entscheidungsregel
-Toxy darf nur für einen MIME-Typ primär werden, wenn es dort keinen relevanten Funktionsverlust gibt.
+Bewertung: Textvollständigkeit 25, Robustheit 20, Formatbreite 15, Metadaten 10, Performance 10, RAM 5, Packaging 5, Isolation 5, Maintenance/Lizenz 5.
 
-## 7. G0-Report
+## 7. G0
 
-Nach A1–A5 entsteht `G0-decision.md`:
+G0 verlangt:
 
-- Ergebnis jedes Spikes,
-- Messdaten,
-- gewählter Stack,
-- Fallbacks,
-- offene Risiken,
-- ADR-Updates,
-- Go/No-Go.
+- A1 mindestens Conditional Go + Rest-Evidence klar,
+- A2–A5 entschieden,
+- ADRs entsprechend aktualisiert,
+- .NET-8-Lifecycle-/Migrationsentscheidung,
+- CI-Minimum grün,
+- keine normative Dokumentkollision.
