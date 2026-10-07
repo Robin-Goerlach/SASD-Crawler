@@ -1,10 +1,10 @@
 # SASD-Crawler – Roadmap
 
-**Stand:** 6. Oktober 2026  
+**Stand:** 7. Oktober 2026  
 **Roadmap-Version:** 0.2  
 **Ziel:** kontrollierbare Entwicklung vom Architektur-Spike bis zur stabilen Version 1.0 und danach  
-**Aktueller Status:** Q0 Architekturvalidierung – A1 CONDITIONAL GO, A2 READY  
-**Aktuelles Gate:** A2 – Lucene.NET Spike
+**Aktueller Status:** Q0 Architekturvalidierung – A2 TECHNICAL GO; A1/A3/A4/A5 conditional; G0 NOT READY  
+**Aktuelles Gate:** G0 – Architecture Feasibility Review
 
 ---
 
@@ -105,10 +105,10 @@ Die frühere normative Dokumentkollision ist durch CR-2026-001, Amendment 0.1a u
 |---|---|---|---|
 | **0.0.0** | Dokument- und Baseline-Vorbereitung | IN PROGRESS | – |
 | **0.0.1** | WinForms Host Lifecycle Spike | **CONDITIONAL GO** | A1 – manuelle Desktop-Evidence offen |
-| **0.0.2** | Lucene.NET Spike | **READY / NEXT** | A2 |
-| **0.0.3** | Tika Sidecar/Packaging Spike | NOT STARTED | A3 |
-| **0.0.4** | Windows Media Identity Spike | NOT STARTED | A4 |
-| **0.0.5** | Tika-vs-Toxy Parser Benchmark | NOT STARTED | **G0** |
+| **0.0.2** | Lucene.NET Spike | **TECHNICAL GO / FORMAL REVIEW OPEN** | A2 |
+| **0.0.3** | Tika Sidecar/Packaging Spike | **CONDITIONAL GO** | A3 |
+| **0.0.4** | Windows Media Identity Spike | **CONDITIONAL GO** | A4 |
+| **0.0.5** | Tika-vs-Toxy Parser Benchmark | **CONDITIONAL; TIKA DEFAULT** | **G0** |
 | **0.1.0** | lokaler vertikaler Slice | NOT STARTED | G1 |
 | **0.2.0** | USB/Offline + SMB | NOT STARTED | G2 |
 | **0.3.0** | Webcrawler | NOT STARTED | G3 |
@@ -137,10 +137,10 @@ Ohne G0 dürfen wir keinen großen Produktionscode schreiben.
 ## 5.1 Voraussetzungen
 
 - [x] A1 WinForms/Generic Host automatisiert erfolgreich; CONDITIONAL GO, manuelle Desktop-Evidence offen.
-- [ ] A2 Lucene.NET erfolgreich oder Fallback auf OpenSearch beschlossen.
-- [ ] A3 Tika Packaging/Isolation erfolgreich.
-- [ ] A4 Volume Identity ausreichend belastbar.
-- [ ] A5 Parservergleich dokumentiert.
+- [x] A2 Lucene.NET technisch erfolgreich; Lucene.NET 4.8.0-beta00018 bleibt bevorzugtes Embedded-v1-Backend, formaler ADR-Review offen.
+- [ ] A3 CONDITIONAL GO: Tika 3.3.2 Sidecar/Runtime technisch bewiesen; Tika-4.1-Vergleich und finales Packaging/SBOM/CVE/AV offen.
+- [ ] A4 CONDITIONAL GO: API-/Matching-Modell bewiesen; physische Wechselmedien- und Drive-Letter-Smokes offen.
+- [ ] A5 Vergleich dokumentiert und Tika bleibt Default; realer/Legacy-DOC/PPT-/verschlüsselter Korpus bleibt für vollständige Gate-Evidence offen.
 - [x] Pflichtenheft 0.2 aktive Baseline; CR-2026-001 + Amendment 0.1a angenommen.
 - [ ] ADR-0001 bis ADR-0014 reviewed.
 - [ ] .NET-8-Lifecycle: aktuelles Servicing genutzt; G0 muss Migration vor produktiver 1.0 terminieren (Supportende 10.11.2026).
@@ -1146,7 +1146,7 @@ Nicht bei jedem kleinen Commit umschreiben.
 
 Zum aktuellen Stichtag ist die Antwort:
 
-> Die fachliche und technische Planung ist weit fortgeschritten. A1 ist implementiert, gemerged und automatisiert verifiziert, bleibt wegen vier manueller Desktop-Smokes auf CONDITIONAL GO. A2 ist READY und der nächste operative Schritt. A2–A5 entscheiden die noch offenen Technologiepfade vor Gate G0; der eigentliche Produkt-Vertical-Slice 0.1 beginnt erst danach.
+> Die Architekturspikes A2–A5 besitzen inzwischen ausführbaren Code und Evidence. A2 ist technisch erfolgreich; A1, A3, A4 und A5 bleiben wegen klar benannter Rest-Evidence conditional. G0 ist deshalb noch NOT READY. Der Produkt-Vertical-Slice 0.1 beginnt weiterhin erst nach einem ausdrücklich dokumentierten G0-GO.
 
 ---
 
@@ -1157,12 +1157,15 @@ Zum aktuellen Stichtag ist die Antwort:
 - [x] Pflichtenheft 0.2 erzeugt.
 - [x] A1 Spike-Solution umgesetzt und nach `main` gemerged.
 - [x] A1 Evidence unter `docs/evidence/0.0.1/` dokumentiert.
-- [ ] **A2 Lucene.NET Benchmark jetzt ausführen – nächster Schritt.**
-- [ ] A3 Tika Sidecar nach A2; Tika 4.1.0 vs 3.3.2 Maintenance explizit entscheiden.
-- [ ] A4 reale USB-Medien testen.
-- [ ] A5 Tika/Toxy Benchmark.
-- [ ] G0-Entscheidung dokumentieren.
-- [ ] erst danach Milestone 0.1 starten.
+- [x] A2 Lucene.NET technisch durchführen und Evidence erzeugen.
+- [x] A3 Tika-3.3.2-Sidecar technisch durchführen; 4.1.0-Vergleich/Packaging-Rest-Evidence bleibt offen.
+- [x] A4 Media-Identity-Code/Tests durchführen; reale USB-Medien bleiben offen.
+- [x] A5 Tika/Toxy Benchmark durchführen; Tika bleibt Default, Korpus-Rest-Evidence offen.
+- [ ] Recovery-Integration gegen reconciled `main` per CI verifizieren und mergen.
+- [ ] A1/A3/A4/A5-Rest-Evidence schließen.
+- [ ] PoC-abhängige ADRs und .NET-8-Lifecycle im G0-Review entscheiden.
+- [ ] G0 auf GO/NO-GO finalisieren.
+- [ ] erst bei **G0 = GO** Milestone 0.1 starten.
 
 ---
 
@@ -1184,9 +1187,9 @@ Abgeschlossene Checklisten bleiben zur Historie erhalten. Sie werden nicht gelö
 # 41. Reconciliation-Stand 2026-10-06
 
 - A1 ist in `main` integriert; 9/9 Tests und Build/Format sind grün, Gate bleibt wegen manueller Desktop-Smokes `CONDITIONAL GO`.
-- A2 ist der nächste aktive Spike.
+- A2 ist technisch erfolgreich; A3–A5 besitzen Teil-Evidence und bleiben wegen dokumentierter Restpunkte conditional.
 - CR-2026-001, Amendment 0.1a und Pflichtenheft 0.2 bilden nun die aktive WinForms/.NET-8-Baseline.
-- Windows-CI und Repository-Hygiene werden mit dem Reconciliation-Update eingeführt.
+- Windows-CI und Repository-Hygiene sind auf dem reconciled `main` eingeführt und der erste Main-CI-Lauf ist erfolgreich.
 - Quality Maturity bleibt Q0 bis G0 bestanden und der 0.1-Vertical-Slice beginnt.
 - Langfristige Enterprise-Ideen sind in `docs/planning/ENTERPRISE-VISION.md` konserviert, aber ausdrücklich nicht 1.0-scopeverbindlich.
 
