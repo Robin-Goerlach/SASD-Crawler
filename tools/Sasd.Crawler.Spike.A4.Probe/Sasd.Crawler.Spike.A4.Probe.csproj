@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/Sasd.Crawler.Spike.A4.Media/Sasd.Crawler.Spike.A4.Media.csproj" /></ItemGroup>
+</Project>
