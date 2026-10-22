@@ -40,7 +40,11 @@ public sealed class MainForm : Form, IMainView
 
         Shown += async (_, _) => await RunUiOperationAsync(
             cancellationToken => presenter.InitializeAsync(cancellationToken));
-        FormClosed += (_, _) => lifetimeCancellation.Cancel();
+        FormClosed += (_, _) =>
+        {
+            lifetimeCancellation.Cancel();
+            lifetimeCancellation.Dispose();
+        };
 
         addFolderButton.Click += async (_, _) => await AddFolderAsync();
         refreshButton.Click += async (_, _) => await RunUiOperationAsync(
@@ -136,7 +140,7 @@ public sealed class MainForm : Form, IMainView
         var title = new Label
         {
             AutoSize = true,
-            Font = new Font(Font, FontStyle.Bold),
+            Font = new Font(this.Font, FontStyle.Bold),
             Text = "Configured crawl sources",
         };
 
