@@ -230,7 +230,7 @@ public sealed class SqliteSourceRepository : ISourceRepository
         SqliteConnection connection,
         CancellationToken cancellationToken)
     {
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
         await using (var command = connection.CreateCommand())
         {
