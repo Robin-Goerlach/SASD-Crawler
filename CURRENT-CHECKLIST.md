@@ -17,6 +17,8 @@
 - [x] SEA-022 Stopwortfilterung spezifiziert
 - [x] ID-011 geschärft und ID-012 fortlaufende Dublettenerkennung spezifiziert
 - [x] Polyglot-Repository-Grenze mit C#/.NET-8-Kanon festgelegt
+- [x] CR-2026-003 / ADR-0017: Frontend/shared/Indexer als getrennte Produktionsbereiche festgelegt
+- [x] `src/frontend/`, `src/shared/`, `src/indexer/` und gespiegelte Testbereiche vorbereitet
 - [x] Repository-Reconciliation 2026-10-06 nach `main` gemerged
 - [x] Windows-CI auf reconciled `main` grün
 - [ ] PoC-abhängige ADRs nach A2–A5 formal reviewen
