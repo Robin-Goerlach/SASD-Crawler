@@ -6,6 +6,7 @@
       "src\\shared\\Sasd.Crawler.Application\\Sasd.Crawler.Application.csproj",
       "src\\frontend\\Sasd.Crawler.Frontend\\Sasd.Crawler.Frontend.csproj",
       "src\\indexer\\Sasd.Crawler.Persistence.Sqlite\\Sasd.Crawler.Persistence.Sqlite.csproj",
+      "src\\indexer\\Sasd.Crawler.Indexer.LocalFileSystem\\Sasd.Crawler.Indexer.LocalFileSystem.csproj",
       "src\\frontend\\Sasd.Crawler.WinForms\\Sasd.Crawler.WinForms.csproj",
       "tests\\frontend\\Sasd.Crawler.Frontend.Tests\\Sasd.Crawler.Frontend.Tests.csproj"
     ]

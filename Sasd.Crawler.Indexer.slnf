@@ -5,7 +5,10 @@
       "src\\shared\\Sasd.Crawler.Domain\\Sasd.Crawler.Domain.csproj",
       "src\\shared\\Sasd.Crawler.Application\\Sasd.Crawler.Application.csproj",
       "src\\indexer\\Sasd.Crawler.Persistence.Sqlite\\Sasd.Crawler.Persistence.Sqlite.csproj",
-      "tests\\indexer\\Sasd.Crawler.Persistence.Sqlite.Tests\\Sasd.Crawler.Persistence.Sqlite.Tests.csproj"
+      "src\\indexer\\Sasd.Crawler.Indexer.LocalFileSystem\\Sasd.Crawler.Indexer.LocalFileSystem.csproj",
+      "tests\\indexer\\Sasd.Crawler.Persistence.Sqlite.Tests\\Sasd.Crawler.Persistence.Sqlite.Tests.csproj",
+      "tests\\indexer\\Sasd.Crawler.Indexer.LocalFileSystem.Tests\\Sasd.Crawler.Indexer.LocalFileSystem.Tests.csproj",
+      "tests\\e2e\\Sasd.Crawler.LocalScan.E2E.Tests\\Sasd.Crawler.LocalScan.E2E.Tests.csproj"
     ]
   }
 }
