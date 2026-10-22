@@ -1,7 +1,7 @@
 # Requirements Status Register
 
-**Stand:** 21. August 2026  
-**Anforderungen:** 258
+**Stand:** 22. Oktober 2026  
+**Anforderungen:** 260
 
 ## Statusdefinition
 
@@ -14,9 +14,9 @@
 
 | Dimension | Stand |
 |---|---|
-| Fachlich spezifiziert | 258/258 |
-| Implementiert | 0/258 verifiziert |
-| Verifiziert | 0/258 verifiziert |
+| Fachlich spezifiziert | 260/260 |
+| Implementiert | 0/260 verifiziert |
+| Verifiziert | 0/260 verifiziert |
 
 > Milestone 0.0.1 ist ein Architektur-Spike und implementiert keine Produktanforderung. Deshalb wurde trotz grüner A1-Tests kein Eintrag unten auf `DONE` gesetzt. Evidence: `docs/evidence/0.0.1/`.
 
@@ -116,7 +116,8 @@
 | ID-008 | LastSeen | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ID-009 | Availability | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ID-010 | Rename-/Move-Erkennung | SOLL | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| ID-011 | Dublettenerkennung | SOLL | 1.1.x | SPECIFIED | NOT STARTED | PENDING | – |
+| ID-011 | Exakte Dublettenerkennung | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1b / CR-2026-002 |
+| ID-012 | Fortlaufende Dublettenerkennung | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1b / CR-2026-002 |
 | META-001 | Basisfelder | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | META-002 | Dokumenttitel | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | META-003 | Autor | SOLL | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -154,6 +155,7 @@
 | SEA-019 | Related/Similar | SOLL | 1.5.x | SPECIFIED | NOT STARTED | PENDING | – |
 | SEA-020 | Result Pinning | SOLL | 1.4.x | SPECIFIED | NOT STARTED | PENDING | – |
 | SEA-021 | Learning to Rank | KANN | 1.5.x | SPECIFIED | NOT STARTED | PENDING | – |
+| SEA-022 | Stopwortfilterung | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1b / CR-2026-002 |
 | UI-001 | Zentrales Suchfeld | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | UI-002 | Search-as-you-type Reaktion | SOLL | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | UI-003 | Treffername | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -166,7 +168,7 @@
 | UI-010 | Vorschau | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | UI-011 | PDF-/Bildthumbnail | SOLL | 1.1.x | SPECIFIED | NOT STARTED | PENDING | – |
 | UI-012 | Tastaturbedienung | MUSS | 0.9.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| UI-013 | Responsive Weboberfläche | SOLL | 1.0.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| UI-013 | Native WinForms-Oberfläche (amended) | SOLL | 1.0.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1a |
 | UI-014 | Desktopintegration | KANN | 1.1.x | SPECIFIED | NOT STARTED | PENDING | – |
 | AUTH-001 | Single-User-Betrieb | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | AUTH-002 | Benutzerkonten | MUSS | 0.6.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -257,8 +259,8 @@
 | PRIV-003 | Suchhistorie deaktivierbar | MUSS | 1.1.x | SPECIFIED | NOT STARTED | PENDING | – |
 | PRIV-004 | Retention für Logs | SOLL | 0.9.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | PLAT-001 | Windows | MUSS | 1.0.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| PLAT-002 | Linux | MUSS | 1.0.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| PLAT-003 | Containerbetrieb | SOLL | 1.0.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| PLAT-002 | Linux-Service-Host (verschoben) | MUSS | post-1.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1a |
+| PLAT-003 | Containerbetrieb Shared/Service Mode (verschoben) | SOLL | post-1.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1a |
 | PLAT-004 | macOS | KANN | 2.x | SPECIFIED | NOT STARTED | PENDING | – |
 | UX-001 | Einfache Erstsuche | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | UX-002 | Technische Details optional | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
