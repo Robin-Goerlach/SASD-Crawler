@@ -67,6 +67,11 @@ public sealed class SourceCatalogServiceTests
         public Task<IReadOnlyList<SourceDefinition>> ListAsync(CancellationToken cancellationToken)
             => Task.FromResult<IReadOnlyList<SourceDefinition>>(sources.ToArray());
 
+        public Task<SourceDefinition?> GetByIdAsync(
+            SourceId sourceId,
+            CancellationToken cancellationToken)
+            => Task.FromResult(sources.SingleOrDefault(source => source.Id == sourceId));
+
         public Task<SourceDefinition?> FindByCanonicalLocationAsync(
             string canonicalLocation,
             CancellationToken cancellationToken)
