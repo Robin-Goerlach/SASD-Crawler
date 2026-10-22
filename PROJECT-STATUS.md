@@ -1,17 +1,17 @@
 # SASD-Crawler – Projektstatus
 
-**Stichtag:** 7. Oktober 2026  
+**Stichtag:** 22. Oktober 2026  
 **Gesamtstatus:** 🟡 Architekturvalidierung; A2 technisch erfolgreich, A3–A5 mit belastbarer Teil-Evidence, G0 noch nicht freigegeben  
-**Aktueller Arbeitsblock:** **Recovery/Integration der Architektur-Spikes A2–A5**  
+**Aktueller Arbeitsblock:** **G0-Rest-Evidence, formale ADR-Entscheidungen und Baseline-Synchronisierung**  
 **Nächstes Gate:** **G0 – Architecture Feasibility Review**  
-**Reconciled Main-Basis:** `428f8b0bb82c5f6736cbc78d48b4a10049da19b3`
+**Aktuelle Main-Basis vor CR-2026-002-PR:** `bfeb23b7cacb8ff989a3adfeb904128109d2b65a`
 
 ## 1. Executive Snapshot
 
 | Bereich | Status | Kommentar |
 |---|---|---|
 | Produktanalyse | ✅ DONE | auditierte Produkt-/Funktionsanalyse vorhanden |
-| Lastenheft 0.1 | ✅ ACTIVE | 258 Anforderungen; Amendment 0.1a gilt ergänzend |
+| Fachliche Baseline | ✅ ACTIVE | Lastenheft 0.1 + Amendments 0.1a/0.1b; wirksam 260 Anforderungen |
 | CR-2026-001 / Amendment 0.1a | ✅ ACCEPTED | WinForms/.NET-8-Rebaselining bestätigt |
 | Pflichtenheft 0.2 | ✅ ACTIVE BASELINE | WinForms/.NET 8; ersetzt widersprechende 0.1-Technikannahmen |
 | A1 WinForms Host Lifecycle | 🟡 CONDITIONAL GO | 9 automatisierte Tests; vier interaktive Windows-Smokes offen |
@@ -67,17 +67,17 @@ Der reproduzierbare Vergleich umfasst DOCX/XLSX/PPTX/PDF/HTML/RTF/TXT, Legacy-XL
 3. A4: echte NTFS-/exFAT-/FAT32-Wechselmedien, Attach/Detach und Laufwerksbuchstabenwechsel.
 4. A5: realer/komplexer, Legacy-DOC/PPT- und verschlüsselter Fehlerkorpus.
 5. PoC-abhängige ADRs (insbesondere 0005/0006/0007/0011) formal reviewen.
-6. .NET-8-Supportende am 10.11.2026: Upgradepfad vor produktiver 1.0 festlegen.
+6. .NET-8-Supportende am 10.11.2026: bewusstes Risiko dokumentieren und Upgradepfad definieren; C#/.NET 8 bleibt wegen Managed-PC-Kompatibilität die kanonische V1-Baseline, bis ein eigener Change Request etwas anderes beschließt.
 
 ## 4. Nächste kontrollierte Schritte
 
-1. Recovery-PR gegen den reconciled `main` vollständig per CI verifizieren und mergen.
-2. A1-manual-smokes nachholen.
-3. A3-Rest-Evidence inklusive Tika 4.1 schließen.
-4. A4-Hardware-Smokes durchführen.
-5. A5-Korpus-Evidence vervollständigen.
-6. PoC-ADRs und .NET-Lifecycle im G0-Review entscheiden.
-7. Erst nach **G0 = GO** Milestone 0.1 starten.
+1. A1-manual-smokes nachholen.
+2. A3-Rest-Evidence inklusive Tika-Produktlinie/Packaging schließen.
+3. A4-Hardware-Smokes durchführen.
+4. A5-Korpus-Evidence vervollständigen.
+5. ADR-0005/0006/0007/0011 formal entscheiden und CR-2026-002/ADR-0016 in G0 berücksichtigen.
+6. .NET-8-Support-/Upgradepfad dokumentieren, ohne die festgelegte V1-Kompatibilitätsbaseline stillschweigend zu ändern.
+7. G0 final auditieren; erst nach **G0 = GO** Milestone 0.1 starten.
 
 ## 5. Fortschrittsregel
 

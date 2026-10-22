@@ -1,6 +1,6 @@
 # SASD-Crawler – Roadmap
 
-**Stand:** 7. Oktober 2026  
+**Stand:** 22. Oktober 2026  
 **Roadmap-Version:** 0.2  
 **Ziel:** kontrollierbare Entwicklung vom Architektur-Spike bis zur stabilen Version 1.0 und danach  
 **Aktueller Status:** Q0 Architekturvalidierung – A2 TECHNICAL GO; A1/A3/A4/A5 conditional; G0 NOT READY  
@@ -584,6 +584,7 @@ SOLL:
 - [ ] Archive Limits.
 - [ ] Zip-Bomb-Schutz.
 - [ ] Rename/Move.
+- [ ] exakte Dublettengruppen aus `FileSize + ContentHash` (`ID-011`).
 - [ ] Last Known Good.
 - [ ] Parser Failure Center.
 
@@ -619,6 +620,7 @@ Golden Document Corpus muss reproduzierbar bestehen.
 - [ ] Facetten.
 - [ ] Sortierung.
 - [ ] German/English Analyzer.
+- [ ] versionierte, konfigurierbare DE/EN-Stopwortlisten (`SEA-022`).
 - [ ] Highlighting.
 - [ ] Snippets.
 - [ ] sichere Textpreview.
@@ -684,6 +686,7 @@ Keine künstliche lokale Benutzerverwaltung im per-user Desktop-MVP, nur weil da
 ## 18.1 Scheduler
 
 - [ ] periodische Scans.
+- [ ] fortlaufende Dublettengruppen-Aktualisierung aus normalen Crawl-/Reconciliation-Daten (`ID-012`).
 - [ ] Autostart-Option.
 - [ ] Tray Mode.
 - [ ] Pause/Resume.
@@ -1161,9 +1164,9 @@ Zum aktuellen Stichtag ist die Antwort:
 - [x] A3 Tika-3.3.2-Sidecar technisch durchführen; 4.1.0-Vergleich/Packaging-Rest-Evidence bleibt offen.
 - [x] A4 Media-Identity-Code/Tests durchführen; reale USB-Medien bleiben offen.
 - [x] A5 Tika/Toxy Benchmark durchführen; Tika bleibt Default, Korpus-Rest-Evidence offen.
-- [ ] Recovery-Integration gegen reconciled `main` per CI verifizieren und mergen.
+- [x] Recovery-Integration gegen reconciled `main` per CI verifiziert und als PR #4 gemerged.
 - [ ] A1/A3/A4/A5-Rest-Evidence schließen.
-- [ ] PoC-abhängige ADRs und .NET-8-Lifecycle im G0-Review entscheiden.
+- [ ] PoC-abhängige ADRs im G0-Review entscheiden; CR-2026-002 hält C#/.NET 8 für V1 fest, Support-/Upgradepfad bleibt zu dokumentieren.
 - [ ] G0 auf GO/NO-GO finalisieren.
 - [ ] erst bei **G0 = GO** Milestone 0.1 starten.
 
