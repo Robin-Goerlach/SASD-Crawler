@@ -4,7 +4,7 @@ This file contains repository-wide instructions for Codex and other coding agent
 
 ## 1. Mission
 
-Develop SASD Crawler as a **native Windows Forms application for .NET 8** according to the repository baseline.
+Develop SASD Crawler as a **native Windows Forms application in C# for .NET 8** according to the repository baseline. C#/.NET 8 is the canonical Version-1.0 product implementation; additional programming languages are allowed only behind the repository boundaries defined by ADR-0016 and `languages/README.md`.
 
 The product is an index-in-place crawler and search application for:
 
@@ -125,6 +125,14 @@ Forms/UserControls must not:
 - contain credentials,
 - become large business-logic code-behind files.
 
+### Canonical C#/.NET 8 and polyglot rules
+
+The top-level `src/`, `tests/` and `tools/` directories are the canonical C#/.NET-8 codebase.
+
+Additional languages must live under `languages/<language>/` and must document their toolchain, build, tests, runtime requirements, licensing and integration boundary. Do not introduce a mandatory V1 runtime dependency through a secondary language without an explicit Change Request. In particular, the Windows V1 must not require an installed Go runtime.
+
+Do not duplicate security-critical domain rules across languages without a versioned contract and explicit review.
+
 ### C# rules
 
 - nullable reference types enabled;
@@ -145,6 +153,19 @@ These are architecture invariants, not optional implementation details:
 A missing root, offline USB medium, inaccessible SMB share, aborted scan or global I/O failure must **not** be interpreted as mass deletion.
 
 Only a successfully completed authoritative scan may advance source-wide missing/delete reconciliation.
+
+### Duplicate discovery
+
+Exact duplicate grouping is observational metadata, never delete authority.
+
+- use at least file size plus cryptographic ContentHash for automatic exact grouping;
+- reuse hashes produced by normal crawl/extraction where possible;
+- background reconciliation updates groups idempotently;
+- duplicate detection must never delete, move or overwrite original files.
+
+### Search analyzers
+
+Stopword filtering must be versioned and symmetric between index and query analyzers. Conservative defaults are required; configurable exceptions must exist so semantically meaningful words are not silently lost.
 
 ### Removable media
 
