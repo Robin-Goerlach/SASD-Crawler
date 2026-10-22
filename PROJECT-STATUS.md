@@ -2,7 +2,7 @@
 
 **Stichtag:** 22. Oktober 2026  
 **Gesamtstatus:** 🟡 Architekturvalidierung; A2 technisch erfolgreich, A3–A5 mit belastbarer Teil-Evidence, G0 noch nicht freigegeben  
-**Aktueller Arbeitsblock:** **G0-Rest-Evidence, formale ADR-Entscheidungen und Baseline-Synchronisierung**  
+**Aktueller Arbeitsblock:** **G0-Rest-Evidence plus verifizierte Pre-G0-C#-Produktionsbasis**  
 **Nächstes Gate:** **G0 – Architecture Feasibility Review**  
 **Letzte verifizierte Main-Basis vor CR-2026-003:** `60f185a81582ed5723454571d65e018b4cb96ced`
 
@@ -22,10 +22,31 @@
 | A4 Media Identity | 🟡 CONDITIONAL GO | Windows-API-/Matching-Modell + 13 Tests; physische Wechselmedien-/Letter-Wechsel-Smokes offen |
 | A5 Tika vs. Toxy | 🟡 CONDITIONAL / DECISION CLEAR | Tika bleibt Default; kein Toxy-Fast-Path. Real-/Legacy-DOC/PPT-/verschlüsselter Korpus offen |
 | G0 | 🔴 NOT READY | technische PoCs weit fortgeschritten, aber Rest-Evidence, ADR-Reviews und .NET-8-Lifecycle-Entscheidung offen |
-| CI | 🟢 BASELINE VERIFIED | Reconciled `main` lief unter Windows mit Restore/Format/Release-Build/Tests erfolgreich |
+| C# Produktionsbasis | 🟢 FOUNDATION VERIFIED | Source Domain/Application, SQLite Source Catalog, MVP Presenter und WinForms Shell; 14 neue Tests grün; zählt noch nicht als 0.1-Gate |
+| CI | 🟢 BASELINE VERIFIED | Produktionsfoundation-Branch: Restore/Format/Release-Build/Tests grün; 51 Tests gesamt |
 | Milestone 0.1 | ⬜ BLOCKED | darf erst nach G0-GO beginnen |
 
-## 2. Verifizierte Spike-Evidence
+## 2. Verifizierte Pre-G0-Produktionsbasis
+
+Auf ausdrückliche Entwicklungsanweisung wurde vor dem formalen G0-GO ein **feature-begrenztes Produktionsfundament** angelegt. Das ändert den Gate-Status nicht.
+
+Implementiert und automatisiert verifiziert:
+
+- `src/shared/Sasd.Crawler.Domain`: `SourceId`, `SourceKind`, `SourceDefinition`;
+- `src/shared/Sasd.Crawler.Application`: `ISourceCatalog`, `ISourceRepository`, Source-Use-Cases und lokale Canonical-Location-Normalisierung;
+- `src/indexer/Sasd.Crawler.Persistence.Sqlite`: SQLite-Control-Store Schema v1, WAL, Schema-Versionierung und Source-Persistenz;
+- `src/frontend/Sasd.Crawler.Frontend`: UI-neutraler MVP Presenter;
+- `src/frontend/Sasd.Crawler.WinForms`: produktiver .NET-8-WinForms-Shell für Quellenliste, lokale Quelle registrieren und Aktiv/Inaktiv;
+- additive Developer-Views `Sasd.Crawler.Frontend.slnf` und `Sasd.Crawler.Indexer.slnf`;
+- Architekturtests sichern die Frontend/shared/Indexer-Grenzen ab.
+
+CI #22 auf Code-Commit `10a4809008b4ad4ece83dfc39dd78d443e146d55`: Restore, Format, Release-Build und Tests erfolgreich; **51 Tests gesamt, 0 Fehler, 0 übersprungen**, davon 14 neue Produktionstests.
+
+Keine fachliche 0.1-Anforderung wird dadurch bereits als `DONE` gewertet. Insbesondere fehlen Document Registry, Crawl, Reconciliation und Search-End-to-End-Semantik.
+
+Evidence: `docs/evidence/pre-g0-production-foundation/`.
+
+## 3. Verifizierte Spike-Evidence
 
 ### A1
 - WinForms + Generic Host/DI
@@ -62,7 +83,7 @@ Volume-GUID/Serial/Filesystem/Capacity, `MediaId + RelativePath`, konservatives 
 ### A5
 Der reproduzierbare Vergleich umfasst DOCX/XLSX/PPTX/PDF/HTML/RTF/TXT, Legacy-XLS, 5-MiB-TXT und ein malformed PDF. Tika bleibt Referenzparser; Toxy wird derzeit nicht in Produktcode übernommen. Reale komplexe Dokumente, Legacy DOC/PPT sowie verschlüsselte/bösartige Dateien fehlen noch.
 
-## 3. Aktuelle Blocker vor G0
+## 4. Aktuelle Blocker vor G0
 
 1. A1: vier interaktive Desktop-Smokes.
 2. A3: Tika-4.1-vs-3.3.2-Entscheidung auf gleicher Packaging-/Security-Basis sowie finales SBOM/CVE/AV/Installer-Evidence.
@@ -71,7 +92,7 @@ Der reproduzierbare Vergleich umfasst DOCX/XLSX/PPTX/PDF/HTML/RTF/TXT, Legacy-XL
 5. PoC-abhängige ADRs (insbesondere 0005/0006/0007/0011) formal reviewen.
 6. .NET-8-Supportende am 10.11.2026: bewusstes Risiko dokumentieren und Upgradepfad definieren; C#/.NET 8 bleibt wegen Managed-PC-Kompatibilität die kanonische V1-Baseline, bis ein eigener Change Request etwas anderes beschließt.
 
-## 4. Nächste kontrollierte Schritte
+## 5. Nächste kontrollierte Schritte
 
 1. A1-manual-smokes nachholen.
 2. A3-Rest-Evidence inklusive Tika-Produktlinie/Packaging schließen.
@@ -81,6 +102,6 @@ Der reproduzierbare Vergleich umfasst DOCX/XLSX/PPTX/PDF/HTML/RTF/TXT, Legacy-XL
 6. .NET-8-Support-/Upgradepfad dokumentieren, ohne die festgelegte V1-Kompatibilitätsbaseline stillschweigend zu ändern.
 7. G0 final auditieren; erst nach **G0 = GO** Milestone 0.1 starten.
 
-## 5. Fortschrittsregel
+## 6. Fortschrittsregel
 
 `specified ≠ implemented ≠ verified ≠ released`. Spike-Evidence beweist Architekturhypothesen, zählt aber nicht automatisch als implementierte Produktanforderung.

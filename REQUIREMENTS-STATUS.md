@@ -19,6 +19,8 @@
 | Verifiziert | 0/260 verifiziert |
 
 > Milestone 0.0.1 ist ein Architektur-Spike und implementiert keine Produktanforderung. Deshalb wurde trotz grüner A1-Tests kein Eintrag unten auf `DONE` gesetzt. Evidence: `docs/evidence/0.0.1/`.
+>
+> Am 22.10.2026 wurde eine verifizierte Pre-G0-Produktionsbasis begonnen. Sie berührt insbesondere SRC-001/SRC-003/LOC-001, erfüllt deren vollständige End-to-End-Semantik aber noch nicht. Deshalb bleiben die Requirements bis Document Registry, Crawl/Reconciliation und die jeweiligen Akzeptanzfälle vollständig bewiesen sind auf `NOT STARTED`/`PENDING`. Evidence: `docs/evidence/pre-g0-production-foundation/`.
 
 ## Register
 
