@@ -24,11 +24,12 @@ Read these before making architectural or milestone-level changes:
 1. `BASELINE-AND-CHANGE-CONTROL.md`
 2. `docs/baseline/LASTENHEFT.md`
 3. `docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md`
-4. `docs/baseline/PFLICHTENHEFT.md`
-5. `docs/baseline/ARCHITECTURE.md`
-6. relevant ADRs under `docs/architecture/adr/`
-7. `ROADMAP.md`
-8. `PROJECT-STATUS.md`
+4. `docs/baseline/LASTENHEFT-AMENDMENT-0.1b-SEARCH-DUPLICATES.md`
+5. `docs/baseline/PFLICHTENHEFT.md`
+6. `docs/baseline/ARCHITECTURE.md`
+7. relevant ADRs under `docs/architecture/adr/`
+8. `ROADMAP.md`
+9. `PROJECT-STATUS.md`
 
 If documents conflict, follow the baseline/change-control rules. Do **not** resolve normative conflicts silently.
 
@@ -127,11 +128,21 @@ Forms/UserControls must not:
 
 ### Canonical C#/.NET 8 and polyglot rules
 
-The top-level `src/`, `tests/` and `tools/` directories are the canonical C#/.NET-8 codebase.
+The top-level `src/`, `tests/` and `tools/` directories are the canonical C#/.NET-8 codebase. New production code from milestone 0.1 onward is physically separated into `src/shared/`, `src/frontend/` and `src/indexer/`; production tests mirror those boundaries. Existing `Sasd.Crawler.Spike.*` paths remain historical PoC/evidence and are not moved for cosmetic reasons.
 
 Additional languages must live under `languages/<language>/` and must document their toolchain, build, tests, runtime requirements, licensing and integration boundary. Do not introduce a mandatory V1 runtime dependency through a secondary language without an explicit Change Request. In particular, the Windows V1 must not require an installed Go runtime.
 
 Do not duplicate security-critical domain rules across languages without a versioned contract and explicit review.
+
+### Frontend / indexer boundary
+
+- `shared` must not reference frontend or concrete indexer implementations.
+- frontend presentation code may depend on shared Application/Contracts but must not call SQLite, Lucene, Tika/Tesseract or crawler connectors directly.
+- indexer code must remain buildable/testable without WinForms.
+- the WinForms desktop composition root may wire concrete indexer implementations for the in-process V1 host.
+- indexer owns writes to the control store, search index, extraction cache and crawl/reconciliation state.
+- do not introduce IPC merely because the repository is separated; a second process requires an explicit need.
+- when production projects exist, keep `Sasd.Crawler.sln` as the integration solution and add narrower frontend/indexer developer views only as additive tooling.
 
 ### C# rules
 

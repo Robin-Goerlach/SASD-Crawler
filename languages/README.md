@@ -22,6 +22,9 @@ languages/
   <language>/
     README.md
     src/
+      frontend/   # only when that language implements a frontend
+      indexer/    # only when that language implements indexer components
+      shared/     # only for an explicitly versioned cross-language boundary
     tests/
     tools/
 ```
@@ -47,6 +50,8 @@ In particular, V1 must not require an installed Go runtime. Any future mandatory
 ## Architecture rule
 
 Prefer stable process/data contracts over duplicate business logic. Domain rules, reconciliation invariants, source identity and deletion safety remain authoritative in the canonical architecture unless an explicit cross-language contract is approved.
+
+ADR-0017 also separates the canonical C# code into frontend/shared/indexer. A later alternative-language indexer should therefore live under `languages/<language>/src/indexer/` and integrate through an approved contract rather than reaching into WinForms internals.
 
 ## CI rule
 

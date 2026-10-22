@@ -369,17 +369,33 @@ Diese Möglichkeiten dürfen genutzt werden, ändern aber die Grundentscheidung 
 Sasd.Crawler.WinForms.exe
 ```
 
-enthält:
+V1 darf Frontend und Indexer weiterhin im selben Prozess hosten, aber die Module bleiben physisch und logisch getrennt.
+
+Frontend-Anteil:
 
 - WinForms UI;
-- .NET Generic Host;
-- DI Container;
+- MVP Presenter/Presentation Models;
+- Desktop Composition Root;
+- .NET Generic Host / DI-Start.
+
+Shared-Anteil:
+
+- Domain;
 - Application Services;
-- SQLite;
+- Contracts/Abstraktionen.
+
+Indexer-Anteil:
+
+- SQLite Control Store;
 - Lucene.NET;
 - Scheduler;
 - Queue Dispatcher;
-- Crawler Worker.
+- Crawler Worker;
+- Reconciliation/Hashing/Duplicate Groups;
+- Connectoren;
+- Extraction/OCR-Integration.
+
+Die Repository-Grenze ist damit **keine erzwungene Prozessgrenze**. Ein späterer `Sasd.Crawler.Indexer.exe` darf dieselben Shared Contracts über einen versionierten IPC-Adapter bereitstellen, ohne Presentation-Code neu zu schreiben.
 
 ## 7.2 Sidecar-Prozesse
 
@@ -451,49 +467,51 @@ Produktiver Code muss Shutdown/Exceptions sauberer behandeln; die Struktur ist v
 Sasd.Crawler.sln
 
 src/
-  Sasd.Crawler.Domain/
-  Sasd.Crawler.Application/
-  Sasd.Crawler.Contracts/
+  shared/
+    Sasd.Crawler.Domain/
+    Sasd.Crawler.Application/
+    Sasd.Crawler.Contracts/
+    Sasd.Crawler.Persistence.Abstractions/
+    Sasd.Crawler.Search.Abstractions/
+    Sasd.Crawler.Extraction.Abstractions/
+    Sasd.Crawler.Ocr.Abstractions/
+    Sasd.Crawler.Connectors.Abstractions/
 
-  Sasd.Crawler.Persistence.Abstractions/
-  Sasd.Crawler.Persistence.Sqlite/
+  frontend/
+    Sasd.Crawler.WinForms/
 
-  Sasd.Crawler.Search.Abstractions/
-  Sasd.Crawler.Search.Lucene/
-
-  Sasd.Crawler.Extraction.Abstractions/
-  Sasd.Crawler.Extraction.Tika/
-  Sasd.Crawler.Extraction.Toxy/
-
-  Sasd.Crawler.Ocr.Abstractions/
-  Sasd.Crawler.Ocr.Tesseract/
-
-  Sasd.Crawler.Connectors.Abstractions/
-  Sasd.Crawler.Connectors.FileSystem/
-  Sasd.Crawler.Connectors.RemovableMedia/
-  Sasd.Crawler.Connectors.Web/
-
-  Sasd.Crawler.Windows/
-  Sasd.Crawler.Security/
-  Sasd.Crawler.Observability/
-
-  Sasd.Crawler.WinForms/
-  Sasd.Crawler.Cli/                  # später/optional
-  Sasd.Crawler.ApiHost/              # später/optional
+  indexer/
+    Sasd.Crawler.Persistence.Sqlite/
+    Sasd.Crawler.Search.Lucene/
+    Sasd.Crawler.Extraction.Tika/
+    Sasd.Crawler.Ocr.Tesseract/
+    Sasd.Crawler.Connectors.FileSystem/
+    Sasd.Crawler.Connectors.RemovableMedia/
+    Sasd.Crawler.Connectors.Web/
+    Sasd.Crawler.Windows/
+    Sasd.Crawler.Security/
+    Sasd.Crawler.Observability/
 
 tests/
-  Sasd.Crawler.Domain.Tests/
-  Sasd.Crawler.Application.Tests/
-  Sasd.Crawler.Persistence.Tests/
-  Sasd.Crawler.Search.Tests/
-  Sasd.Crawler.Extraction.Tests/
-  Sasd.Crawler.Connectors.Tests/
-  Sasd.Crawler.Windows.Tests/
-  Sasd.Crawler.Security.Tests/
-  Sasd.Crawler.WinForms.Tests/
-  Sasd.Crawler.E2E.Tests/
-  Sasd.Crawler.Performance.Tests/
-  Sasd.Crawler.Recovery.Tests/
+  shared/
+    Sasd.Crawler.Domain.Tests/
+    Sasd.Crawler.Application.Tests/
+
+  frontend/
+    Sasd.Crawler.WinForms.Tests/
+
+  indexer/
+    Sasd.Crawler.Persistence.Tests/
+    Sasd.Crawler.Search.Tests/
+    Sasd.Crawler.Extraction.Tests/
+    Sasd.Crawler.Connectors.Tests/
+    Sasd.Crawler.Windows.Tests/
+    Sasd.Crawler.Security.Tests/
+    Sasd.Crawler.Performance.Tests/
+    Sasd.Crawler.Recovery.Tests/
+
+  e2e/
+    Sasd.Crawler.E2E.Tests/
 
 testdata/
   documents/
@@ -505,6 +523,8 @@ testdata/
   smb/
 ```
 
+Die vorhandenen A1–A5-Spikeprojekte bleiben an ihren historischen Pfaden. Neue Produktionsprojekte ab 0.1 werden direkt in diese Struktur gelegt.
+
 ---
 
 # 10. Abhängigkeitsregeln
@@ -512,16 +532,20 @@ testdata/
 ## 10.1 Erlaubt
 
 ```text
-WinForms
-   ↓
-Application
-   ↓
+frontend ─────► shared ◄───── indexer
+
+WinForms Presentation
+        ↓
+Application Contracts / Use Cases
+        ↓
 Domain
 
-Infrastructure
-   ↓
+Indexer Infrastructure
+        ↓
 Application Contracts / Domain
 ```
+
+Nur der Desktop-Composition-Root im Frontend darf für den In-Process-V1-Host konkrete Indexer-Implementierungen registrieren. Presentation-Klassen selbst dürfen diese Implementierungen nicht kennen.
 
 ## 10.2 Verboten
 

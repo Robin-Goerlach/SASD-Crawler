@@ -1,6 +1,6 @@
 # Decision Log
 
-**Stand:** 7. Oktober 2026
+**Stand:** 22. Oktober 2026
 
 | ADR | Entscheidung | Status |
 |---|---|---|
@@ -19,5 +19,7 @@
 | ADR-0013 | Index und Cache sind rekonstruierbar | **Accepted product invariant** |
 | ADR-0014 | Kein Windows Service im Desktop-MVP | **Accepted** |
 | ADR-0015 | Shared Mode nach 1.0 als separater Host | **Accepted planning boundary** |
+| ADR-0016 | C#/.NET 8 kanonisch, Repository polyglot-erweiterbar | **Accepted**; zusätzliche Sprachen dürfen keine versteckte V1-Runtimeabhängigkeit erzeugen |
+| ADR-0017 | Frontend/shared/Indexer als getrennte Repository-Bereiche | **Accepted**; V1 darf weiterhin In-Process hosten |
 
 PoC-Evidence darf den technischen Reifegrad erhöhen, setzt einen `Proposed`-ADR aber nicht automatisch auf `Accepted`. Die formale Annahme der PoC-abhängigen ADRs bleibt Teil des G0-Reviews.

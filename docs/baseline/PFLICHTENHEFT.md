@@ -78,6 +78,24 @@ Zusätzliche Programmiersprachen dürfen unter `languages/<language>/` für klar
 
 Für verwaltete Windows-Arbeitsplätze bleibt ein self-contained `win-x64` Publish der bevorzugte Auslieferungsweg.
 
+## 2.4b Frontend-/Indexer-Repository-Grenze
+
+Neuer Produktionscode ab 0.1 wird physisch getrennt:
+
+```text
+src/shared/
+src/frontend/
+src/indexer/
+```
+
+Tests spiegeln die Grenze unter `tests/shared/`, `tests/frontend/`, `tests/indexer/` und `tests/e2e/`.
+
+`shared` enthält Domain, Application und stabile Contracts/Abstraktionen. `frontend` enthält WinForms/MVP und den Desktop-Composition-Root. `indexer` enthält Persistence, Crawl/Queue/Reconciliation, Search, Extraction/OCR und Windows-Source-Infrastructure.
+
+Diese Ablage erzwingt für V1 keinen zweiten Prozess. Der Desktop-Host darf Indexer-Services in-process über DI betreiben. Frontend-Presentation-Code darf konkrete Indexer-Technologien jedoch nicht direkt verwenden.
+
+Die vorhandenen A1–A5-Spikeprojekte bleiben als historische PoC-/Evidence-Struktur unverändert.
+
 ## 2.5 Hintergrundarbeit
 
 Generic Host + BackgroundServices + durable SQLite Work Queue + bounded Channels.

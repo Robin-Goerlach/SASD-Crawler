@@ -8,4 +8,4 @@ Statuswerte:
 - Superseded
 - Rejected
 
-Vor G0 sollten ADR-0001 bis ADR-0014 reviewed und entweder Accepted oder angepasst werden.
+Die ADR-Serie reicht aktuell bis ADR-0017. Vor G0 müssen insbesondere die noch `Proposed` geführten PoC-abhängigen Entscheidungen formal reviewed und entweder `Accepted`, angepasst oder verworfen werden.
