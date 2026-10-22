@@ -1,13 +1,13 @@
 # Baseline- und Änderungssteuerung
 
-**Stand:** 6. Oktober 2026  
+**Stand:** 22. Oktober 2026  
 **Status:** ACTIVE
 
 ## 1. Gültige Baseline
 
 Die frühere technische Annahme `.NET 10 + Blazor + Windows/Linux + Shared-Server-first` wurde durch die explizite Produktentscheidung **Windows Forms auf .NET 8, Desktop-first** ersetzt.
 
-Diese Rebaselining-Entscheidung ist nicht mehr nur ein Draft: Sie wurde anschließend als A1 tatsächlich umgesetzt und verifiziert. Bei diesem Reconciliation-Stand wird CR-2026-001 deshalb formal als **ACCEPTED** geführt.
+CR-2026-001 ist angenommen und durch A1 praktisch bestätigt. Mit CR-2026-002 wird zusätzlich festgelegt, dass die **kanonische Version 1.0 weiterhin in C# auf .NET 8** entsteht, weil sie auf verwalteten Windows-Arbeitsplätzen ohne Installation einer zusätzlichen Programmiersprachen-Runtime nutzbar sein muss. Das Repository darf trotzdem mehrere Programmiersprachen enthalten; zusätzliche Implementierungen bleiben klar isoliert und dürfen keine versteckte V1-Laufzeitabhängigkeit erzeugen.
 
 ## 2. Dokumentrangfolge
 
@@ -15,18 +15,19 @@ Diese Rebaselining-Entscheidung ist nicht mehr nur ein Draft: Sie wurde anschlie
 
 1. `docs/baseline/LASTENHEFT.md`
 2. `docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md`
+3. `docs/baseline/LASTENHEFT-AMENDMENT-0.1b-SEARCH-DUPLICATES.md`
 
 ### Technisch normativ
 
-3. akzeptierte ADRs
-4. `docs/baseline/ARCHITECTURE.md`
-5. `docs/baseline/PFLICHTENHEFT.md` (Pflichtenheft 0.2)
+4. akzeptierte ADRs
+5. `docs/baseline/ARCHITECTURE.md`
+6. `docs/baseline/PFLICHTENHEFT.md` (Pflichtenheft 0.2)
 
 ### Steuernd / nicht selbst scope-ändernd
 
-6. `ROADMAP.md`
-7. `PROJECT-STATUS.md`
-8. Planungs-, Test-, Security- und Operations-Dokumente
+7. `ROADMAP.md`
+8. `PROJECT-STATUS.md`
+9. Planungs-, Test-, Security- und Operations-Dokumente
 
 Eine Roadmap oder Implementierung darf keine MUSS-Anforderung stillschweigend abschaffen.
 
@@ -41,7 +42,7 @@ Pflichtenheft 0.1 bleibt historische Referenz außerhalb der aktuellen Repositor
 Verbindlich für 1.0:
 
 - Windows Forms Primär-UI,
-- `net8.0-windows` als derzeit gewünschtes Entwicklungs-Target,
+- `net8.0-windows`,
 - Windows-first,
 - per-user Desktopbetrieb,
 - SQLite Control Store,
@@ -49,48 +50,59 @@ Verbindlich für 1.0:
 - kein zwingender Windows Service im Desktop-MVP,
 - späterer Shared/Service Mode als Erweiterung.
 
-PoC-abhängig bleiben:
+PoC-abhängig bleiben insbesondere konkrete Search-/Parser-/Media-Details.
 
-- Lucene.NET als konkretes v1 Search Backend (A2),
-- Tika-Version/Packaging (A3),
-- Media Identity Details (A4),
-- Toxy-Rolle (A5).
+## 5. CR-2026-002 – Search Efficiency, Duplicate Discovery and Polyglot Repository
 
-## 5. .NET-8-Lifecycle
+**Status:** ACCEPTED / recorded 2026-10-22
 
-Die Produktentscheidung für .NET 8 bleibt für die aktuellen Spikes bestehen. Sie ist jedoch zeitlich begrenzt: Hersteller-Support endet am 10.11.2026.
+Verbindlich:
+
+- C#/.NET 8 bleibt die kanonische V1-Produktimplementierung.
+- Der Windows-V1-Client darf keine Installation einer Go-Runtime oder einer anderen zusätzlichen Programmiersprachen-Runtime voraussetzen.
+- Ein self-contained `win-x64` Publish bleibt der bevorzugte Auslieferungsweg für verwaltete Arbeitsplätze.
+- Das Repository wird für mehrere Programmiersprachen vorbereitet; sekundäre Implementierungen liegen unter `languages/<language>/` und dürfen die kanonische C#-Architektur nicht duplizieren oder unterlaufen.
+- `SEA-022` führt versionierte, konfigurierbare Stopwortlisten für analysierte Suchfelder ein.
+- `ID-011` wird auf exakte, hashbasierte Dublettenerkennung geschärft und auf 0.4.0 vorgezogen.
+- `ID-012` verlangt die fortlaufende Aktualisierung von Dublettengruppen im Zuge regulärer Hintergrund-/Reconciliation-Läufe.
+
+## 6. .NET-8-Lifecycle
+
+Microsofts Supportende für .NET 8 am 10.11.2026 bleibt ein bewusstes Risiko. Die Anforderung des verwalteten Hochschul-PCs führt jedoch zu einer expliziten Kompatibilitätsentscheidung: **Die V1-Baseline wird nicht allein wegen des Supportdatums stillschweigend auf ein anderes Target umgestellt.**
 
 Daher gilt:
 
-- A2–A5 dürfen auf aktuell gepatchtem .NET 8 laufen;
-- G0 MUSS den Zeitpunkt für die Migration auf eine unterstützte LTS-Version festlegen;
-- eine produktive 1.0 darf nicht versehentlich auf einer ungeprüften, aus dem Support gefallenen Runtime veröffentlicht werden.
+- Entwicklung und V1-Kompatibilität bleiben auf `net8.0-windows`, bis eine bewusst getestete Baselineänderung beschlossen wird;
+- Publish-Artefakte sollen self-contained sein, damit keine separate .NET-Runtime-Installation erforderlich ist;
+- G0 dokumentiert Patch-/Support-/Security-Risiko und einen späteren Upgradepfad, erzwingt aber nicht automatisch einen Targetwechsel;
+- ein Framework-Upgrade benötigt einen eigenen Change Request und Kompatibilitätstest auf dem vorgesehenen Hochschul-PC-/Managed-PC-Szenario.
 
-Ein Framework-Upgrade soll die Architektur nicht ändern; das Target ist zentral zu halten.
-
-## 6. Change-Request-Verfahren
+## 7. Change-Request-Verfahren
 
 Langfristige Änderungen an Scope, Architektur, Datenformat, Security oder Releaseziel erhalten `CR-YYYY-NNN` und bei Architekturwirkung zusätzlich ein ADR.
 
 Ein Change Request enthält mindestens Ausgangslage, Änderung, Requirements, Nutzen, Kosten, Risiken, Migration, Tests, Releaseauswirkung und Entscheidung.
 
-## 7. Gate vor Milestone 0.1
+## 8. Gate vor Milestone 0.1
 
 - [x] CR-2026-001 angenommen.
 - [x] Amendment 0.1a angenommen.
+- [x] CR-2026-002 angenommen.
+- [x] Amendment 0.1b angenommen.
 - [x] Pflichtenheft 0.2 aktive technische Baseline.
 - [x] A1 automatisiert erfolgreich; manuelle Rest-Evidence dokumentiert.
-- [ ] A2 abgeschlossen.
-- [ ] A3 abgeschlossen.
-- [ ] A4 abgeschlossen.
-- [ ] A5 abgeschlossen.
-- [ ] ADR-Entscheidungen nach PoCs aktualisiert.
-- [ ] .NET-8-Migrationszeitpunkt beschlossen.
+- [x] A2 technisch erfolgreich.
+- [ ] A3 Rest-Evidence abgeschlossen.
+- [ ] A4 Hardware-Evidence abgeschlossen.
+- [ ] A5 Restkorpus abgeschlossen.
+- [ ] PoC-abhängige ADR-Entscheidungen aktualisiert.
+- [ ] .NET-8-Support-/Upgradepfad für G0 dokumentiert.
 - [ ] G0 formal GO.
 
-## 8. Änderungsprotokoll
+## 9. Änderungsprotokoll
 
 | Datum | Änderung | Status |
 |---|---|---|
 | 2026-08-21 | Dokumentbaseline und Supersession-Regeln erstmalig definiert | historisch |
 | 2026-10-06 | Repository/Chats/A1-Code abgeglichen; CR-2026-001 + Amendment 0.1a + Pflichtenheft 0.2 als aktive Baseline konsolidiert | active |
+| 2026-10-22 | CR-2026-002 + Amendment 0.1b: C#/.NET-8-V1 bestätigt, Polyglot-Repository vorbereitet, Stopwort- und fortlaufende Dublettenerkennung ergänzt | active |
