@@ -26,7 +26,7 @@ public sealed class MainPresenterTests
         await presenter.InitializeAsync(CancellationToken.None);
 
         Assert.True(catalog.InitializeCalled);
-        Assert.Equal([true, false], view.BusyStates);
+        Assert.Equal(new[] { true, false }, view.BusyStates);
         Assert.Equal(source, Assert.Single(view.Sources));
     }
 
@@ -51,7 +51,7 @@ public sealed class MainPresenterTests
 
         Assert.Contains("already registered", view.Notice, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(source, Assert.Single(view.Sources));
-        Assert.Equal([true, false], view.BusyStates);
+        Assert.Equal(new[] { true, false }, view.BusyStates);
     }
 
     private sealed class RecordingMainView : IMainView
