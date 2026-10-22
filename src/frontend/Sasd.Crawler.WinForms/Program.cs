@@ -37,7 +37,7 @@ internal static class Program
         host.StartAsync(CancellationToken.None).GetAwaiter().GetResult();
         try
         {
-            Application.Run(host.Services.GetRequiredService<MainForm>());
+            System.Windows.Forms.Application.Run(host.Services.GetRequiredService<MainForm>());
         }
         finally
         {
