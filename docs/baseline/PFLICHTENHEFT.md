@@ -70,7 +70,7 @@ Rekonstruierbar:
 - Lucene,
 - Extraction Cache.
 
-## 2.5 Programmiersprachen- und Runtimegrenze
+## 2.4a Programmiersprachen- und Runtimegrenze
 
 Die kanonische V1 wird in C# auf .NET 8 (`net8.0-windows`) entwickelt. `Sasd.Crawler.sln` bleibt der maßgebliche Build-Einstieg.
 
