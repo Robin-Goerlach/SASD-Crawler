@@ -66,7 +66,20 @@ Verbindlich:
 - `ID-011` wird auf exakte, hashbasierte Dublettenerkennung geschärft und auf 0.4.0 vorgezogen.
 - `ID-012` verlangt die fortlaufende Aktualisierung von Dublettengruppen im Zuge regulärer Hintergrund-/Reconciliation-Läufe.
 
-## 6. .NET-8-Lifecycle
+## 6. CR-2026-003 – Frontend-/Indexer-Repository-Grenze
+
+**Status:** ACCEPTED / recorded 2026-10-22
+
+Verbindlich:
+
+- neuer Produktionscode ab 0.1 wird unter `src/shared/`, `src/frontend/` und `src/indexer/` getrennt;
+- Tests spiegeln diese Grenze unter `tests/`;
+- die vorhandenen A1–A5-Spikes bleiben unverändert als PoC-/Evidence-Historie;
+- V1 darf Frontend und Indexer weiterhin in einem Prozess hosten;
+- die Contract-Grenze muss einen später separaten Indexer-Host ermöglichen;
+- `Sasd.Crawler.sln` bleibt die autoritative Integrations-Solution.
+
+## 7. .NET-8-Lifecycle
 
 Microsofts Supportende für .NET 8 am 10.11.2026 bleibt ein bewusstes Risiko. Die Anforderung des verwalteten Hochschul-PCs führt jedoch zu einer expliziten Kompatibilitätsentscheidung: **Die V1-Baseline wird nicht allein wegen des Supportdatums stillschweigend auf ein anderes Target umgestellt.**
 
@@ -77,17 +90,18 @@ Daher gilt:
 - G0 dokumentiert Patch-/Support-/Security-Risiko und einen späteren Upgradepfad, erzwingt aber nicht automatisch einen Targetwechsel;
 - ein Framework-Upgrade benötigt einen eigenen Change Request und Kompatibilitätstest auf dem vorgesehenen Hochschul-PC-/Managed-PC-Szenario.
 
-## 7. Change-Request-Verfahren
+## 8. Change-Request-Verfahren
 
 Langfristige Änderungen an Scope, Architektur, Datenformat, Security oder Releaseziel erhalten `CR-YYYY-NNN` und bei Architekturwirkung zusätzlich ein ADR.
 
 Ein Change Request enthält mindestens Ausgangslage, Änderung, Requirements, Nutzen, Kosten, Risiken, Migration, Tests, Releaseauswirkung und Entscheidung.
 
-## 8. Gate vor Milestone 0.1
+## 9. Gate vor Milestone 0.1
 
 - [x] CR-2026-001 angenommen.
 - [x] Amendment 0.1a angenommen.
 - [x] CR-2026-002 angenommen.
+- [x] CR-2026-003 Frontend-/Indexer-Repository-Grenze angenommen.
 - [x] Amendment 0.1b angenommen.
 - [x] Pflichtenheft 0.2 aktive technische Baseline.
 - [x] A1 automatisiert erfolgreich; manuelle Rest-Evidence dokumentiert.
@@ -99,10 +113,11 @@ Ein Change Request enthält mindestens Ausgangslage, Änderung, Requirements, Nu
 - [ ] .NET-8-Support-/Upgradepfad für G0 dokumentiert.
 - [ ] G0 formal GO.
 
-## 9. Änderungsprotokoll
+## 10. Änderungsprotokoll
 
 | Datum | Änderung | Status |
 |---|---|---|
 | 2026-08-21 | Dokumentbaseline und Supersession-Regeln erstmalig definiert | historisch |
 | 2026-10-06 | Repository/Chats/A1-Code abgeglichen; CR-2026-001 + Amendment 0.1a + Pflichtenheft 0.2 als aktive Baseline konsolidiert | active |
 | 2026-10-22 | CR-2026-002 + Amendment 0.1b: C#/.NET-8-V1 bestätigt, Polyglot-Repository vorbereitet, Stopwort- und fortlaufende Dublettenerkennung ergänzt | active |
+| 2026-10-22 | CR-2026-003 + ADR-0017: Produktionscode in shared/frontend/indexer getrennt; V1 bleibt zunächst In-Process-fähig | active |
