@@ -87,7 +87,7 @@ public sealed class SqliteDocumentRegistryTests
         Assert.Equal(1, completion.NewlyMissingDocuments);
         Assert.False(a.IsMissing);
         Assert.True(b.IsMissing);
-        Assert.Equal(Utc(21, 2), b.MissingSinceUtc);
+        Assert.Equal(Utc(21, 2), b.MissingSinceUtc!.Value);
     }
 
     [Fact]
@@ -129,6 +129,7 @@ public sealed class SqliteDocumentRegistryTests
             aborted,
             source.Id,
             outcome,
+            issueCount: 0,
             "test abort",
             Utc(21, 2),
             CancellationToken.None);

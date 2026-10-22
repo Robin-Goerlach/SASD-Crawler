@@ -42,6 +42,11 @@ public sealed class LocalSourceScanService
     {
         ArgumentNullException.ThrowIfNull(options);
 
+        // The scan service is also usable by a future headless host, so it does not assume that the WinForms
+        // source-catalog screen happened to initialize persistence first.
+        await sourceRepository.InitializeAsync(cancellationToken).ConfigureAwait(false);
+        await documentRegistry.InitializeAsync(cancellationToken).ConfigureAwait(false);
+
         var source = await sourceRepository.GetByIdAsync(sourceId, cancellationToken).ConfigureAwait(false)
             ?? throw new KeyNotFoundException($"Source '{sourceId}' does not exist.");
 
@@ -55,8 +60,6 @@ public sealed class LocalSourceScanService
             throw new InvalidOperationException(
                 $"Source '{sourceId}' is '{source.Kind}' and cannot be scanned by the local-filesystem connector.");
         }
-
-        await documentRegistry.InitializeAsync(cancellationToken).ConfigureAwait(false);
 
         var scanRunId = await documentRegistry
             .BeginFullScanAsync(sourceId, timeProvider.GetUtcNow(), cancellationToken)
@@ -124,6 +127,7 @@ public sealed class LocalSourceScanService
                     scanRunId,
                     sourceId,
                     ScanRunOutcome.Cancelled,
+                    nonFatalIssues,
                     "Scan cancelled.",
                     timeProvider.GetUtcNow())
                 .ConfigureAwait(false);
@@ -135,6 +139,7 @@ public sealed class LocalSourceScanService
                     scanRunId,
                     sourceId,
                     ScanRunOutcome.Failed,
+                    nonFatalIssues,
                     BuildErrorSummary(exception),
                     timeProvider.GetUtcNow())
                 .ConfigureAwait(false);
@@ -146,6 +151,7 @@ public sealed class LocalSourceScanService
         ScanRunId scanRunId,
         SourceId sourceId,
         ScanRunOutcome outcome,
+        int issueCount,
         string errorSummary,
         DateTimeOffset completedAtUtc)
     {
@@ -158,6 +164,7 @@ public sealed class LocalSourceScanService
                     scanRunId,
                     sourceId,
                     outcome,
+                    issueCount,
                     errorSummary,
                     completedAtUtc,
                     CancellationToken.None)

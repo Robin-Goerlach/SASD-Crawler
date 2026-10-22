@@ -208,6 +208,7 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
         ScanRunId scanRunId,
         SourceId sourceId,
         ScanRunOutcome outcome,
+        int issueCount,
         string? errorSummary,
         DateTimeOffset completedAtUtc,
         CancellationToken cancellationToken)
@@ -217,6 +218,11 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
             throw new ArgumentOutOfRangeException(
                 nameof(outcome),
                 "Abort may only persist Failed or Cancelled scan outcomes.");
+        }
+
+        if (issueCount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(issueCount), "Issue count must not be negative.");
         }
 
         await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -229,7 +235,7 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
                 scanRunId,
                 sourceId,
                 outcome,
-                issueCount: 0,
+                issueCount: issueCount,
                 errorSummary: errorSummary,
                 completedAtUtc: completedAtUtc,
                 cancellationToken: cancellationToken)

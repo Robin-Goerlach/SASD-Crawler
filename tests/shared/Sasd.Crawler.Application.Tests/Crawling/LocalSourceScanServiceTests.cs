@@ -110,7 +110,9 @@ public sealed class LocalSourceScanServiceTests
     public async Task DisabledSource_IsRejectedBeforeARegistryScanStarts()
     {
         var source = CreateSource();
-        source.SetEnabled(isEnabled: false, DateTimeOffset.UtcNow.AddMinutes(1));
+        source.SetEnabled(
+            isEnabled: false,
+            new DateTimeOffset(2026, 10, 22, 20, 0, 0, TimeSpan.Zero));
         var registry = new RecordingDocumentRegistry();
         var service = CreateService(source, new SequenceConnector([]), registry);
 
@@ -279,6 +281,7 @@ public sealed class LocalSourceScanServiceTests
             ScanRunId candidateScanRunId,
             SourceId sourceId,
             ScanRunOutcome outcome,
+            int issueCount,
             string? errorSummary,
             DateTimeOffset completedAtUtc,
             CancellationToken cancellationToken)

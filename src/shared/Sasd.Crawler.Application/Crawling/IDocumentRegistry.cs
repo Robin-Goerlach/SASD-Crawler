@@ -48,6 +48,7 @@ public interface IDocumentRegistry
         ScanRunId scanRunId,
         SourceId sourceId,
         ScanRunOutcome outcome,
+        int issueCount,
         string? errorSummary,
         DateTimeOffset completedAtUtc,
         CancellationToken cancellationToken);
