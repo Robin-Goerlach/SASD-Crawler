@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Sasd.Crawler.Application.Sources;
 using Sasd.Crawler.Domain.Sources;
+using Sasd.Crawler.Persistence.Sqlite;
 
 namespace Sasd.Crawler.Persistence.Sqlite.Sources;
 

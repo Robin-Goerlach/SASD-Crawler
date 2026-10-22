@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Sasd.Crawler.Application.Crawling;
 using Sasd.Crawler.Domain.Sources;
 
@@ -138,7 +139,7 @@ public sealed class LocalFileSystemConnector : ILocalFileSystemConnector
 
     private static bool TryCreateEnumerator(
         string directoryPath,
-        out IEnumerator<string>? enumerator,
+        [NotNullWhen(true)] out IEnumerator<string>? enumerator,
         out string? error)
     {
         try

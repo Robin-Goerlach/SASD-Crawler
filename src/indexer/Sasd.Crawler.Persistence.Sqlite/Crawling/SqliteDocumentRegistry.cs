@@ -4,6 +4,7 @@ using Sasd.Crawler.Application.Crawling;
 using Sasd.Crawler.Domain.Crawling;
 using Sasd.Crawler.Domain.Documents;
 using Sasd.Crawler.Domain.Sources;
+using Sasd.Crawler.Persistence.Sqlite;
 
 namespace Sasd.Crawler.Persistence.Sqlite.Crawling;
 
@@ -134,7 +135,7 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
         command.Parameters.AddWithValue(
             "$createdUtc",
             observation.CreatedAtUtc.HasValue
-                ? FormatTimestamp(observation.CreatedAtUtc.Value)
+                ? (object)FormatTimestamp(observation.CreatedAtUtc.Value)
                 : DBNull.Value);
         command.Parameters.AddWithValue("$modifiedUtc", FormatTimestamp(observation.ModifiedAtUtc));
         command.Parameters.AddWithValue("$lastSeenUtc", FormatTimestamp(observedAtUtc));
@@ -167,8 +168,8 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
                 outcome,
                 issueCount,
                 errorSummary: null,
-                completedAtUtc,
-                cancellationToken)
+                completedAtUtc: completedAtUtc,
+                cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (!completed)
@@ -229,9 +230,9 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
                 sourceId,
                 outcome,
                 issueCount: 0,
-                errorSummary,
-                completedAtUtc,
-                cancellationToken)
+                errorSummary: errorSummary,
+                completedAtUtc: completedAtUtc,
+                cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         if (!completed)

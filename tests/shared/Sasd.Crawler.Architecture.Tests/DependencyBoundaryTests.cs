@@ -1,6 +1,7 @@
 using Sasd.Crawler.Application.Sources;
 using Sasd.Crawler.Domain.Sources;
 using Sasd.Crawler.Frontend.Main;
+using Sasd.Crawler.Indexer.LocalFileSystem;
 using Sasd.Crawler.Persistence.Sqlite.Sources;
 
 namespace Sasd.Crawler.Architecture.Tests;
@@ -45,6 +46,17 @@ public sealed class DependencyBoundaryTests
 
         Assert.DoesNotContain("System.Windows.Forms", references);
         Assert.DoesNotContain("Sasd.Crawler.Frontend", references);
+    }
+
+    [Fact]
+    public void LocalFileSystemIndexer_DoesNotDependOnFrontendOrSqlite()
+    {
+        var references = GetReferenceNames(typeof(LocalFileSystemConnector).Assembly);
+
+        Assert.DoesNotContain("System.Windows.Forms", references);
+        Assert.DoesNotContain("Sasd.Crawler.Frontend", references);
+        Assert.DoesNotContain("Sasd.Crawler.Persistence.Sqlite", references);
+        Assert.DoesNotContain("Microsoft.Data.Sqlite", references);
     }
 
     private static string[] GetReferenceNames(System.Reflection.Assembly assembly)

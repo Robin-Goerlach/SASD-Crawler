@@ -20,5 +20,6 @@
     <ProjectReference Include="..\..\..\src\shared\Sasd.Crawler.Application\Sasd.Crawler.Application.csproj" />
     <ProjectReference Include="..\..\..\src\frontend\Sasd.Crawler.Frontend\Sasd.Crawler.Frontend.csproj" />
     <ProjectReference Include="..\..\..\src\indexer\Sasd.Crawler.Persistence.Sqlite\Sasd.Crawler.Persistence.Sqlite.csproj" />
+    <ProjectReference Include="..\..\..\src\indexer\Sasd.Crawler.Indexer.LocalFileSystem\Sasd.Crawler.Indexer.LocalFileSystem.csproj" />
   </ItemGroup>
 </Project>
