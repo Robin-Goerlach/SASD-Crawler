@@ -1,0 +1,11 @@
+{
+  "solution": {
+    "path": "Sasd.Crawler.sln",
+    "projects": [
+      "src\\shared\\Sasd.Crawler.Domain\\Sasd.Crawler.Domain.csproj",
+      "src\\shared\\Sasd.Crawler.Application\\Sasd.Crawler.Application.csproj",
+      "src\\indexer\\Sasd.Crawler.Persistence.Sqlite\\Sasd.Crawler.Persistence.Sqlite.csproj",
+      "tests\\indexer\\Sasd.Crawler.Persistence.Sqlite.Tests\\Sasd.Crawler.Persistence.Sqlite.Tests.csproj"
+    ]
+  }
+}

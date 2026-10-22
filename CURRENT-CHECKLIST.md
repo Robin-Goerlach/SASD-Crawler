@@ -26,6 +26,20 @@
 - [ ] .NET-8-Support-/Upgradepfad als G0-Risiko dokumentieren
 - [ ] G0 final entscheiden
 
+## Pre-G0 C#-Produktionsbasis
+
+- [x] Domain-Projekt mit stabiler `SourceId` und `SourceDefinition`
+- [x] Application-Projekt mit UI-neutralem `ISourceCatalog`
+- [x] SQLite-Control-Store Schema v1 mit WAL und Schema-Versionsschutz
+- [x] UI-neutraler MVP Presenter
+- [x] produktive .NET-8-WinForms-Shell für Quellenverwaltung
+- [x] Frontend-/Indexer-Solution-Filter
+- [x] Domain-, Application-, SQLite-, Presenter- und Architekturtests
+- [x] CI #22: Restore / Format / Release-Build / Tests grün
+- [x] 51 Tests gesamt, 0 Fehler, 0 übersprungen
+- [ ] **keine 0.1-Anforderung als DONE markieren, bevor ihre vollständige Semantik bewiesen ist**
+- [ ] nächster Produktionsslice erst kontrolliert: LocalFileSystemConnector + Document Registry + ScanRun/Reconciliation
+
 ## Architektur-Spikes
 
 - [x] A1 WinForms + Generic Host – **CONDITIONAL GO**

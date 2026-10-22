@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "Sasd.Crawler.sln",
+    "projects": [
+      "src\\shared\\Sasd.Crawler.Domain\\Sasd.Crawler.Domain.csproj",
+      "src\\shared\\Sasd.Crawler.Application\\Sasd.Crawler.Application.csproj",
+      "src\\frontend\\Sasd.Crawler.Frontend\\Sasd.Crawler.Frontend.csproj",
+      "src\\indexer\\Sasd.Crawler.Persistence.Sqlite\\Sasd.Crawler.Persistence.Sqlite.csproj",
+      "src\\frontend\\Sasd.Crawler.WinForms\\Sasd.Crawler.WinForms.csproj",
+      "tests\\frontend\\Sasd.Crawler.Frontend.Tests\\Sasd.Crawler.Frontend.Tests.csproj"
+    ]
+  }
+}

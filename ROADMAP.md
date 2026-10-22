@@ -399,6 +399,20 @@ Tika bleibt Default, solange Toxy nicht für einen konkreten MIME-Typ überzeuge
 
 ---
 
+## Pre-G0 Produktionsfundament – Status 22.10.2026
+
+Auf ausdrückliche Entwicklungsanweisung wurde bereits ein begrenztes C#-Produktionsfundament unter der für 0.1 vorgesehenen Repository-Struktur angelegt und per CI verifiziert.
+
+Vorhanden:
+
+- Domain/Application Source Catalog;
+- SQLite Control Store Schema v1;
+- WinForms/MVP Source-Management-Shell;
+- Architekturgrenzentests;
+- Frontend-/Indexer-Solution-Filter.
+
+Diese Arbeit **öffnet G1 nicht vorzeitig**. Die Checkliste von 0.1 bleibt maßgeblich; kein Punkt gilt allein aufgrund des Fundaments als vollständig erledigt.
+
 # 12. Milestone 0.1.0 – Local Vertical Slice
 
 **Ziel:** erster echter End-to-End-Produktpfad.

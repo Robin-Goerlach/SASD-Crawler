@@ -75,6 +75,26 @@ Core principles:
 
 ## Verified implementation so far
 
+### Production foundation
+
+The canonical C#/.NET 8 production tree has started without declaring G0 complete:
+
+- `Sasd.Crawler.Domain` with strong source identity and infrastructure-neutral source state;
+- `Sasd.Crawler.Application` with the UI-neutral source-catalog use-case boundary;
+- `Sasd.Crawler.Persistence.Sqlite` with control-store schema v1, WAL and version guarding;
+- `Sasd.Crawler.Frontend` with a testable MVP presenter;
+- `Sasd.Crawler.WinForms` with the first production source-management shell;
+- architecture tests that guard frontend/shared/indexer dependency direction;
+- dedicated Frontend and Indexer solution filters in addition to the canonical `Sasd.Crawler.sln`.
+
+CI #22 verified the code commit with restore, format, Release build and **51 passing tests** (14 new production tests; 0 failed, 0 skipped).
+
+This is deliberately a **pre-G0 foundation**, not a claim that milestone 0.1 has passed. Crawling, Document Registry, reconciliation and search still have to be implemented and verified.
+
+Evidence: [`docs/evidence/pre-g0-production-foundation/SUMMARY.md`](docs/evidence/pre-g0-production-foundation/SUMMARY.md).
+
+### A1 architecture spike
+
 A1 has established a real .NET 8 WinForms spike with:
 
 - Generic Host and DI,
