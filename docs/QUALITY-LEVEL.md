@@ -1,7 +1,7 @@
 # Quality Maturity Level
 
-**Stand:** 6. Oktober 2026  
-**Current level:** **Q0 – Architecture Validation (A1 Conditional Go, A2 next)**
+**Stand:** 22. Oktober 2026  
+**Current level:** **Q0 – Architecture Validation (A1/A3/A4/A5 conditional, A2 Technical Go, G0 closure)**
 
 Dieses Modell beschreibt **Qualitätsreife**, nicht Funktionsumfang oder Marketingversion.
 
@@ -17,7 +17,7 @@ Dieses Modell beschreibt **Qualitätsreife**, nicht Funktionsumfang oder Marketi
 
 A1 beweist Host-/Lifecycle-Grundlagen, aber noch keine Crawler-/Search-Produktfunktion. Daher bleibt das Projekt auf Q0.
 
-A2–A5 sind Bestandteil von Q0 und dürfen nicht als Endnutzerfeatures gezählt werden.
+A2–A5 sind in `main` integriert und Bestandteil von Q0; sie dürfen weiterhin nicht als Endnutzerfeatures gezählt werden. CR-2026-002 ergänzt die Baseline um Stopwortfilterung, fortlaufende Dublettenerkennung und eine klare Polyglot-Repository-Grenze.
 
 Der Übergang auf Q1 erfolgt erst mit bestandenem G0 und dem lokalen 0.1-Vertical-Slice.
 

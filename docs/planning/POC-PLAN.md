@@ -1,7 +1,7 @@
 # PoC- und Architektur-Spike-Plan
 
-**Stand:** 6. Oktober 2026  
-**Aktueller Spike:** A2 – Lucene.NET
+**Stand:** 22. Oktober 2026  
+**Aktueller Fokus:** G0-Rest-Evidence und formale Architekturentscheidungen
 
 ## 1. Grundsatz
 
@@ -33,7 +33,7 @@ Diese Restpunkte verhindern `GO`, aber nicht A2.
 
 ## 3. A2 – Lucene.NET
 
-**Status:** READY / NEXT
+**Status:** **TECHNICAL GO**
 
 ### Hypothese
 Lucene.NET 4.8.0-beta00018 ist für den eingebetteten Desktopindex stabil, ausreichend schnell und recovery-fähig.
@@ -65,9 +65,9 @@ Details: `docs/codex/FIRST-TASK-0.0.2.md`.
 
 ## 4. A3 – Tika Sidecar/Packaging
 
-**Status:** NOT STARTED
+**Status:** **CONDITIONAL GO**
 
-Seit der ursprünglichen Planung hat sich die Lage geändert: **Tika 4.1.0** ist aktuell; die **3.3.2**-Linie bleibt unterstützt.
+Tika 3.3.2 ist als isolierter Sidecar einschließlich reduzierter Runtime praktisch bewiesen. Offen bleiben die finale Produktlinien-/Packagingentscheidung sowie SBOM/CVE/Signierungs-/AV-Evidence.
 
 A3 muss daher zusätzlich entscheiden:
 
@@ -81,7 +81,7 @@ Keine Version wird nur deshalb gewählt, weil sie im Pflichtenheft ursprünglich
 
 ## 5. A4 – Windows Media Identity
 
-**Status:** NOT STARTED
+**Status:** **CONDITIONAL GO**
 
 Test: NTFS/exFAT/FAT32, USB Flash/externe SSD, detach/attach, anderer Laufwerksbuchstabe, gleiches Label, Klon/Ambiguität, Neustart offline.
 
@@ -89,7 +89,7 @@ Fallback bei Ambiguität: user-assisted binding; niemals aggressives Auto-Merge.
 
 ## 6. A5 – Tika vs. Toxy
 
-**Status:** NOT STARTED
+**Status:** **CONDITIONAL; TIKA DEFAULT**
 
 Verglichen wird Toxy gegen die in A3 gewählte Tika-Linie, nicht gegen eine veraltete Annahme.
 
@@ -100,8 +100,8 @@ Bewertung: Textvollständigkeit 25, Robustheit 20, Formatbreite 15, Metadaten 10
 G0 verlangt:
 
 - A1 mindestens Conditional Go + Rest-Evidence klar,
-- A2–A5 entschieden,
-- ADRs entsprechend aktualisiert,
-- .NET-8-Lifecycle-/Migrationsentscheidung,
+- A2 technisch entschieden; A3–A5 Rest-Evidence geschlossen,
+- PoC-abhängige ADRs entsprechend aktualisiert,
+- C#/.NET-8-Kompatibilitätsentscheidung berücksichtigt und Support-/Upgradepfad dokumentiert,
 - CI-Minimum grün,
 - keine normative Dokumentkollision.

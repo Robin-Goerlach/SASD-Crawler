@@ -1,7 +1,7 @@
 # Current Checklist
 
-**Stichtag:** 7. Oktober 2026  
-**Aktueller Fokus:** **Recovery A2–A5 abschließen und G0-Readiness herstellen**
+**Stichtag:** 22. Oktober 2026  
+**Aktueller Fokus:** **G0-Rest-Evidence schließen und Baseline 0.1b konsistent halten**
 
 ## Baseline / Governance
 
@@ -12,10 +12,16 @@
 - [x] Lastenheft-Amendment 0.1a angenommen
 - [x] Pflichtenheft 0.2 als aktive technische Baseline
 - [x] Roadmap / Teststrategie / Risk Register / ADR-Baseline
+- [x] CR-2026-002 + Amendment 0.1b angenommen
+- [x] wirksame fachliche Baseline auf 260 Anforderungen erweitert
+- [x] SEA-022 Stopwortfilterung spezifiziert
+- [x] ID-011 geschärft und ID-012 fortlaufende Dublettenerkennung spezifiziert
+- [x] Polyglot-Repository-Grenze mit C#/.NET-8-Kanon festgelegt
 - [x] Repository-Reconciliation 2026-10-06 nach `main` gemerged
 - [x] Windows-CI auf reconciled `main` grün
 - [ ] PoC-abhängige ADRs nach A2–A5 formal reviewen
-- [ ] .NET-8-Lifecycleentscheidung für G0
+- [x] C#/.NET 8 als kanonische V1 für Managed-PC-Kompatibilität bestätigt (CR-2026-002 / ADR-0016)
+- [ ] .NET-8-Support-/Upgradepfad als G0-Risiko dokumentieren
 - [ ] G0 final entscheiden
 
 ## Architektur-Spikes
@@ -58,8 +64,8 @@
 - [x] `Sasd.Crawler.sln` kanonisch
 - [x] Windows-CI für restore/format/Release-build/tests
 - [x] erster CI-Lauf auf reconciled `main` erfolgreich
-- [ ] Recovery-PR A2–A5 erfolgreich verifizieren und mergen
-- [ ] alte Recovery-/Codex-Branches danach remote/lokal entfernen
+- [x] Recovery-PR A2–A5 erfolgreich verifiziert und als PR #4 gemerged
+- [x] alte Recovery-/Codex-/Reconciliation-Branches remote/lokal entfernt; nur `main` verbleibt
 
 ## Erst nach G0
 

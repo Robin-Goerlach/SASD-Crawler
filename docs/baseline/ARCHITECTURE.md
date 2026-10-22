@@ -2,14 +2,14 @@
 # SASD-Crawler – Softwarearchitektur
 
 **Dokumentstatus:** Architekturentwurf / Diskussions- und Entscheidungsbaseline  
-**Stand:** 20. August 2026  
+**Stand:** 22. Oktober 2026  
 **Dokumentversion:** 0.1  
 **Produkt:** SASD-Crawler  
 **Zielplattform:** Windows Desktop  
 **UI-Technologie:** Windows Forms  
 **Zielframework:** .NET 8 (`net8.0-windows`)  
 **Architekturstil:** Modularer Desktop-Monolith mit Clean-Architecture-Grenzen, MVP-Präsentationsmuster und isolierten Worker-/Sidecar-Prozessen  
-**Bezug:** Lastenheft 0.1 und Pflichtenheft 0.1  
+**Bezug:** Lastenheft 0.1 + Amendments 0.1a/0.1b, Pflichtenheft 0.2, CR-2026-001/002  
 **Wichtiger Statushinweis:** Dieses Architekturdokument ersetzt die bisherigen technischen Annahmen „.NET 10 + Blazor/Linux-first“ des Pflichtenhefts dort, wo sie der neuen expliziten Vorgabe „Windows Forms auf .NET 8“ widersprechen.
 
 ---
@@ -1207,6 +1207,22 @@ Verwendung:
 - Integrity;
 - Idempotenz.
 
+Der Hash soll nach Möglichkeit im selben sequenziellen Lesevorgang ermittelt werden, der ohnehin für Extraktion beziehungsweise Indexierung erforderlich ist. Ein zweiter vollständiger Read nur für Dublettenerkennung ist zu vermeiden.
+
+## 28.5 Duplicate Groups
+
+Exakte Dubletten werden mindestens über `FileSize + ContentHash` gruppiert.
+
+Wichtige Invarianten:
+
+- jeder Fundort bleibt ein eigenständiges Dokument-/Location-Objekt;
+- gleiche Größe ohne gleichen kryptografischen Hash ist keine exakte Dublette;
+- Dublettenerkennung darf niemals Originaldateien automatisch löschen, verschieben oder überschreiben;
+- Rename/Move darf keine künstliche zusätzliche Dublette erzeugen;
+- Offline-Medien bleiben in bekannten Gruppen erhalten, bis Reconciliation eine echte Löschung bestätigt;
+- periodische/background Reconciliation aktualisiert Gruppen idempotent aus den ohnehin erhobenen Crawl-/Hashdaten;
+- ein separater Dateisystem-Vollscan ausschließlich zur Dublettensuche ist nicht vorgesehen.
+
 ---
 
 # 29. Rename und Move
@@ -1563,7 +1579,23 @@ Deutscher Analyzer/Stemming.
 
 Englischer Analyzer/Stemming.
 
-## 42.4 Feldboosts
+## 42.4 Stopwort-Policy
+
+Die analysierten Volltextfelder unterstützen versionierte, sprachabhängige Stopwortlisten.
+
+Regeln:
+
+- mindestens Deutsch und Englisch;
+- konservative Defaultlisten;
+- Benutzer/Administrator können Wörter ergänzen oder ausnehmen;
+- Index- und Query-Analyzer verwenden dieselbe Stopwortlisten- und Profilversion;
+- eine Änderung der Stopwortliste invalidiert das betroffene Analyzer-/Processing-Profil und führt zu kontrolliertem Reindex;
+- `content_exact` darf Stopwörter behalten, wenn dies für exakte Phrase-Semantik erforderlich ist;
+- stark semantische Kurzantworten wie `ja`/`nein` werden nicht zwingend global als Default-Stopwörter behandelt, können aber konfiguriert werden.
+
+Ziel ist nicht maximale Token-Reduktion um jeden Preis, sondern ein kleinerer, signalreicherer Index ohne Verlust wichtiger Suchsemantik.
+
+## 42.5 Feldboosts
 
 Initial:
 
@@ -3202,6 +3234,18 @@ Benutzer kann:
 12. nach bestätigtem Scan keinen aktuellen Treffer mehr sehen.
 
 Damit ist Architektur bewiesen, bevor Tika/OCR/Web die Komplexität erhöhen.
+
+---
+
+# 113a. Polyglot-Repository-Grenze
+
+Die Produktarchitektur bleibt C#/.NET-8-zentriert. Die bestehenden Top-Level-Verzeichnisse `src/`, `tests/` und `tools/` sind die kanonische .NET-Codebasis.
+
+Weitere Programmiersprachen werden ausschließlich unter `languages/<language>/` geführt. Jede zusätzliche Sprache dokumentiert Zweck, Toolchain, Build, Tests, Runtime, Lizenz und Kommunikationsgrenze zur C#-Anwendung.
+
+Sekundäre Sprachen dürfen keine zwingende V1-Runtimevoraussetzung erzeugen, solange kein eigener Change Request dies ausdrücklich genehmigt. Insbesondere setzt die V1 keine installierte Go-Runtime voraus.
+
+Sprachübergreifende Integration bevorzugt versionierte Prozess-/Datenverträge. Sicherheitskritische Domainregeln wie Reconciliation, Media Identity und Delete Authority dürfen nicht unkontrolliert in mehreren Implementierungen divergieren.
 
 ---
 

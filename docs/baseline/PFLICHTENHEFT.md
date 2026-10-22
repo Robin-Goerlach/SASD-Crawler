@@ -1,15 +1,15 @@
 # Pflichtenheft 0.2 – SASD-Crawler WinForms/.NET 8
 
 **Status:** ACTIVE BASELINE – WinForms/.NET-8-Rebaselining  
-**Stand:** 6. Oktober 2026  
+**Stand:** 22. Oktober 2026  
 **Supersedes:** Pflichtenheft 0.1 in allen widersprechenden technischen Aussagen  
-**Bezug:** Lastenheft 0.1 + Amendment 0.1a + CR-2026-001 + Architektur 0.1
+**Bezug:** Lastenheft 0.1 + Amendment 0.1a + Amendment 0.1b + CR-2026-001 + CR-2026-002 + Architektur 0.1
 
 ---
 
 # 1. Ziel
 
-Dieses Pflichtenheft überführt die 258 fachlichen Anforderungen in die aktuelle Desktoparchitektur:
+Dieses Pflichtenheft überführt die 260 fachlichen Anforderungen der wirksamen Baseline in die aktuelle Desktoparchitektur:
 
 ```text
 Windows Forms / .NET 8
@@ -22,6 +22,7 @@ Windows Forms / .NET 8
 + Local/USB/UNC/Web Connectoren
 + Durable Work Queue
 + Reconciliation als Löschautorität
++ C#/.NET 8 als kanonische V1; zusätzliche Sprachen isoliert unter languages/
 ```
 
 Es ersetzt die frühere Annahme eines Blazor-/Linux-first-Hosts.
@@ -68,6 +69,14 @@ Führend:
 Rekonstruierbar:
 - Lucene,
 - Extraction Cache.
+
+## 2.4a Programmiersprachen- und Runtimegrenze
+
+Die kanonische V1 wird in C# auf .NET 8 (`net8.0-windows`) entwickelt. `Sasd.Crawler.sln` bleibt der maßgebliche Build-Einstieg.
+
+Zusätzliche Programmiersprachen dürfen unter `languages/<language>/` für klar abgegrenzte Komponenten, Werkzeuge oder Experimente verwendet werden. Sie dürfen keine versteckte V1-Laufzeitvoraussetzung erzeugen. Insbesondere setzt der Windows-V1-Client keine installierte Go-Runtime voraus.
+
+Für verwaltete Windows-Arbeitsplätze bleibt ein self-contained `win-x64` Publish der bevorzugte Auslieferungsweg.
 
 ## 2.5 Hintergrundarbeit
 
@@ -214,7 +223,7 @@ Die technische Baseline wird vor Milestone 0.1 durch G0 bestätigt:
 
 # 14. Requirements Mapping
 
-Die folgende Matrix enthält alle 258 Anforderungen und deren technische Zielkomponente.
+Die folgende Matrix enthält alle 260 Anforderungen der wirksamen Baseline und deren technische Zielkomponente.
 
 | Requirement | Titel | Prio | Release | Umsetzungskomponente | Disposition 0.2 | Anmerkung |
 |---|---|---|---|---|---|---|
@@ -310,7 +319,8 @@ Die folgende Matrix enthält alle 258 Anforderungen und deren technische Zielkom
 | ID-008 | LastSeen | MUSS | 0.1.0 | DocumentRegistry + ReconciliationService | UNCHANGED | – |
 | ID-009 | Availability | MUSS | 0.2.0 | DocumentRegistry + ReconciliationService | UNCHANGED | – |
 | ID-010 | Rename-/Move-Erkennung | SOLL | 0.4.0 | DocumentRegistry + ReconciliationService | UNCHANGED | – |
-| ID-011 | Dublettenerkennung | SOLL | 1.1.x | DocumentRegistry + ReconciliationService | UNCHANGED | – |
+| ID-011 | Exakte Dublettenerkennung | MUSS | 0.4.0 | DocumentRegistry + DuplicateGroupService + ContentHash | AMENDED 0.1b | Größe + kryptografischer Hash; keine automatische Dateilöschung |
+| ID-012 | Fortlaufende Dublettenerkennung | MUSS | 0.7.0 | DuplicateGroupService + ReconciliationService + Scheduler | ADDED 0.1b | nutzt reguläre Crawl-/Hashdaten; kein separater Vollscan |
 | META-001 | Basisfelder | MUSS | 0.1.0 | MetadataNormalizer | UNCHANGED | – |
 | META-002 | Dokumenttitel | MUSS | 0.4.0 | MetadataNormalizer | UNCHANGED | – |
 | META-003 | Autor | SOLL | 0.4.0 | MetadataNormalizer | UNCHANGED | – |
@@ -348,6 +358,7 @@ Die folgende Matrix enthält alle 258 Anforderungen und deren technische Zielkom
 | SEA-019 | Related/Similar | SOLL | 1.5.x | SearchApplicationService | UNCHANGED | – |
 | SEA-020 | Result Pinning | SOLL | 1.4.x | SearchApplicationService | UNCHANGED | – |
 | SEA-021 | Learning to Rank | KANN | 1.5.x | SearchApplicationService | UNCHANGED | – |
+| SEA-022 | Stopwortfilterung | MUSS | 0.5.0 | AnalyzerConfiguration + ISearchIndex/Lucene.NET | ADDED 0.1b | DE/EN, versioniert, konfigurierbar, Reindex bei Änderung |
 | UI-001 | Zentrales Suchfeld | MUSS | 0.1.0 | WinForms Workspaces + MVP Presenters | UNCHANGED | – |
 | UI-002 | Search-as-you-type Reaktion | SOLL | 0.5.0 | WinForms Workspaces + MVP Presenters | UNCHANGED | – |
 | UI-003 | Treffername | MUSS | 0.1.0 | WinForms Workspaces + MVP Presenters | UNCHANGED | – |
@@ -523,4 +534,4 @@ Eine Requirement gilt nicht als erfüllt, bevor:
 
 Pflichtenheft 0.2 ist die aktive technische Desktop-Rebaselining-Fassung.
 
-Die ausführliche Komponenten- und Klassensicht verbleibt im Architekturdokument 0.1. Dieses Pflichtenheft stellt sicher, dass die 258 fachlichen Anforderungen auf die Windows-Forms-/NET-8-Baseline abgebildet sind, ohne die alte Blazor-/Linux-Architektur weiterzutragen. PoC-abhängige Komponentenentscheidungen werden nach A2–A5 über ADRs und Baseline-Updates konkretisiert.
+Die ausführliche Komponenten- und Klassensicht verbleibt im Architekturdokument 0.1. Dieses Pflichtenheft stellt sicher, dass die 260 fachlichen Anforderungen auf die Windows-Forms-/NET-8-Baseline abgebildet sind, ohne die alte Blazor-/Linux-Architektur weiterzutragen. PoC-abhängige Komponentenentscheidungen werden nach A2–A5 über ADRs und Baseline-Updates konkretisiert.

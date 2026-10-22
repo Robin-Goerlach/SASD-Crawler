@@ -2,7 +2,7 @@
 
 Native Windows desktop crawler and full-text search application for local folders, USB/offline media, SMB/UNC shares and websites.
 
-> **Current status (6 October 2026):** architecture validation. Milestone **0.0.1 / A1** is merged on `main` with **CONDITIONAL GO** (build clean, 9/9 automated tests, manual interactive desktop smoke evidence still pending). **0.0.2 / A2 – Lucene.NET** is the next active spike.
+> **Current status (22 October 2026):** architecture validation / G0 closure. A1 remains **CONDITIONAL GO**, A2 is **TECHNICAL GO**, and A3–A5 are integrated with documented conditional/open evidence. Milestone 0.1 remains blocked until G0 is formally closed. The effective requirements baseline now contains **260 requirements** after Amendment 0.1b.
 
 ## UI concept
 
@@ -78,20 +78,22 @@ Evidence: [`docs/evidence/0.0.1/SUMMARY.md`](docs/evidence/0.0.1/SUMMARY.md).
 
 A1 remains **CONDITIONAL GO** until the manual interactive Windows smokes for tray behavior, visible responsiveness, second-launch focus and forced-kill/restart are recorded.
 
-## Current work: A2 Lucene.NET
+## Current work: G0 closure
 
-The next spike validates Lucene.NET 4.8.0-beta00018 on .NET 8 with 100k/1M-document workloads, updates/deletes, NRT search, German/English analyzers, phrase/Boolean/fuzzy/prefix queries, highlighting, facets, concurrent readers, coordinated writing and crash/reopen recovery.
+The architecture spikes are integrated. Remaining work before the 0.1 production slice is focused on interactive A1 evidence, Tika packaging/security evidence, physical removable-media evidence, the remaining parser corpus, formal ADR review and the .NET-8 support/upgrade risk decision.
 
-See:
+Two additional product requirements are now part of the baseline:
 
-- [`docs/codex/FIRST-TASK-0.0.2.md`](docs/codex/FIRST-TASK-0.0.2.md)
-- [`docs/codex/PROMPT-0.0.2-AUTONOMOUS.md`](docs/codex/PROMPT-0.0.2-AUTONOMOUS.md)
+- versioned/configurable stopword filtering for analyzed DE/EN search fields (`SEA-022`);
+- exact and continuously refreshed duplicate groups based on regular crawl/reconciliation data (`ID-011`, `ID-012`).
+
+Duplicate discovery is observational only: it never deletes, moves or merges original files.
 
 ## Technology watch
 
 The project intentionally separates **chosen product architecture** from **current dependency versions**.
 
-- .NET 8 remains the requested development target, but reaches Microsoft end of support on **10 November 2026**. The repository pins the current .NET 8 servicing SDK and the migration decision must be revisited at G0/before production release.
+- .NET 8 remains the explicit C# V1 compatibility target for managed Windows PCs. Its **10 November 2026** support end is a consciously tracked risk; G0 must document the support/upgrade path, but the target is not changed silently. A self-contained `win-x64` publish is preferred so a separate .NET installation is not required.
 - Lucene.NET 4.8.0-beta00018 remains the current 4.8 beta line and explicitly supports .NET 8; A2 exists because its formal status is still Beta.
 - Apache Tika 4.1.0 is now current, while 3.3.2 remains a supported maintenance line. A3 will compare the packaging/migration/security trade-offs rather than assuming the older line forever.
 - Tesseract 5.5.3 remains the current release line for the planned OCR PoC.
@@ -100,10 +102,10 @@ The project intentionally separates **chosen product architecture** from **curre
 
 ```text
 0.0.1  A1 WinForms host lifecycle     CONDITIONAL GO
-0.0.2  A2 Lucene.NET                  READY / next
-0.0.3  A3 Tika sidecar/packaging      NOT STARTED
-0.0.4  A4 Windows media identity      NOT STARTED
-0.0.5  A5 Tika vs. Toxy               NOT STARTED
+0.0.2  A2 Lucene.NET                  TECHNICAL GO
+0.0.3  A3 Tika sidecar/packaging      CONDITIONAL GO
+0.0.4  A4 Windows media identity      CONDITIONAL GO
+0.0.5  A5 Tika vs. Toxy               CONDITIONAL; TIKA DEFAULT
         G0 Architecture Feasibility
 0.1.0   Local vertical slice
 0.2.0   USB/offline + SMB
@@ -122,6 +124,9 @@ The authoritative details and gates are in [`ROADMAP.md`](ROADMAP.md).
 |---|---|
 | [`docs/baseline/LASTENHEFT.md`](docs/baseline/LASTENHEFT.md) | functional/product requirements |
 | [`docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md`](docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md) | accepted desktop amendment |
+| [`docs/baseline/LASTENHEFT-AMENDMENT-0.1b-SEARCH-DUPLICATES.md`](docs/baseline/LASTENHEFT-AMENDMENT-0.1b-SEARCH-DUPLICATES.md) | stopword + continuous duplicate requirements |
+| [`docs/baseline/CR-2026-002-SEARCH-DUPLICATES-POLYGLOT.md`](docs/baseline/CR-2026-002-SEARCH-DUPLICATES-POLYGLOT.md) | C#/.NET-8, search/duplicate and polyglot change record |
+| [`languages/README.md`](languages/README.md) | multi-language repository boundary |
 | [`docs/baseline/PFLICHTENHEFT.md`](docs/baseline/PFLICHTENHEFT.md) | active WinForms/.NET 8 technical baseline |
 | [`docs/baseline/ARCHITECTURE.md`](docs/baseline/ARCHITECTURE.md) | detailed architecture |
 | [`ROADMAP.md`](ROADMAP.md) | milestones, gates and progress |

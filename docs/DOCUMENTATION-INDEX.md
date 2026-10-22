@@ -1,6 +1,6 @@
 # Dokumentationsindex
 
-**Stand:** 6. Oktober 2026
+**Stand:** 22. Oktober 2026
 
 ## Einstieg
 
@@ -19,7 +19,9 @@
 | Dokument | Status |
 |---|---|
 | `docs/baseline/LASTENHEFT.md` | aktive fachliche Baseline |
-| `docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md` | accepted |
+| `docs/baseline/LASTENHEFT-AMENDMENT-0.1a.md`
+- `docs/baseline/LASTENHEFT-AMENDMENT-0.1b-SEARCH-DUPLICATES.md`
+- `docs/baseline/CR-2026-002-SEARCH-DUPLICATES-POLYGLOT.md` | accepted |
 | `docs/baseline/CR-2026-001-WINFORMS-NET8.md` | accepted |
 | `docs/baseline/PFLICHTENHEFT.md` | aktive technische Baseline 0.2 |
 | `docs/baseline/ARCHITECTURE.md` | aktive Architektur, PoC-abhängige Teile markiert |
@@ -66,3 +68,9 @@ Aktuell:
 ## Dokumentregel
 
 Baseline-Dokumente ändern Scope/Architektur kontrolliert. Roadmap und Status beschreiben Umsetzung, dürfen fachliche Requirements nicht stillschweigend umdefinieren.
+
+
+## Multi-language development
+
+- `languages/README.md` – repository boundary and rules for additional programming languages.
+- `docs/architecture/adr/ADR-0016-csharp-net8-kanonisch-polyglot-erweiterbar.md` – canonical C#/.NET-8 V1 and polyglot extension decision.

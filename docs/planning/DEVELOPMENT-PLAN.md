@@ -1,6 +1,6 @@
 # Entwicklungsplan
 
-**Stand:** 21. August 2026
+**Stand:** 22. Oktober 2026
 
 ## 1. Entwicklungsstrategie
 
@@ -38,13 +38,13 @@ kleinster realer Nutzerpfad
 ## 3. Workstreams
 
 ### WS-A Core Domain
-Source, Media, Document, Job, WorkItem, Reconciliation, States.
+Source, Media, Document, DuplicateGroup, Job, WorkItem, Reconciliation, States.
 
 ### WS-B Persistence
 SQLite, migrations, repositories, queue leases.
 
 ### WS-C Search
-Lucene backend, schema, analyzers, queries, snippets.
+Lucene backend, schema, versionierte DE/EN-Analyzer und Stopwortlisten, queries, snippets.
 
 ### WS-D Connectors
 Local, USB, SMB, Web.
@@ -95,7 +95,17 @@ Eine Aufgabe ist READY, wenn:
 - keine `async void` außer echten UI-Eventhandlern.
 - keine COM-Automation von Office.
 
-## 7. Branch-/Commit-Konzept
+## 7. Programmiersprachen und Repository-Grenzen
+
+- C#/.NET 8 bleibt die kanonische V1-Implementierung.
+- `Sasd.Crawler.sln` bleibt der kanonische Build-Einstieg.
+- zusätzliche Sprachen liegen unter `languages/<language>/`;
+- jede zusätzliche Sprache dokumentiert Build, Tests, Runtime und Lizenz;
+- sprachspezifische CI wird mit der ersten gepflegten Komponente ergänzt;
+- keine sekundäre Sprache darf ohne Change Request zur zwingenden V1-Runtimeabhängigkeit werden;
+- gemeinsame Domain-/Security-Invarianten werden über explizite Verträge geteilt, nicht unabhängig kopiert.
+
+## 8. Branch-/Commit-Konzept
 
 Bis ein bestehender Repo-Standard etwas anderes vorgibt:
 
@@ -111,7 +121,7 @@ test(WEB-009): add robots policy fixtures
 fix(IDX-003): avoid delete on incomplete scan
 ```
 
-## 8. Arbeitsblock-Abschluss
+## 9. Arbeitsblock-Abschluss
 
 Jeder größere Codex-/Entwicklungsauftrag endet mit:
 
