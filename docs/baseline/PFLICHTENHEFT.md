@@ -223,7 +223,7 @@ Die technische Baseline wird vor Milestone 0.1 durch G0 bestätigt:
 
 # 14. Requirements Mapping
 
-Die folgende Matrix enthält alle 258 Anforderungen und deren technische Zielkomponente.
+Die folgende Matrix enthält alle 260 Anforderungen der wirksamen Baseline und deren technische Zielkomponente.
 
 | Requirement | Titel | Prio | Release | Umsetzungskomponente | Disposition 0.2 | Anmerkung |
 |---|---|---|---|---|---|---|
