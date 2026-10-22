@@ -6,40 +6,42 @@
 ## Statusdefinition
 
 - `SPECIFIED` – fachlich im Lastenheft beschrieben.
-- `NOT STARTED` – keine verifizierte Implementierung.
-- `PENDING` – noch kein Verifikationsnachweis.
-- `DONE` darf erst gesetzt werden, wenn Code + Test + Evidence vorhanden sind.
+- Implementierung: `NOT STARTED`, `PARTIAL` oder `IMPLEMENTED`.
+- Verifikation: `PENDING`, `PARTIAL` oder `VERIFIED`.
+- Eine Anforderung gilt erst als fachlich erledigt, wenn `IMPLEMENTED` + `VERIFIED` + belastbare Evidence vorliegen.
+- `PARTIAL` bedeutet ausdrücklich, dass ein nachgewiesener Teil existiert, die vollständige Lastenheft-Semantik aber noch nicht erfüllt ist.
 
 ## Aktueller Gesamtstatus
 
 | Dimension | Stand |
 |---|---|
 | Fachlich spezifiziert | 260/260 |
-| Implementiert | 0/260 verifiziert |
-| Verifiziert | 0/260 verifiziert |
+| Vollständig implementiert | 5/260 |
+| Vollständig verifiziert | 5/260 |
+| Teilimplementiert / Teilverifiziert | 6/260 |
 
 > Milestone 0.0.1 ist ein Architektur-Spike und implementiert keine Produktanforderung. Deshalb wurde trotz grüner A1-Tests kein Eintrag unten auf `DONE` gesetzt. Evidence: `docs/evidence/0.0.1/`.
 >
-> Am 22.10.2026 wurde eine verifizierte Pre-G0-Produktionsbasis begonnen. Sie berührt insbesondere SRC-001/SRC-003/LOC-001, erfüllt deren vollständige End-to-End-Semantik aber noch nicht. Deshalb bleiben die Requirements bis Document Registry, Crawl/Reconciliation und die jeweiligen Akzeptanzfälle vollständig bewiesen sind auf `NOT STARTED`/`PENDING`. Evidence: `docs/evidence/pre-g0-production-foundation/`.
+> Am 22.10.2026 wurde eine verifizierte Pre-G0-Produktionsbasis begonnen. Der zweite Slice ergänzt Local Crawl, Document Registry, ScanRunId und fail-closed Reconciliation. ID-001/ID-002/ID-003/ID-007/ID-008 sind damit für den 0.1-Local-Scope vollständig implementiert und verifiziert. SRC-/LOC-Anforderungen bleiben dort `PARTIAL`, wo Volltextindexierung, persistente Crawl-Konfiguration oder spätere Verarbeitungsstufen noch fehlen. Evidence: `docs/evidence/pre-g0-production-foundation/` und `docs/evidence/pre-g0-local-scan-document-registry/`.
 
 ## Register
 
 | ID | Titel | Priorität | Zielrelease | Spezifikation | Implementierung | Verifikation | Evidence |
 |---|---|---|---|---|---|---|---|
-| SRC-001 | Quellen als eigenständige Objekte | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| SRC-001 | Quellen als eigenständige Objekte | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
 | SRC-002 | Quellentypen erweiterbar | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| SRC-003 | Quelle aktivieren/deaktivieren | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| SRC-003 | Quelle aktivieren/deaktivieren | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
 | SRC-004 | Vollständiger Neuaufbau pro Quelle | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-005 | Inkrementelle Aktualisierung | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-006 | Include-Regeln | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-007 | Exclude-Regeln | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-008 | Quellspezifische Größenlimits | SOLL | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-009 | Quellspezifische Priorität | KANN | 1.4.x | SPECIFIED | NOT STARTED | PENDING | – |
-| LOC-001 | Lokale Verzeichnisse | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| LOC-002 | Rekursive Traversierung | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| LOC-003 | Rekursion begrenzbar | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| LOC-001 | Lokale Verzeichnisse | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
+| LOC-002 | Rekursive Traversierung | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
+| LOC-003 | Rekursion begrenzbar | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
 | LOC-004 | Symbolische Links/Junctions | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| LOC-005 | Dateisystemfehler | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| LOC-005 | Dateisystemfehler | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
 | LOC-006 | Pfadänderungen | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | USB-001 | Wechseldatenträger als eigene Quelle | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | USB-002 | Stabile Medienidentität | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -108,14 +110,14 @@
 | OCR-007 | OCR-Metadaten | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | OCR-008 | OCR wiederholen | SOLL | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | OCR-009 | OCR-Ressourcenlimit | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| ID-001 | DocumentId | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| ID-002 | SourceId | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| ID-003 | Canonical URI | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| ID-001 | DocumentId | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-local-scan-document-registry/ |
+| ID-002 | SourceId | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-local-scan-document-registry/ |
+| ID-003 | Canonical URI | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-local-scan-document-registry/ |
 | ID-004 | MediaId | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ID-005 | Relative Path | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ID-006 | Content Hash | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| ID-007 | Zeitstempel und Größe | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| ID-008 | LastSeen | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| ID-007 | Zeitstempel und Größe | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-local-scan-document-registry/ |
+| ID-008 | LastSeen | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-local-scan-document-registry/ |
 | ID-009 | Availability | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ID-010 | Rename-/Move-Erkennung | SOLL | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ID-011 | Exakte Dublettenerkennung | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1b / CR-2026-002 |

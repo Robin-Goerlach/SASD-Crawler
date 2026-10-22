@@ -30,15 +30,22 @@
 
 - [x] Domain-Projekt mit stabiler `SourceId` und `SourceDefinition`
 - [x] Application-Projekt mit UI-neutralem `ISourceCatalog`
-- [x] SQLite-Control-Store Schema v1 mit WAL und Schema-Versionsschutz
+- [x] SQLite-Control-Store Schema v2 mit WAL, vorwärtskompatibler v1→v2-Migration und Schema-Versionsschutz
 - [x] UI-neutraler MVP Presenter
 - [x] produktive .NET-8-WinForms-Shell für Quellenverwaltung
 - [x] Frontend-/Indexer-Solution-Filter
 - [x] Domain-, Application-, SQLite-, Presenter- und Architekturtests
-- [x] CI #22: Restore / Format / Release-Build / Tests grün
-- [x] 51 Tests gesamt, 0 Fehler, 0 übersprungen
-- [ ] **keine 0.1-Anforderung als DONE markieren, bevor ihre vollständige Semantik bewiesen ist**
-- [ ] nächster Produktionsslice erst kontrolliert: LocalFileSystemConnector + Document Registry + ScanRun/Reconciliation
+- [x] `DocumentId`, `ScanRunId` und durable `DocumentRecord`
+- [x] LocalFileSystemConnector mit Streaming-Traversierung und konfigurierbarer Maximaltiefe
+- [x] Reparse Points werden im aktuellen Local-Scope nicht verfolgt
+- [x] nicht-fatale Datei-/Verzeichnisfehler machen den Scan `Partial`, ohne den restlichen Crawl abzubrechen
+- [x] Document Registry mit LastSeen/LastSeenScanRunId
+- [x] Reconciliation nur nach `Succeeded`; Partial/Failed/Cancelled können keine Missing-Markierung auslösen
+- [x] realer E2E-Test: Ordner → Scan → SQLite → Datei löschen → erfolgreicher Rescan → genau ein Missing-Dokument
+- [x] CI #25: Restore / Format / Release-Build / Tests grün
+- [x] 69 Tests gesamt, 0 Fehler, 0 übersprungen
+- [x] ID-001/ID-002/ID-003/ID-007/ID-008 vollständig implementiert und automatisiert verifiziert
+- [ ] nächster kontrollierter Produktionsslice: CrawlJob/WorkItem-Hintergrundausführung und anschließend Lucene-Produktadapter
 
 ## Architektur-Spikes
 

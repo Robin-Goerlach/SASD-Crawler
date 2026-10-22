@@ -406,7 +406,11 @@ Auf ausdrückliche Entwicklungsanweisung wurde bereits ein begrenztes C#-Produkt
 Vorhanden:
 
 - Domain/Application Source Catalog;
-- SQLite Control Store Schema v1;
+- zentraler SQLite Control Store Schema v2 mit v1→v2-Migration;
+- `DocumentId`, `ScanRunId`, Document Registry und LastSeen;
+- LocalFileSystemConnector mit Streaming-Rekursion und Maximaltiefe;
+- fail-closed Full-Scan/Reconciliation: nur `Succeeded` besitzt Missing-Autorität;
+- realer Local-Scan-E2E-Test;
 - WinForms/MVP Source-Management-Shell;
 - Architekturgrenzentests;
 - Frontend-/Indexer-Solution-Filter.
