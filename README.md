@@ -81,17 +81,24 @@ The canonical C#/.NET 8 production tree has started without declaring G0 complet
 
 - `Sasd.Crawler.Domain` with strong source identity and infrastructure-neutral source state;
 - `Sasd.Crawler.Application` with the UI-neutral source-catalog use-case boundary;
-- `Sasd.Crawler.Persistence.Sqlite` with control-store schema v1, WAL and version guarding;
+- `Sasd.Crawler.Persistence.Sqlite` with centralized control-store migrations, schema v2, WAL, sources, scan runs, document registry and atomic reconciliation;
+- `Sasd.Crawler.Indexer.LocalFileSystem` with streaming recursive traversal, maximum-depth control and fail-closed handling of incomplete scans;
+- `Sasd.Crawler.Application` with a UI-neutral `LocalSourceScanService`, `IDocumentRegistry` and `ILocalFileSystemConnector`;
+- `Sasd.Crawler.Domain` with strong `DocumentId`/`ScanRunId` identities and durable document metadata;
 - `Sasd.Crawler.Frontend` with a testable MVP presenter;
 - `Sasd.Crawler.WinForms` with the first production source-management shell;
 - architecture tests that guard frontend/shared/indexer dependency direction;
 - dedicated Frontend and Indexer solution filters in addition to the canonical `Sasd.Crawler.sln`.
 
-CI #22 verified the code commit with restore, format, Release build and **51 passing tests** (14 new production tests; 0 failed, 0 skipped).
+The first foundation slice was verified by CI #22. CI #25 verified the Local Scan / Document Registry code head with restore, format, Release build and **69 passing tests** (32 production tests plus 37 spike tests; 0 failed, 0 skipped).
 
-This is deliberately a **pre-G0 foundation**, not a claim that milestone 0.1 has passed. Crawling, Document Registry, reconciliation and search still have to be implemented and verified.
+The local metadata crawl, durable Document Registry, ScanRun identity and fail-closed reconciliation path are now implemented. An incomplete scan is never deletion authority: only `Succeeded` can mark unseen registry entries missing.
 
-Evidence: [`docs/evidence/pre-g0-production-foundation/SUMMARY.md`](docs/evidence/pre-g0-production-foundation/SUMMARY.md).
+This remains deliberately **pre-G0 work**, not a claim that milestone 0.1 has passed. Background CrawlJob/WorkItem execution, Lucene product integration, TXT/HTML content indexing and the search UI still remain.
+
+Evidence:
+- [`docs/evidence/pre-g0-production-foundation/SUMMARY.md`](docs/evidence/pre-g0-production-foundation/SUMMARY.md)
+- [`docs/evidence/pre-g0-local-scan-document-registry/SUMMARY.md`](docs/evidence/pre-g0-local-scan-document-registry/SUMMARY.md)
 
 ### A1 architecture spike
 

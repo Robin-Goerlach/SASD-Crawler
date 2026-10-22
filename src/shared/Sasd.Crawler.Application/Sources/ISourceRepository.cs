@@ -17,6 +17,9 @@ public interface ISourceRepository
     /// <summary>Returns all configured sources in stable presentation order.</summary>
     Task<IReadOnlyList<SourceDefinition>> ListAsync(CancellationToken cancellationToken);
 
+    /// <summary>Returns one source by stable identity, or <see langword="null"/> when it no longer exists.</summary>
+    Task<SourceDefinition?> GetByIdAsync(SourceId sourceId, CancellationToken cancellationToken);
+
     /// <summary>Finds a source by its canonical source-type-specific location.</summary>
     Task<SourceDefinition?> FindByCanonicalLocationAsync(
         string canonicalLocation,

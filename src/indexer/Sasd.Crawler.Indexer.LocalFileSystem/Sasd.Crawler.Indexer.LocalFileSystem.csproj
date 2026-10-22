@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Sasd.Crawler.Application\Sasd.Crawler.Application.csproj" />
+    <ProjectReference Include="..\..\shared\Sasd.Crawler.Domain\Sasd.Crawler.Domain.csproj" />
+  </ItemGroup>
+</Project>

@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.Data.Sqlite;
 using Sasd.Crawler.Application.Sources;
 using Sasd.Crawler.Domain.Sources;
+using Sasd.Crawler.Persistence.Sqlite;
 
 namespace Sasd.Crawler.Persistence.Sqlite.Sources;
 
@@ -14,71 +15,31 @@ namespace Sasd.Crawler.Persistence.Sqlite.Sources;
 /// </remarks>
 public sealed class SqliteSourceRepository : ISourceRepository
 {
-    private const int CurrentSchemaVersion = 1;
-    private readonly string connectionString;
+    private readonly SqliteControlStore controlStore;
 
-    /// <summary>
-    /// Initializes a repository for the supplied control database path.
-    /// </summary>
-    /// <param name="databasePath">Path of the SQLite control database file.</param>
+    /// <summary>Creates a source repository for a database path.</summary>
     public SqliteSourceRepository(string databasePath)
+        : this(new SqliteControlStore(databasePath))
     {
-        if (string.IsNullOrWhiteSpace(databasePath))
-        {
-            throw new ArgumentException("A control database path is required.", nameof(databasePath));
-        }
+    }
 
-        DatabasePath = Path.GetFullPath(databasePath);
-
-        // Pooling is deliberately disabled for the first production slice. This makes file ownership and test
-        // cleanup deterministic. Connection pooling can be measured and enabled later during the optimization
-        // round rather than obscuring lifecycle behavior now.
-        connectionString = new SqliteConnectionStringBuilder
-        {
-            DataSource = DatabasePath,
-            Mode = SqliteOpenMode.ReadWriteCreate,
-            Pooling = false,
-        }.ToString();
+    /// <summary>Creates a source repository over the shared control-store boundary.</summary>
+    public SqliteSourceRepository(SqliteControlStore controlStore)
+    {
+        this.controlStore = controlStore ?? throw new ArgumentNullException(nameof(controlStore));
     }
 
     /// <summary>Gets the absolute control-database path used by this repository.</summary>
-    public string DatabasePath { get; }
+    public string DatabasePath => controlStore.DatabasePath;
 
     /// <inheritdoc />
-    public async Task InitializeAsync(CancellationToken cancellationToken)
-    {
-        var directory = Path.GetDirectoryName(DatabasePath)
-            ?? throw new InvalidOperationException("The control database path has no parent directory.");
-
-        Directory.CreateDirectory(directory);
-
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-
-        // WAL provides good resilience and reader/writer coexistence for the single-user desktop model. It is
-        // established before migrations so every subsequent connection sees the intended journal mode.
-        await ExecuteNonQueryAsync(connection, "PRAGMA journal_mode = WAL;", cancellationToken)
-            .ConfigureAwait(false);
-
-        var version = await ReadUserVersionAsync(connection, cancellationToken).ConfigureAwait(false);
-        switch (version)
-        {
-            case 0:
-                await ApplyVersion1Async(connection, cancellationToken).ConfigureAwait(false);
-                break;
-            case CurrentSchemaVersion:
-                break;
-            default:
-                // Opening a newer database with older code could corrupt or silently misread state. Failing
-                // closed is safer than attempting an implicit downgrade.
-                throw new NotSupportedException(
-                    $"Control database schema version {version} is newer than supported version {CurrentSchemaVersion}.");
-        }
-    }
+    public Task InitializeAsync(CancellationToken cancellationToken)
+        => controlStore.InitializeAsync(cancellationToken);
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<SourceDefinition>> ListAsync(CancellationToken cancellationToken)
     {
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
         command.CommandText = """
             SELECT
@@ -105,13 +66,41 @@ public sealed class SqliteSourceRepository : ISourceRepository
     }
 
     /// <inheritdoc />
+    public async Task<SourceDefinition?> GetByIdAsync(
+        SourceId sourceId,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT
+                source_id,
+                kind,
+                display_name,
+                canonical_location,
+                is_enabled,
+                created_utc,
+                updated_utc
+            FROM sources
+            WHERE source_id = $sourceId
+            LIMIT 1;
+            """;
+        command.Parameters.AddWithValue("$sourceId", sourceId.ToString());
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
+            ? ReadSource(reader)
+            : null;
+    }
+
+    /// <inheritdoc />
     public async Task<SourceDefinition?> FindByCanonicalLocationAsync(
         string canonicalLocation,
         CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(canonicalLocation);
 
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
         command.CommandText = """
             SELECT
@@ -139,7 +128,7 @@ public sealed class SqliteSourceRepository : ISourceRepository
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
         command.CommandText = """
             INSERT OR IGNORE INTO sources (
@@ -169,7 +158,7 @@ public sealed class SqliteSourceRepository : ISourceRepository
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
         command.CommandText = """
             UPDATE sources
@@ -191,75 +180,6 @@ public sealed class SqliteSourceRepository : ISourceRepository
         {
             throw new KeyNotFoundException($"Source '{source.Id}' no longer exists in the control store.");
         }
-    }
-
-    private async Task<SqliteConnection> OpenConnectionAsync(CancellationToken cancellationToken)
-    {
-        var connection = new SqliteConnection(connectionString);
-        try
-        {
-            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-
-            // Busy timeout prevents a transient writer overlap from failing immediately while still providing a
-            // bounded wait. Longer retry/backoff policy belongs to the later durable-work-queue milestone.
-            await ExecuteNonQueryAsync(connection, "PRAGMA busy_timeout = 5000;", cancellationToken)
-                .ConfigureAwait(false);
-            await ExecuteNonQueryAsync(connection, "PRAGMA foreign_keys = ON;", cancellationToken)
-                .ConfigureAwait(false);
-
-            return connection;
-        }
-        catch
-        {
-            await connection.DisposeAsync().ConfigureAwait(false);
-            throw;
-        }
-    }
-
-    private static async Task<int> ReadUserVersionAsync(
-        SqliteConnection connection,
-        CancellationToken cancellationToken)
-    {
-        await using var command = connection.CreateCommand();
-        command.CommandText = "PRAGMA user_version;";
-        var value = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
-        return Convert.ToInt32(value, CultureInfo.InvariantCulture);
-    }
-
-    private static async Task ApplyVersion1Async(
-        SqliteConnection connection,
-        CancellationToken cancellationToken)
-    {
-        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-
-        await using (var command = connection.CreateCommand())
-        {
-            command.Transaction = transaction;
-            command.CommandText = """
-                CREATE TABLE sources (
-                    source_id TEXT PRIMARY KEY,
-                    kind TEXT NOT NULL,
-                    display_name TEXT NOT NULL,
-                    canonical_location TEXT NOT NULL COLLATE NOCASE,
-                    is_enabled INTEGER NOT NULL CHECK (is_enabled IN (0, 1)),
-                    created_utc TEXT NOT NULL,
-                    updated_utc TEXT NOT NULL
-                );
-
-                CREATE UNIQUE INDEX ux_sources_canonical_location
-                    ON sources(canonical_location COLLATE NOCASE);
-                """;
-            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        await using (var versionCommand = connection.CreateCommand())
-        {
-            versionCommand.Transaction = transaction;
-            versionCommand.CommandText = $"PRAGMA user_version = {CurrentSchemaVersion};";
-            await versionCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static void BindSource(SqliteCommand command, SourceDefinition source)
@@ -300,14 +220,4 @@ public sealed class SqliteSourceRepository : ISourceRepository
             value,
             CultureInfo.InvariantCulture,
             DateTimeStyles.RoundtripKind);
-
-    private static async Task ExecuteNonQueryAsync(
-        SqliteConnection connection,
-        string sql,
-        CancellationToken cancellationToken)
-    {
-        await using var command = connection.CreateCommand();
-        command.CommandText = sql;
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-    }
 }
