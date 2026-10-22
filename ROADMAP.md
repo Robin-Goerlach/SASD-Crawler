@@ -421,7 +421,9 @@ Ein Benutzer kann:
 
 ## 12.2 Technische Deliverables
 
-- [ ] Produktions-Solution-Struktur nach G0.
+- [ ] Produktions-Solution-Struktur nach G0 unter `src/shared/`, `src/frontend/`, `src/indexer/`.
+- [ ] gespiegelte Teststruktur unter `tests/shared/`, `tests/frontend/`, `tests/indexer/`, `tests/e2e/`.
+- [ ] `Sasd.Crawler.sln` als Integrations-Solution; additive Frontend-/Indexer-Developer-Views sobald reale Produktionsprojekte existieren.
 - [ ] WinForms Search Shell.
 - [ ] MVP Presenters.
 - [ ] SQLite Control-Schema v1.

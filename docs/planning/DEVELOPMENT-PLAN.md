@@ -29,13 +29,34 @@ kleinster realer Nutzerpfad
 - Domain kennt keine UI/Infrastructure.
 - Application enthält Use Cases.
 - Infrastructure implementiert IO.
-- WinForms enthält Views/Presenter/Composition Root.
+- `src/shared/` enthält Domain/Application/Contracts.
+- `src/frontend/` enthält WinForms Views/Presenter/Composition Root.
+- `src/indexer/` enthält Persistence, Crawl/Queue/Reconciliation, Search, Extraction/OCR und Windows-Indexer-Infrastructure.
 - Fremdparser laufen isoliert.
 - jeder persistente Zustand besitzt Migration.
 - jeder langlaufende Prozess besitzt Cancellation.
 - jeder Hintergrundjob besitzt persistenten Status.
 
-## 3. Workstreams
+## 3. Repository- und Build-Sicht
+
+Produktionscode ab 0.1:
+
+```text
+src/shared/
+src/frontend/
+src/indexer/
+
+tests/shared/
+tests/frontend/
+tests/indexer/
+tests/e2e/
+```
+
+`Sasd.Crawler.sln` bleibt der vollständige Integrations-Build. Sobald echte Produktionsprojekte existieren, können Frontend und Indexer zusätzliche Solution-Filter/Entwicklereinstiege erhalten. Diese ersetzen die Gesamt-Solution nicht.
+
+Die physische Trennung erzwingt keinen zweiten Prozess. V1 darf Indexer-Services im Desktopprozess hosten; die Contract-Grenze soll einen späteren separaten Host ermöglichen.
+
+## 4. Workstreams
 
 ### WS-A Core Domain
 Source, Media, Document, DuplicateGroup, Job, WorkItem, Reconciliation, States.
@@ -61,7 +82,7 @@ Windows context, secret store, parser isolation, web security.
 ### WS-H Quality
 tests, corpus, performance, recovery, evidence.
 
-## 4. Definition of Ready
+## 5. Definition of Ready
 
 Eine Aufgabe ist READY, wenn:
 
@@ -72,7 +93,7 @@ Eine Aufgabe ist READY, wenn:
 - Testansatz beschrieben;
 - kein ungelöster ADR-Blocker.
 
-## 5. Definition of Done
+## 6. Definition of Done
 
 - Code kompiliert Release.
 - Unit/Integrationtest vorhanden.
@@ -84,7 +105,7 @@ Eine Aufgabe ist READY, wenn:
 - CI grün.
 - keine neue Critical/High Finding.
 
-## 6. Coding-Regeln
+## 7. Coding-Regeln
 
 - `Nullable=enable`.
 - keine `.Result`/`.Wait()` in UI-/Serverpfaden.
@@ -95,17 +116,17 @@ Eine Aufgabe ist READY, wenn:
 - keine `async void` außer echten UI-Eventhandlern.
 - keine COM-Automation von Office.
 
-## 7. Programmiersprachen und Repository-Grenzen
+## 8. Programmiersprachen und Repository-Grenzen
 
 - C#/.NET 8 bleibt die kanonische V1-Implementierung.
 - `Sasd.Crawler.sln` bleibt der kanonische Build-Einstieg.
-- zusätzliche Sprachen liegen unter `languages/<language>/`;
+- zusätzliche Sprachen liegen unter `languages/<language>/`; wenn sie Frontend/Indexer/Shared spiegeln, dann unter `languages/<language>/src/<bereich>/`;
 - jede zusätzliche Sprache dokumentiert Build, Tests, Runtime und Lizenz;
 - sprachspezifische CI wird mit der ersten gepflegten Komponente ergänzt;
 - keine sekundäre Sprache darf ohne Change Request zur zwingenden V1-Runtimeabhängigkeit werden;
 - gemeinsame Domain-/Security-Invarianten werden über explizite Verträge geteilt, nicht unabhängig kopiert.
 
-## 8. Branch-/Commit-Konzept
+## 9. Branch-/Commit-Konzept
 
 Bis ein bestehender Repo-Standard etwas anderes vorgibt:
 
@@ -121,7 +142,7 @@ test(WEB-009): add robots policy fixtures
 fix(IDX-003): avoid delete on incomplete scan
 ```
 
-## 9. Arbeitsblock-Abschluss
+## 10. Arbeitsblock-Abschluss
 
 Jeder größere Codex-/Entwicklungsauftrag endet mit:
 

@@ -50,6 +50,17 @@ Apache Tika  Tesseract
   Sidecar       OCR
 ```
 
+Repository/runtime boundary:
+
+```text
+src/frontend/  ─────►  src/shared/  ◄─────  src/indexer/
+   WinForms            Domain /              Crawl / SQLite /
+   MVP                 Application /         Lucene / Tika /
+                       Contracts              OCR / Reconcile
+```
+
+For V1 these modules may still run inside `Sasd.Crawler.WinForms.exe`. The separation is deliberately a code/repository boundary first, so a dedicated indexer process or alternative frontend can be added later without moving the production code.
+
 Core principles:
 
 - WinForms is the **presentation layer**, not the crawler implementation.
@@ -127,6 +138,9 @@ The authoritative details and gates are in [`ROADMAP.md`](ROADMAP.md).
 | [`docs/baseline/LASTENHEFT-AMENDMENT-0.1b-SEARCH-DUPLICATES.md`](docs/baseline/LASTENHEFT-AMENDMENT-0.1b-SEARCH-DUPLICATES.md) | stopword + continuous duplicate requirements |
 | [`docs/baseline/CR-2026-002-SEARCH-DUPLICATES-POLYGLOT.md`](docs/baseline/CR-2026-002-SEARCH-DUPLICATES-POLYGLOT.md) | C#/.NET-8, search/duplicate and polyglot change record |
 | [`languages/README.md`](languages/README.md) | multi-language repository boundary |
+| [`src/README.md`](src/README.md) | production frontend/shared/indexer repository layout |
+| [`docs/baseline/CR-2026-003-FRONTEND-INDEXER-BOUNDARY.md`](docs/baseline/CR-2026-003-FRONTEND-INDEXER-BOUNDARY.md) | frontend/indexer repository change record |
+| [`docs/architecture/adr/ADR-0017-frontend-indexer-repository-boundary.md`](docs/architecture/adr/ADR-0017-frontend-indexer-repository-boundary.md) | accepted frontend/indexer dependency boundary |
 | [`docs/baseline/PFLICHTENHEFT.md`](docs/baseline/PFLICHTENHEFT.md) | active WinForms/.NET 8 technical baseline |
 | [`docs/baseline/ARCHITECTURE.md`](docs/baseline/ARCHITECTURE.md) | detailed architecture |
 | [`ROADMAP.md`](ROADMAP.md) | milestones, gates and progress |
