@@ -12,7 +12,7 @@ namespace Sasd.Crawler.Application.Crawling;
 /// file errors do not abort traversal, but they downgrade the run to <see cref="ScanRunOutcome.Partial"/> and
 /// therefore suppress global missing reconciliation. Fatal traversal/root errors mark the run failed.
 /// </remarks>
-public sealed class LocalSourceScanService
+public sealed class LocalSourceScanService : ILocalSourceScanner
 {
     private readonly ISourceRepository sourceRepository;
     private readonly IDocumentRegistry documentRegistry;
