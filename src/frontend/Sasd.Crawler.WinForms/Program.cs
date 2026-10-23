@@ -46,9 +46,9 @@ internal static class Program
                 services.AddSingleton<ISourceCatalog, SourceCatalogService>();
                 services.AddSingleton<ICrawlJobService, CrawlJobService>();
 
-                // The crawler is registered at the composition root but is not invoked directly from a Form.
-                // A later background-work slice will own scheduling/execution so synchronous filesystem traversal
-                // never becomes UI-thread work.
+                // The crawler is registered at the composition root but is never invoked directly from a Form.
+                // Forms enqueue durable work; the hosted worker below owns filesystem traversal so synchronous
+                // enumeration never becomes UI-thread work.
                 services.AddSingleton<ILocalFileSystemConnector, LocalFileSystemConnector>();
                 services.AddSingleton<ILocalSourceScanner, LocalSourceScanService>();
 

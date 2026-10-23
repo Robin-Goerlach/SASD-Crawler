@@ -113,7 +113,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
             workCommand.Parameters.AddWithValue("$sourceId", sourceId.ToString());
             workCommand.Parameters.AddWithValue(
                 "$maximumDepth",
-                options.MaximumDepth.HasValue ? options.MaximumDepth.Value : DBNull.Value);
+                options.MaximumDepth.HasValue ? (object)options.MaximumDepth.Value : DBNull.Value);
             workCommand.Parameters.AddWithValue("$requestedUtc", requested);
 
             await workCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);

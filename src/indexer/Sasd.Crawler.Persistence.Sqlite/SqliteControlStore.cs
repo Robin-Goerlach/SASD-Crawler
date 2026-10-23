@@ -49,8 +49,8 @@ public sealed class SqliteControlStore
         }
 
         // Multiple repositories are started by the Generic Host. Serializing in-process initialization prevents
-        // two startup paths from racing the same migration chain. Cross-process safety still comes from SQLite's
-        // transactional schema changes; the desktop's later single-instance integration remains a separate concern.
+        // those startup paths from racing the same migration chain. Cross-process startup coordination is not
+        // claimed here; the production single-instance boundary remains a separate lifecycle slice.
         await initializationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
