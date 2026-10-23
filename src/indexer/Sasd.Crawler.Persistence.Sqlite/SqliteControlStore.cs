@@ -12,8 +12,10 @@ namespace Sasd.Crawler.Persistence.Sqlite;
 /// </remarks>
 public sealed class SqliteControlStore
 {
-    private const int CurrentSchemaVersion = 2;
+    private const int CurrentSchemaVersion = 3;
     private readonly string connectionString;
+    private readonly SemaphoreSlim initializationGate = new(1, 1);
+    private bool initialized;
 
     /// <summary>Creates a control store for the supplied SQLite database path.</summary>
     public SqliteControlStore(string databasePath)
@@ -41,34 +43,58 @@ public sealed class SqliteControlStore
     /// <summary>Creates the database when needed and migrates it to the supported schema version.</summary>
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
-        var directory = Path.GetDirectoryName(DatabasePath)
-            ?? throw new InvalidOperationException("The control database path has no parent directory.");
-
-        Directory.CreateDirectory(directory);
-
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-
-        // WAL is a database-level setting and is established before migrations so all repositories observe the
-        // same writer/read behavior.
-        await ExecuteNonQueryAsync(connection, "PRAGMA journal_mode = WAL;", cancellationToken)
-            .ConfigureAwait(false);
-
-        var version = await ReadUserVersionAsync(connection, cancellationToken).ConfigureAwait(false);
-        if (version > CurrentSchemaVersion)
+        if (initialized)
         {
-            // An older executable must never attempt an implicit downgrade of a newer control database.
-            throw new NotSupportedException(
-                $"Control database schema version {version} is newer than supported version {CurrentSchemaVersion}.");
+            return;
         }
 
-        while (version < CurrentSchemaVersion)
+        // Multiple repositories are started by the Generic Host. Serializing in-process initialization prevents
+        // those startup paths from racing the same migration chain. Cross-process startup coordination is not
+        // claimed here; the production single-instance boundary remains a separate lifecycle slice.
+        await initializationGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
         {
-            version = version switch
+            if (initialized)
             {
-                0 => await ApplyVersion1Async(connection, cancellationToken).ConfigureAwait(false),
-                1 => await ApplyVersion2Async(connection, cancellationToken).ConfigureAwait(false),
-                _ => throw new InvalidOperationException($"No migration path exists from schema version {version}."),
-            };
+                return;
+            }
+
+            var directory = Path.GetDirectoryName(DatabasePath)
+                ?? throw new InvalidOperationException("The control database path has no parent directory.");
+
+            Directory.CreateDirectory(directory);
+
+            await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+            // WAL is a database-level setting and is established before migrations so all repositories observe the
+            // same writer/read behavior.
+            await ExecuteNonQueryAsync(connection, "PRAGMA journal_mode = WAL;", cancellationToken)
+                .ConfigureAwait(false);
+
+            var version = await ReadUserVersionAsync(connection, cancellationToken).ConfigureAwait(false);
+            if (version > CurrentSchemaVersion)
+            {
+                // An older executable must never attempt an implicit downgrade of a newer control database.
+                throw new NotSupportedException(
+                    $"Control database schema version {version} is newer than supported version {CurrentSchemaVersion}.");
+            }
+
+            while (version < CurrentSchemaVersion)
+            {
+                version = version switch
+                {
+                    0 => await ApplyVersion1Async(connection, cancellationToken).ConfigureAwait(false),
+                    1 => await ApplyVersion2Async(connection, cancellationToken).ConfigureAwait(false),
+                    2 => await ApplyVersion3Async(connection, cancellationToken).ConfigureAwait(false),
+                    _ => throw new InvalidOperationException($"No migration path exists from schema version {version}."),
+                };
+            }
+
+            initialized = true;
+        }
+        finally
+        {
+            initializationGate.Release();
         }
     }
 
@@ -194,6 +220,66 @@ public sealed class SqliteControlStore
         await SetUserVersionAsync(connection, transaction, 2, cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return 2;
+    }
+
+    private static async Task<int> ApplyVersion3Async(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction =
+            (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        await using (var command = connection.CreateCommand())
+        {
+            command.Transaction = transaction;
+            command.CommandText = """
+                CREATE TABLE crawl_jobs (
+                    crawl_job_id TEXT PRIMARY KEY,
+                    source_id TEXT NOT NULL,
+                    status TEXT NOT NULL
+                        CHECK (status IN ('Queued', 'Running', 'Succeeded', 'Partial', 'Failed', 'Cancelled')),
+                    requested_utc TEXT NOT NULL,
+                    started_utc TEXT NULL,
+                    completed_utc TEXT NULL,
+                    observed_documents INTEGER NULL CHECK (observed_documents IS NULL OR observed_documents >= 0),
+                    non_fatal_issues INTEGER NULL CHECK (non_fatal_issues IS NULL OR non_fatal_issues >= 0),
+                    newly_missing_documents INTEGER NULL
+                        CHECK (newly_missing_documents IS NULL OR newly_missing_documents >= 0),
+                    last_error TEXT NULL,
+                    FOREIGN KEY (source_id) REFERENCES sources(source_id) ON DELETE CASCADE
+                );
+
+                CREATE INDEX ix_crawl_jobs_source_requested
+                    ON crawl_jobs(source_id, requested_utc);
+
+                CREATE TABLE work_items (
+                    work_item_id TEXT PRIMARY KEY,
+                    crawl_job_id TEXT NOT NULL,
+                    source_id TEXT NOT NULL,
+                    stage TEXT NOT NULL CHECK (stage IN ('LocalFullScan')),
+                    status TEXT NOT NULL CHECK (status IN ('Pending', 'Leased', 'Succeeded', 'Failed')),
+                    maximum_depth INTEGER NULL CHECK (maximum_depth IS NULL OR maximum_depth >= 0),
+                    attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts >= 0),
+                    next_attempt_utc TEXT NOT NULL,
+                    lease_owner TEXT NULL,
+                    lease_until_utc TEXT NULL,
+                    created_utc TEXT NOT NULL,
+                    updated_utc TEXT NOT NULL,
+                    last_error TEXT NULL,
+                    FOREIGN KEY (crawl_job_id) REFERENCES crawl_jobs(crawl_job_id) ON DELETE CASCADE,
+                    FOREIGN KEY (source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
+                    UNIQUE (crawl_job_id, stage)
+                );
+
+                CREATE INDEX ix_work_items_ready
+                    ON work_items(status, next_attempt_utc, created_utc);
+                """;
+            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await SetUserVersionAsync(connection, transaction, 3, cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return 3;
     }
 
     private static async Task SetUserVersionAsync(

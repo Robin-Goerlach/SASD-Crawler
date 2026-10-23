@@ -406,12 +406,15 @@ Auf ausdrückliche Entwicklungsanweisung wurde bereits ein begrenztes C#-Produkt
 Vorhanden:
 
 - Domain/Application Source Catalog;
-- zentraler SQLite Control Store Schema v2 mit v1→v2-Migration;
+- zentraler SQLite Control Store Schema v3 mit v1→v2→v3-Migration;
 - `DocumentId`, `ScanRunId`, Document Registry und LastSeen;
 - LocalFileSystemConnector mit Streaming-Rekursion und Maximaltiefe;
 - fail-closed Full-Scan/Reconciliation: nur `Succeeded` besitzt Missing-Autorität;
 - realer Local-Scan-E2E-Test;
-- WinForms/MVP Source-Management-Shell;
+- durable CrawlJob/WorkItem Queue mit Lease-Metadaten;
+- Generic-Host Background Worker;
+- realer Background-Queue-E2E-Test;
+- WinForms/MVP Source-Management-Shell mit `Scan now` als Queue-Befehl;
 - Architekturgrenzentests;
 - Frontend-/Indexer-Solution-Filter.
 
@@ -439,20 +442,20 @@ Ein Benutzer kann:
 
 ## 12.2 Technische Deliverables
 
-- [ ] Produktions-Solution-Struktur nach G0 unter `src/shared/`, `src/frontend/`, `src/indexer/`.
-- [ ] gespiegelte Teststruktur unter `tests/shared/`, `tests/frontend/`, `tests/indexer/`, `tests/e2e/`.
-- [ ] `Sasd.Crawler.sln` als Integrations-Solution; additive Frontend-/Indexer-Developer-Views sobald reale Produktionsprojekte existieren.
+- [x] Produktions-Solution-Struktur unter `src/shared/`, `src/frontend/`, `src/indexer/` vorhanden; G0 bleibt separat offen.
+- [x] gespiegelte Teststruktur unter `tests/shared/`, `tests/frontend/`, `tests/indexer/`, `tests/e2e/`.
+- [x] `Sasd.Crawler.sln` als Integrations-Solution plus additive Frontend-/Indexer-Developer-Views.
 - [ ] WinForms Search Shell.
-- [ ] MVP Presenters.
-- [ ] SQLite Control-Schema v1.
-- [ ] `Source`.
-- [ ] `Document`.
-- [ ] `CrawlJob`.
-- [ ] `WorkItem`.
-- [ ] LocalFileSystemConnector.
-- [ ] Full Scan.
-- [ ] ScanRunId.
-- [ ] Reconciliation.
+- [x] MVP Presenters.
+- [x] SQLite Control-Schema (aktuell v3; v1→v2→v3 Migration).
+- [x] `Source`.
+- [x] `Document`.
+- [x] `CrawlJob`.
+- [x] `WorkItem`.
+- [x] LocalFileSystemConnector.
+- [x] Full Scan.
+- [x] ScanRunId.
+- [x] Reconciliation.
 - [ ] SHA-256 bei Änderung.
 - [ ] gewähltes Search Backend.
 - [ ] SearchService.

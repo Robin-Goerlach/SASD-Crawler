@@ -1,3 +1,5 @@
+using Sasd.Crawler.Application.Crawling;
+using Sasd.Crawler.Application.Jobs;
 using Sasd.Crawler.Application.Sources;
 using Sasd.Crawler.Domain.Sources;
 
@@ -14,12 +16,17 @@ public sealed class MainPresenter
 {
     private readonly IMainView view;
     private readonly ISourceCatalog sourceCatalog;
+    private readonly ICrawlJobService crawlJobService;
 
     /// <summary>Initializes a presenter for the supplied view and source application contract.</summary>
-    public MainPresenter(IMainView view, ISourceCatalog sourceCatalog)
+    public MainPresenter(
+        IMainView view,
+        ISourceCatalog sourceCatalog,
+        ICrawlJobService crawlJobService)
     {
         this.view = view ?? throw new ArgumentNullException(nameof(view));
         this.sourceCatalog = sourceCatalog ?? throw new ArgumentNullException(nameof(sourceCatalog));
+        this.crawlJobService = crawlJobService ?? throw new ArgumentNullException(nameof(crawlJobService));
     }
 
     /// <summary>Initializes durable source storage and renders the current catalog.</summary>
@@ -28,6 +35,7 @@ public sealed class MainPresenter
             async () =>
             {
                 await sourceCatalog.InitializeAsync(cancellationToken);
+                await crawlJobService.InitializeAsync(cancellationToken);
                 await RefreshCoreAsync(cancellationToken);
             });
 
@@ -63,6 +71,21 @@ public sealed class MainPresenter
             {
                 await sourceCatalog.SetEnabledAsync(sourceId, isEnabled, cancellationToken);
                 await RefreshCoreAsync(cancellationToken);
+            });
+
+    /// <summary>
+    /// Queues a full scan for the selected source and returns immediately after durable persistence.
+    /// </summary>
+    public Task QueueFullScanAsync(SourceId sourceId, CancellationToken cancellationToken)
+        => ExecuteBusyAsync(
+            async () =>
+            {
+                var jobId = await crawlJobService.QueueLocalFullScanAsync(
+                    sourceId,
+                    new LocalScanOptions(),
+                    cancellationToken);
+
+                view.ShowNotice($"Queued scan job {jobId.Value:N}.");
             });
 
     private async Task ExecuteBusyAsync(Func<Task> operation)

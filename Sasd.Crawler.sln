@@ -61,6 +61,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Indexer.LocalF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.LocalScan.E2E.Tests", "tests\e2e\Sasd.Crawler.LocalScan.E2E.Tests\Sasd.Crawler.LocalScan.E2E.Tests.csproj", "{1A2B3C4D-2007-4A11-8222-777777777777}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Indexer.Workers", "src\indexer\Sasd.Crawler.Indexer.Workers\Sasd.Crawler.Indexer.Workers.csproj", "{1A2B3C4D-1007-4A11-8111-777777777777}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Indexer.Workers.Tests", "tests\indexer\Sasd.Crawler.Indexer.Workers.Tests\Sasd.Crawler.Indexer.Workers.Tests.csproj", "{1A2B3C4D-2008-4A11-8222-888888888888}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -178,6 +182,14 @@ Global
 		{1A2B3C4D-2007-4A11-8222-777777777777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A2B3C4D-2007-4A11-8222-777777777777}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A2B3C4D-2007-4A11-8222-777777777777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A2B3C4D-1007-4A11-8111-777777777777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A2B3C4D-1007-4A11-8111-777777777777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A2B3C4D-1007-4A11-8111-777777777777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A2B3C4D-1007-4A11-8111-777777777777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A2B3C4D-2008-4A11-8222-888888888888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A2B3C4D-2008-4A11-8222-888888888888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A2B3C4D-2008-4A11-8222-888888888888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A2B3C4D-2008-4A11-8222-888888888888}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{80364448-B9B6-4A57-B586-A485EF65AC9B} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
@@ -203,5 +215,7 @@ Global
 		{1A2B3C4D-1006-4A11-8111-666666666666} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
 		{1A2B3C4D-2006-4A11-8222-666666666666} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
 		{1A2B3C4D-2007-4A11-8222-777777777777} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
+		{1A2B3C4D-1007-4A11-8111-777777777777} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
+		{1A2B3C4D-2008-4A11-8222-888888888888} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
 	EndGlobalSection
 EndGlobal

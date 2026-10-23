@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Sasd.Crawler.Application.Jobs;
 using Sasd.Crawler.Application.Sources;
 using Sasd.Crawler.Frontend.Main;
 
@@ -16,16 +17,22 @@ public sealed class MainForm : Form, IMainView
     private readonly ListView sourceList = new();
     private readonly Button addFolderButton = new();
     private readonly Button toggleEnabledButton = new();
+    private readonly Button scanNowButton = new();
     private readonly Button refreshButton = new();
     private readonly Label statusLabel = new();
     private readonly MainPresenter presenter;
     private readonly ILogger<MainForm> logger;
     private readonly CancellationTokenSource lifetimeCancellation = new();
+    private bool isBusy;
 
     /// <summary>Creates the production source-catalog window.</summary>
-    public MainForm(ISourceCatalog sourceCatalog, ILogger<MainForm> logger)
+    public MainForm(
+        ISourceCatalog sourceCatalog,
+        ICrawlJobService crawlJobService,
+        ILogger<MainForm> logger)
     {
         ArgumentNullException.ThrowIfNull(sourceCatalog);
+        ArgumentNullException.ThrowIfNull(crawlJobService);
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         Text = "SASD Crawler";
@@ -36,7 +43,7 @@ public sealed class MainForm : Form, IMainView
         ConfigureButtons();
         ConfigureLayout();
 
-        presenter = new MainPresenter(this, sourceCatalog);
+        presenter = new MainPresenter(this, sourceCatalog, crawlJobService);
 
         Shown += async (_, _) => await RunUiOperationAsync(
             cancellationToken => presenter.InitializeAsync(cancellationToken));
@@ -50,6 +57,7 @@ public sealed class MainForm : Form, IMainView
         refreshButton.Click += async (_, _) => await RunUiOperationAsync(
             cancellationToken => presenter.RefreshAsync(cancellationToken));
         toggleEnabledButton.Click += async (_, _) => await ToggleSelectedSourceAsync();
+        scanNowButton.Click += async (_, _) => await QueueSelectedSourceScanAsync();
         sourceList.SelectedIndexChanged += (_, _) => UpdateSelectionCommands();
     }
 
@@ -90,11 +98,9 @@ public sealed class MainForm : Form, IMainView
     /// <inheritdoc />
     public void SetBusy(bool isBusy)
     {
+        this.isBusy = isBusy;
         UseWaitCursor = isBusy;
-        sourceList.Enabled = !isBusy;
-        addFolderButton.Enabled = !isBusy;
-        refreshButton.Enabled = !isBusy;
-        toggleEnabledButton.Enabled = !isBusy && SelectedSource is not null;
+        UpdateSelectionCommands();
     }
 
     /// <inheritdoc />
@@ -131,6 +137,10 @@ public sealed class MainForm : Form, IMainView
         toggleEnabledButton.AutoSize = true;
         toggleEnabledButton.Enabled = false;
 
+        scanNowButton.Text = "Scan now";
+        scanNowButton.AutoSize = true;
+        scanNowButton.Enabled = false;
+
         refreshButton.Text = "Refresh";
         refreshButton.AutoSize = true;
     }
@@ -150,7 +160,7 @@ public sealed class MainForm : Form, IMainView
             Dock = DockStyle.Fill,
             FlowDirection = FlowDirection.LeftToRight,
         };
-        buttons.Controls.AddRange([addFolderButton, toggleEnabledButton, refreshButton]);
+        buttons.Controls.AddRange([addFolderButton, toggleEnabledButton, scanNowButton, refreshButton]);
 
         statusLabel.AutoEllipsis = true;
         statusLabel.Dock = DockStyle.Fill;
@@ -211,11 +221,34 @@ public sealed class MainForm : Form, IMainView
                 cancellationToken));
     }
 
+    private async Task QueueSelectedSourceScanAsync()
+    {
+        var selected = SelectedSource;
+        if (selected?.IsEnabled != true)
+        {
+            return;
+        }
+
+        // The presenter only persists a job request. The Generic Host background worker performs filesystem I/O,
+        // so this event handler never crawls the selected directory on the WinForms UI thread.
+        await RunUiOperationAsync(
+            cancellationToken => presenter.QueueFullScanAsync(
+                selected.Id,
+                cancellationToken));
+    }
+
     private void UpdateSelectionCommands()
     {
         var selected = SelectedSource;
-        toggleEnabledButton.Enabled = selected is not null;
+
+        // ShowSources can run while a presenter operation still owns the busy state. Centralizing all enable/disable
+        // decisions here prevents a list refresh from accidentally re-enabling commands before that operation ends.
+        sourceList.Enabled = !isBusy;
+        addFolderButton.Enabled = !isBusy;
+        refreshButton.Enabled = !isBusy;
+        toggleEnabledButton.Enabled = !isBusy && selected is not null;
         toggleEnabledButton.Text = selected?.IsEnabled == true ? "Disable" : "Enable";
+        scanNowButton.Enabled = !isBusy && selected?.IsEnabled == true;
     }
 
     private async Task RunUiOperationAsync(Func<CancellationToken, Task> operation)
