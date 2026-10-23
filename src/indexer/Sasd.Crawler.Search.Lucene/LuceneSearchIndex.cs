@@ -34,6 +34,7 @@ public sealed class LuceneSearchIndex : ISearchIndex
     private const string TitleStoredField = "title_stored";
     private const string LanguageField = "language";
     private const string ModifiedTicksField = "modified_ticks";
+    private const string AnalyzerVersionCommitKey = "sasd.analyzer.version";
 
     private static readonly string[] SearchFields =
     [
@@ -64,6 +65,8 @@ public sealed class LuceneSearchIndex : ISearchIndex
         analyzer = CreateAnalyzer(analyzerConfiguration);
         writer = CreateWriter(directory, analyzer);
         AnalyzerConfigurationVersion = analyzerConfiguration.Version;
+        ValidateAndStampAnalyzerVersion();
+        ValidateAndStampAnalyzerVersion();
     }
 
     /// <summary>
@@ -325,6 +328,41 @@ public sealed class LuceneSearchIndex : ISearchIndex
             writeFailed = true;
             throw;
         }
+    }
+
+    private void ValidateAndStampAnalyzerVersion()
+    {
+        var commitData = writer.CommitData;
+
+        if (commitData.TryGetValue(AnalyzerVersionCommitKey, out var persistedVersion))
+        {
+            if (!string.Equals(
+                    persistedVersion,
+                    AnalyzerConfigurationVersion,
+                    StringComparison.Ordinal))
+            {
+                // Index-time and query-time analyzers must use exactly the same stop-word configuration. Mixing
+                // versions would create false negatives/positives that are much harder to diagnose than a clear
+                // rebuild requirement.
+                throw new SearchIndexRebuildRequiredException(
+                    persistedVersion,
+                    AnalyzerConfigurationVersion);
+            }
+        }
+        else if (writer.NumDocs > 0)
+        {
+            // A populated index without our compatibility marker may come from a spike, an older prototype or
+            // another writer. It is rebuildable derived state, so fail closed rather than guessing compatibility.
+            throw new SearchIndexRebuildRequiredException(
+                persistedAnalyzerVersion: null,
+                requiredAnalyzerVersion: AnalyzerConfigurationVersion);
+        }
+
+        var stamped = new Dictionary<string, string>(commitData, StringComparer.Ordinal)
+        {
+            [AnalyzerVersionCommitKey] = AnalyzerConfigurationVersion,
+        };
+        writer.SetCommitData(stamped);
     }
 
     private static string NormalizeLanguageSuffix(string language)

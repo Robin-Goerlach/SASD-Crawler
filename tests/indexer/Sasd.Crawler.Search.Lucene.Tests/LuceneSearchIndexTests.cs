@@ -171,6 +171,30 @@ public sealed class LuceneSearchIndexTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Sea022_AnalyzerVersionMismatch_RequiresControlledRebuild()
+    {
+        var document = Document("Versioned", "searchable", "de");
+
+        await using (var first = CreateIndex())
+        {
+            await first.UpsertAsync(document, CancellationToken.None);
+            await first.CommitAsync(CancellationToken.None);
+        }
+
+        var defaults = SearchAnalyzerConfiguration.CreateDefault();
+        var changed = new SearchAnalyzerConfiguration(
+            "changed-v2",
+            defaults.GermanStopWords.Concat(["ja"]),
+            defaults.EnglishStopWords);
+
+        var exception = Assert.Throws<SearchIndexRebuildRequiredException>(
+            () => new LuceneSearchIndex(indexPath, changed));
+
+        Assert.Equal(defaults.Version, exception.PersistedAnalyzerVersion);
+        Assert.Equal("changed-v2", exception.RequiredAnalyzerVersion);
+    }
+
+    [Fact]
     public async Task Idx001_CommittedIndex_CanBeReopened()
     {
         var document = Document("Durable", "survives restart", "en");
