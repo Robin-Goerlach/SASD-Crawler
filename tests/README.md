@@ -10,7 +10,7 @@ tests/
   e2e/
 ```
 
-Existing `Sasd.Crawler.Spike.*.Tests` projects remain at their historical paths as architecture-spike evidence.
+Historical `Sasd.Crawler.Spike.*.Tests` projects are stored under `archive/spikes/tests/` as architecture-spike evidence.
 
 Guidelines:
 

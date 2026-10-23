@@ -128,7 +128,7 @@ Forms/UserControls must not:
 
 ### Canonical C#/.NET 8 and polyglot rules
 
-The top-level `src/`, `tests/` and `tools/` directories are the canonical C#/.NET-8 codebase. New production code from milestone 0.1 onward is physically separated into `src/shared/`, `src/frontend/` and `src/indexer/`; production tests mirror those boundaries. Existing `Sasd.Crawler.Spike.*` paths remain historical PoC/evidence and are not moved for cosmetic reasons.
+The top-level `src/`, `tests/` and `tools/` directories are the canonical active C#/.NET-8 codebase. New production code from milestone 0.1 onward is physically separated into `src/shared/`, `src/frontend/` and `src/indexer/`; production tests mirror those boundaries. Historical `Sasd.Crawler.Spike.*` projects live under `archive/spikes/` and remain read-only architecture PoC/evidence unless a task explicitly concerns spike evidence. Do not copy archived spike implementation into production merely because it exists; port only reviewed concepts behind the production boundaries.
 
 Additional languages must live under `languages/<language>/` and must document their toolchain, build, tests, runtime requirements, licensing and integration boundary. Do not introduce a mandatory V1 runtime dependency through a secondary language without an explicit Change Request. In particular, the Windows V1 must not require an installed Go runtime.
 

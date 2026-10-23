@@ -9,6 +9,6 @@ src/
   indexer/    crawling, persistence, search, extraction, OCR and background work
 ```
 
-The existing `Sasd.Crawler.Spike.*` projects remain at their historical paths. They are architecture evidence and are not the production layout.
+Historical `Sasd.Crawler.Spike.*` projects are stored under `archive/spikes/`. They are architecture evidence and are intentionally outside the active production source tree.
 
 See ADR-0017 and CR-2026-003 for the authoritative dependency rules.

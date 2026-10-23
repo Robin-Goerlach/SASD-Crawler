@@ -5,35 +5,35 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3FFBDC88-FF32-4574-AFB4-10E678DB0096}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.Core", "src\Sasd.Crawler.Spike.A1.Core\Sasd.Crawler.Spike.A1.Core.csproj", "{80364448-B9B6-4A57-B586-A485EF65AC9B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.Core", "archive\spikes\src\Sasd.Crawler.Spike.A1.Core\Sasd.Crawler.Spike.A1.Core.csproj", "{80364448-B9B6-4A57-B586-A485EF65AC9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.Infrastructure", "src\Sasd.Crawler.Spike.A1.Infrastructure\Sasd.Crawler.Spike.A1.Infrastructure.csproj", "{ADDF430E-5E39-4AE1-A043-14E65B07E822}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.Infrastructure", "archive\spikes\src\Sasd.Crawler.Spike.A1.Infrastructure\Sasd.Crawler.Spike.A1.Infrastructure.csproj", "{ADDF430E-5E39-4AE1-A043-14E65B07E822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.WinForms", "src\Sasd.Crawler.Spike.A1.WinForms\Sasd.Crawler.Spike.A1.WinForms.csproj", "{57FAC19A-93C5-4004-8670-A7276FF609B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.WinForms", "archive\spikes\src\Sasd.Crawler.Spike.A1.WinForms\Sasd.Crawler.Spike.A1.WinForms.csproj", "{57FAC19A-93C5-4004-8670-A7276FF609B1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5F4535E0-8665-45DC-BB73-FE866260C8DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.Tests", "tests\Sasd.Crawler.Spike.A1.Tests\Sasd.Crawler.Spike.A1.Tests.csproj", "{9CB03F02-B33C-45E8-9287-0459D076C020}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A1.Tests", "archive\spikes\tests\Sasd.Crawler.Spike.A1.Tests\Sasd.Crawler.Spike.A1.Tests.csproj", "{9CB03F02-B33C-45E8-9287-0459D076C020}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A2.Search", "src\Sasd.Crawler.Spike.A2.Search\Sasd.Crawler.Spike.A2.Search.csproj", "{C4DDA86C-A709-42A6-A5C4-F99BC27346CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A2.Search", "archive\spikes\src\Sasd.Crawler.Spike.A2.Search\Sasd.Crawler.Spike.A2.Search.csproj", "{C4DDA86C-A709-42A6-A5C4-F99BC27346CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A2.Tests", "tests\Sasd.Crawler.Spike.A2.Tests\Sasd.Crawler.Spike.A2.Tests.csproj", "{6E8A3308-26F2-46F2-86F1-7A32F8D55257}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A2.Tests", "archive\spikes\tests\Sasd.Crawler.Spike.A2.Tests\Sasd.Crawler.Spike.A2.Tests.csproj", "{6E8A3308-26F2-46F2-86F1-7A32F8D55257}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A2.Benchmark", "tools\Sasd.Crawler.Spike.A2.Benchmark\Sasd.Crawler.Spike.A2.Benchmark.csproj", "{93FF20C2-3BF0-4302-96AE-069B4CD3C2A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A2.Benchmark", "archive\spikes\tools\Sasd.Crawler.Spike.A2.Benchmark\Sasd.Crawler.Spike.A2.Benchmark.csproj", "{93FF20C2-3BF0-4302-96AE-069B4CD3C2A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A3.Tika", "src\Sasd.Crawler.Spike.A3.Tika\Sasd.Crawler.Spike.A3.Tika.csproj", "{2CF3679A-80BF-4CF9-B6DA-CFA0538E15D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A3.Tika", "archive\spikes\src\Sasd.Crawler.Spike.A3.Tika\Sasd.Crawler.Spike.A3.Tika.csproj", "{2CF3679A-80BF-4CF9-B6DA-CFA0538E15D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A3.Tests", "tests\Sasd.Crawler.Spike.A3.Tests\Sasd.Crawler.Spike.A3.Tests.csproj", "{BFA33D81-9D25-45DA-A28D-6E49E148D8E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A3.Tests", "archive\spikes\tests\Sasd.Crawler.Spike.A3.Tests\Sasd.Crawler.Spike.A3.Tests.csproj", "{BFA33D81-9D25-45DA-A28D-6E49E148D8E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A3.Probe", "tools\Sasd.Crawler.Spike.A3.Probe\Sasd.Crawler.Spike.A3.Probe.csproj", "{7D7C5965-5A58-48EB-BBDC-4C68A32D3308}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A3.Probe", "archive\spikes\tools\Sasd.Crawler.Spike.A3.Probe\Sasd.Crawler.Spike.A3.Probe.csproj", "{7D7C5965-5A58-48EB-BBDC-4C68A32D3308}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Media", "src\Sasd.Crawler.Spike.A4.Media\Sasd.Crawler.Spike.A4.Media.csproj", "{D81D860B-155E-4C18-B0BE-E17D474FF563}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Media", "archive\spikes\src\Sasd.Crawler.Spike.A4.Media\Sasd.Crawler.Spike.A4.Media.csproj", "{D81D860B-155E-4C18-B0BE-E17D474FF563}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Tests", "tests\Sasd.Crawler.Spike.A4.Tests\Sasd.Crawler.Spike.A4.Tests.csproj", "{2599079C-D23A-4E22-8E9D-E496994DBCA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Tests", "archive\spikes\tests\Sasd.Crawler.Spike.A4.Tests\Sasd.Crawler.Spike.A4.Tests.csproj", "{2599079C-D23A-4E22-8E9D-E496994DBCA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Probe", "tools\Sasd.Crawler.Spike.A4.Probe\Sasd.Crawler.Spike.A4.Probe.csproj", "{B2F78457-C660-48EE-85D9-2B130143D254}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A4.Probe", "archive\spikes\tools\Sasd.Crawler.Spike.A4.Probe\Sasd.Crawler.Spike.A4.Probe.csproj", "{B2F78457-C660-48EE-85D9-2B130143D254}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A5.Benchmark", "tools\Sasd.Crawler.Spike.A5.Benchmark\Sasd.Crawler.Spike.A5.Benchmark.csproj", "{05750556-FF3D-4BBD-8B5B-2C1CC45B7839}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Spike.A5.Benchmark", "archive\spikes\tools\Sasd.Crawler.Spike.A5.Benchmark\Sasd.Crawler.Spike.A5.Benchmark.csproj", "{05750556-FF3D-4BBD-8B5B-2C1CC45B7839}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Domain", "src\shared\Sasd.Crawler.Domain\Sasd.Crawler.Domain.csproj", "{1A2B3C4D-1001-4A11-8111-111111111111}"
 EndProject
@@ -64,6 +64,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Indexer.Workers", "src\indexer\Sasd.Crawler.Indexer.Workers\Sasd.Crawler.Indexer.Workers.csproj", "{1A2B3C4D-1007-4A11-8111-777777777777}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sasd.Crawler.Indexer.Workers.Tests", "tests\indexer\Sasd.Crawler.Indexer.Workers.Tests\Sasd.Crawler.Indexer.Workers.Tests.csproj", "{1A2B3C4D-2008-4A11-8222-888888888888}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "archive-spikes", "archive-spikes", "{A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -192,16 +194,6 @@ Global
 		{1A2B3C4D-2008-4A11-8222-888888888888}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{80364448-B9B6-4A57-B586-A485EF65AC9B} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
-		{ADDF430E-5E39-4AE1-A043-14E65B07E822} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
-		{57FAC19A-93C5-4004-8670-A7276FF609B1} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
-		{9CB03F02-B33C-45E8-9287-0459D076C020} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
-		{C4DDA86C-A709-42A6-A5C4-F99BC27346CA} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
-		{6E8A3308-26F2-46F2-86F1-7A32F8D55257} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
-		{2CF3679A-80BF-4CF9-B6DA-CFA0538E15D7} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
-		{BFA33D81-9D25-45DA-A28D-6E49E148D8E3} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
-		{D81D860B-155E-4C18-B0BE-E17D474FF563} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
-		{2599079C-D23A-4E22-8E9D-E496994DBCA7} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
 		{1A2B3C4D-1001-4A11-8111-111111111111} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
 		{1A2B3C4D-1002-4A11-8111-222222222222} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
 		{1A2B3C4D-1003-4A11-8111-333333333333} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
@@ -217,5 +209,19 @@ Global
 		{1A2B3C4D-2007-4A11-8222-777777777777} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
 		{1A2B3C4D-1007-4A11-8111-777777777777} = {3FFBDC88-FF32-4574-AFB4-10E678DB0096}
 		{1A2B3C4D-2008-4A11-8222-888888888888} = {5F4535E0-8665-45DC-BB73-FE866260C8DA}
+		{80364448-B9B6-4A57-B586-A485EF65AC9B} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{ADDF430E-5E39-4AE1-A043-14E65B07E822} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{57FAC19A-93C5-4004-8670-A7276FF609B1} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{9CB03F02-B33C-45E8-9287-0459D076C020} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{C4DDA86C-A709-42A6-A5C4-F99BC27346CA} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{6E8A3308-26F2-46F2-86F1-7A32F8D55257} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{93FF20C2-3BF0-4302-96AE-069B4CD3C2A1} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{2CF3679A-80BF-4CF9-B6DA-CFA0538E15D7} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{BFA33D81-9D25-45DA-A28D-6E49E148D8E3} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{7D7C5965-5A58-48EB-BBDC-4C68A32D3308} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{D81D860B-155E-4C18-B0BE-E17D474FF563} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{2599079C-D23A-4E22-8E9D-E496994DBCA7} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{B2F78457-C660-48EE-85D9-2B130143D254} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
+		{05750556-FF3D-4BBD-8B5B-2C1CC45B7839} = {A3A5C92B-6D6F-4E99-9F52-7A6B9C7D8E10}
 	EndGlobalSection
 EndGlobal
