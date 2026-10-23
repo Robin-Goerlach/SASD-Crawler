@@ -1,10 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sasd.Crawler.Application.Crawling;
+using Sasd.Crawler.Application.Jobs;
 using Sasd.Crawler.Application.Sources;
 using Sasd.Crawler.Indexer.LocalFileSystem;
+using Sasd.Crawler.Indexer.Workers;
 using Sasd.Crawler.Persistence.Sqlite;
 using Sasd.Crawler.Persistence.Sqlite.Crawling;
+using Sasd.Crawler.Persistence.Sqlite.Jobs;
 using Sasd.Crawler.Persistence.Sqlite.Sources;
 
 namespace Sasd.Crawler.WinForms;
@@ -36,14 +39,25 @@ internal static class Program
                 services.AddSingleton<IDocumentRegistry>(
                     provider => new SqliteDocumentRegistry(
                         provider.GetRequiredService<SqliteControlStore>()));
+                services.AddSingleton<ICrawlWorkQueue>(
+                    provider => new SqliteCrawlWorkQueue(
+                        provider.GetRequiredService<SqliteControlStore>()));
 
                 services.AddSingleton<ISourceCatalog, SourceCatalogService>();
+                services.AddSingleton<ICrawlJobService, CrawlJobService>();
 
                 // The crawler is registered at the composition root but is not invoked directly from a Form.
                 // A later background-work slice will own scheduling/execution so synchronous filesystem traversal
                 // never becomes UI-thread work.
                 services.AddSingleton<ILocalFileSystemConnector, LocalFileSystemConnector>();
-                services.AddSingleton<LocalSourceScanService>();
+                services.AddSingleton<ILocalSourceScanner, LocalSourceScanService>();
+
+                // The hosted worker is the only production path that executes queued crawl work. Keeping it behind
+                // Generic Host ensures WinForms remains presentation-only and shutdown cancellation flows through
+                // the same host lifetime used by the rest of the application.
+                services.AddSingleton(new CrawlWorkerOptions());
+                services.AddSingleton<CrawlWorkItemProcessor>();
+                services.AddHostedService<CrawlWorkBackgroundService>();
 
                 services.AddSingleton<MainForm>();
             })
