@@ -80,14 +80,15 @@ public sealed class SqliteCrawlWorkQueueTests
             new LocalScanOptions(),
             Utc(20, 0),
             CancellationToken.None);
-        var lease = Assert.NotNull(await queue.TryLeaseNextAsync(
+        var lease = await queue.TryLeaseNextAsync(
             "worker-a",
             Utc(20, 1),
             TimeSpan.FromMinutes(30),
-            CancellationToken.None));
+            CancellationToken.None);
+        Assert.NotNull(lease);
 
         await queue.MarkCompletedAsync(
-            lease,
+            lease!,
             new LocalSourceScanResult(
                 ScanRunId.New(),
                 ScanRunOutcome.Partial,
@@ -114,25 +115,27 @@ public sealed class SqliteCrawlWorkQueueTests
             new LocalScanOptions(),
             Utc(20, 0),
             CancellationToken.None);
-        var first = Assert.NotNull(await queue.TryLeaseNextAsync(
+        var first = await queue.TryLeaseNextAsync(
             "worker-a",
             Utc(20, 1),
             TimeSpan.FromMinutes(30),
-            CancellationToken.None));
+            CancellationToken.None);
+        Assert.NotNull(first);
 
-        await queue.ReleaseLeaseAsync(first, Utc(20, 2), CancellationToken.None);
+        await queue.ReleaseLeaseAsync(first!, Utc(20, 2), CancellationToken.None);
 
         var queued = await queue.GetJobAsync(jobId, CancellationToken.None);
         Assert.NotNull(queued);
         Assert.Equal(CrawlJobStatus.Queued, queued.Status);
 
-        var second = Assert.NotNull(await queue.TryLeaseNextAsync(
+        var second = await queue.TryLeaseNextAsync(
             "worker-b",
             Utc(20, 3),
             TimeSpan.FromMinutes(30),
-            CancellationToken.None));
+            CancellationToken.None);
+        Assert.NotNull(second);
 
-        Assert.Equal(first.WorkItemId, second.WorkItemId);
+        Assert.Equal(first!.WorkItemId, second!.WorkItemId);
         Assert.Equal(2, second.Attempt);
         Assert.Equal("worker-b", second.LeaseOwner);
     }
@@ -148,13 +151,14 @@ public sealed class SqliteCrawlWorkQueueTests
             new LocalScanOptions(),
             Utc(20, 0),
             CancellationToken.None);
-        var lease = Assert.NotNull(await queue.TryLeaseNextAsync(
+        var lease = await queue.TryLeaseNextAsync(
             "worker-a",
             Utc(20, 1),
             TimeSpan.FromMinutes(30),
-            CancellationToken.None));
+            CancellationToken.None);
+        Assert.NotNull(lease);
 
-        var forged = lease with { LeaseOwner = "worker-b" };
+        var forged = lease! with { LeaseOwner = "worker-b" };
 
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => queue.MarkCompletedAsync(
@@ -180,14 +184,15 @@ public sealed class SqliteCrawlWorkQueueTests
             new LocalScanOptions(),
             Utc(20, 0),
             CancellationToken.None);
-        var lease = Assert.NotNull(await queue.TryLeaseNextAsync(
+        var lease = await queue.TryLeaseNextAsync(
             "worker-a",
             Utc(20, 1),
             TimeSpan.FromMinutes(30),
-            CancellationToken.None));
+            CancellationToken.None);
+        Assert.NotNull(lease);
 
         await queue.MarkFailedAsync(
-            lease,
+            lease!,
             "IOException: source disappeared",
             Utc(20, 2),
             CancellationToken.None);
@@ -195,7 +200,8 @@ public sealed class SqliteCrawlWorkQueueTests
         var failed = await queue.GetJobAsync(jobId, CancellationToken.None);
         Assert.NotNull(failed);
         Assert.Equal(CrawlJobStatus.Failed, failed.Status);
-        Assert.Contains("source disappeared", failed.LastError, StringComparison.Ordinal);
+        Assert.NotNull(failed.LastError);
+        Assert.Contains("source disappeared", failed.LastError!, StringComparison.Ordinal);
     }
 
     private static DateTimeOffset Utc(int hour, int minute)

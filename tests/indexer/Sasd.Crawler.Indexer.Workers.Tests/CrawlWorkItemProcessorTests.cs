@@ -67,7 +67,8 @@ public sealed class CrawlWorkItemProcessorTests
             CancellationToken.None));
 
         Assert.Null(queue.CompletedResult);
-        Assert.Contains("disk vanished", queue.Failure, StringComparison.Ordinal);
+        Assert.NotNull(queue.Failure);
+        Assert.Contains("disk vanished", queue.Failure!, StringComparison.Ordinal);
     }
 
     [Fact]
