@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Sasd.Crawler.Application\Sasd.Crawler.Application.csproj" />
+    <ProjectReference Include="..\..\shared\Sasd.Crawler.Domain\Sasd.Crawler.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00018" />
+    <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00018" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00018" />
+  </ItemGroup>
+</Project>

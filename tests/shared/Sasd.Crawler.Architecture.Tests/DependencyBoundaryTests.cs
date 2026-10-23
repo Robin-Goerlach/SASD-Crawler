@@ -4,6 +4,7 @@ using Sasd.Crawler.Frontend.Main;
 using Sasd.Crawler.Indexer.LocalFileSystem;
 using Sasd.Crawler.Indexer.Workers;
 using Sasd.Crawler.Persistence.Sqlite.Sources;
+using Sasd.Crawler.Search.Lucene;
 
 namespace Sasd.Crawler.Architecture.Tests;
 
@@ -66,6 +67,18 @@ public sealed class DependencyBoundaryTests
         var references = GetReferenceNames(typeof(CrawlWorkBackgroundService).Assembly);
 
         Assert.DoesNotContain("System.Windows.Forms", references);
+        Assert.DoesNotContain("Sasd.Crawler.WinForms", references);
+        Assert.DoesNotContain("Sasd.Crawler.Persistence.Sqlite", references);
+        Assert.DoesNotContain("Microsoft.Data.Sqlite", references);
+    }
+
+    [Fact]
+    public void LuceneSearchAdapter_DoesNotDependOnFrontendOrSqlite()
+    {
+        var references = GetReferenceNames(typeof(LuceneSearchIndex).Assembly);
+
+        Assert.DoesNotContain("System.Windows.Forms", references);
+        Assert.DoesNotContain("Sasd.Crawler.Frontend", references);
         Assert.DoesNotContain("Sasd.Crawler.WinForms", references);
         Assert.DoesNotContain("Sasd.Crawler.Persistence.Sqlite", references);
         Assert.DoesNotContain("Microsoft.Data.Sqlite", references);
