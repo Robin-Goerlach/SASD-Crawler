@@ -13,7 +13,7 @@ using Lucene.Net.Util;
 using Sasd.Crawler.Application.Search;
 using Sasd.Crawler.Domain.Documents;
 using Sasd.Crawler.Domain.Sources;
-using LuceneDirectory = global::LuceneDirectory;
+using LuceneDirectory = global::Lucene.Net.Store.Directory;
 
 namespace Sasd.Crawler.Search.Lucene;
 
