@@ -1,6 +1,6 @@
 # Current Checklist
 
-**Stichtag:** 22. Oktober 2026  
+**Stichtag:** 23. Oktober 2026  
 **Aktueller Fokus:** **G0-Rest-Evidence schließen und Baseline 0.1b konsistent halten**
 
 ## Baseline / Governance
@@ -30,7 +30,7 @@
 
 - [x] Domain-Projekt mit stabiler `SourceId` und `SourceDefinition`
 - [x] Application-Projekt mit UI-neutralem `ISourceCatalog`
-- [x] SQLite-Control-Store Schema v2 mit WAL, vorwärtskompatibler v1→v2-Migration und Schema-Versionsschutz
+- [x] SQLite-Control-Store Schema v3 mit WAL, vorwärtskompatibler v1→v2→v3-Migration und Schema-Versionsschutz
 - [x] UI-neutraler MVP Presenter
 - [x] produktive .NET-8-WinForms-Shell für Quellenverwaltung
 - [x] Frontend-/Indexer-Solution-Filter
@@ -42,10 +42,18 @@
 - [x] Document Registry mit LastSeen/LastSeenScanRunId
 - [x] Reconciliation nur nach `Succeeded`; Partial/Failed/Cancelled können keine Missing-Markierung auslösen
 - [x] realer E2E-Test: Ordner → Scan → SQLite → Datei löschen → erfolgreicher Rescan → genau ein Missing-Dokument
-- [x] CI #25: Restore / Format / Release-Build / Tests grün
-- [x] 69 Tests gesamt, 0 Fehler, 0 übersprungen
+- [x] `CrawlJobId` und `WorkItemId` als getrennte dauerhafte Identitäten
+- [x] SQLite-v3-`crawl_jobs` / `work_items` mit Stage, Status, Attempts, NextAttempt, LeaseOwner, LeaseUntil
+- [x] atomare Lease-Übernahme und Owner-geprüfte Complete/Fail/Release-Transitions
+- [x] `CrawlJobService`: UI-neutraler Queue-Use-Case
+- [x] `CrawlWorkItemProcessor` und Generic-Host-`CrawlWorkBackgroundService`
+- [x] WinForms `Scan now` reiht nur durable Arbeit ein; kein Crawl auf dem UI-Thread
+- [x] Background-E2E: durable Job → echter BackgroundService → Local Scan → Document Registry
+- [x] CI #28: Restore / Format / Release-Build / Tests grün
+- [x] 83 Tests gesamt, 0 Fehler, 0 übersprungen
 - [x] ID-001/ID-002/ID-003/ID-007/ID-008 vollständig implementiert und automatisiert verifiziert
-- [ ] nächster kontrollierter Produktionsslice: CrawlJob/WorkItem-Hintergrundausführung und anschließend Lucene-Produktadapter
+- [ ] Crash-Reclaim/Retry-Backoff für abgelaufene Leases erst mit expliziter Recovery-/Single-Instance-Policy
+- [ ] nächster kontrollierter Produktionsslice: Lucene-Produktadapter und einfache TXT/HTML-Indexierung
 
 ## Architektur-Spikes
 

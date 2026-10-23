@@ -1,6 +1,6 @@
 # Requirements Status Register
 
-**Stand:** 22. Oktober 2026  
+**Stand:** 23. Oktober 2026  
 **Anforderungen:** 260
 
 ## Statusdefinition
@@ -18,11 +18,11 @@
 | Fachlich spezifiziert | 260/260 |
 | Vollständig implementiert | 5/260 |
 | Vollständig verifiziert | 5/260 |
-| Teilimplementiert / Teilverifiziert | 6/260 |
+| Teilimplementiert / Teilverifiziert | 12/260 |
 
 > Milestone 0.0.1 ist ein Architektur-Spike und implementiert keine Produktanforderung. Deshalb wurde trotz grüner A1-Tests kein Eintrag unten auf `DONE` gesetzt. Evidence: `docs/evidence/0.0.1/`.
 >
-> Am 22.10.2026 wurde eine verifizierte Pre-G0-Produktionsbasis begonnen. Der zweite Slice ergänzt Local Crawl, Document Registry, ScanRunId und fail-closed Reconciliation. ID-001/ID-002/ID-003/ID-007/ID-008 sind damit für den 0.1-Local-Scope vollständig implementiert und verifiziert. SRC-/LOC-Anforderungen bleiben dort `PARTIAL`, wo Volltextindexierung, persistente Crawl-Konfiguration oder spätere Verarbeitungsstufen noch fehlen. Evidence: `docs/evidence/pre-g0-production-foundation/` und `docs/evidence/pre-g0-local-scan-document-registry/`.
+> Am 22.10.2026 wurde eine verifizierte Pre-G0-Produktionsbasis begonnen. Der zweite Slice ergänzt Local Crawl, Document Registry, ScanRunId und fail-closed Reconciliation. Am 23.10.2026 ergänzt der dritte Slice durable CrawlJobs/WorkItems und einen Generic-Host-BackgroundWorker. ID-001/ID-002/ID-003/ID-007/ID-008 sind für den 0.1-Local-Scope vollständig implementiert und verifiziert. SRC-/LOC-/Job-/Reliability-Anforderungen bleiben dort `PARTIAL`, wo Volltextindexierung, Crash-Reclaim, Retry/Backoff, Administration oder spätere Verarbeitungsstufen noch fehlen. Evidence: `docs/evidence/pre-g0-production-foundation/`, `docs/evidence/pre-g0-local-scan-document-registry/` und `docs/evidence/pre-g0-crawl-work-queue/`.
 
 ## Register
 
@@ -31,7 +31,7 @@
 | SRC-001 | Quellen als eigenständige Objekte | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
 | SRC-002 | Quellentypen erweiterbar | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-003 | Quelle aktivieren/deaktivieren | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-local-scan-document-registry/ |
-| SRC-004 | Vollständiger Neuaufbau pro Quelle | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| SRC-004 | Vollständiger Neuaufbau pro Quelle | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-crawl-work-queue/ |
 | SRC-005 | Inkrementelle Aktualisierung | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-006 | Include-Regeln | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SRC-007 | Exclude-Regeln | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -187,7 +187,7 @@
 | AUTH-011 | OIDC/SSO | SOLL | 1.3.x | SPECIFIED | NOT STARTED | PENDING | – |
 | AUTH-012 | TOTP/MFA | KANN | 1.3.x | SPECIFIED | NOT STARTED | PENDING | – |
 | ADM-001 | Administrationsoberfläche | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| ADM-002 | Crawl starten | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| ADM-002 | Crawl starten | MUSS | 0.7.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-crawl-work-queue/ |
 | ADM-003 | Crawl pausieren | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ADM-004 | Crawl fortsetzen | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | ADM-005 | Zeitpläne | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -243,12 +243,12 @@
 | CON-008 | Git-Repositories | KANN | 2.x | SPECIFIED | NOT STARTED | PENDING | – |
 | PERF-001 | Interaktive Suche | MUSS | 0.8.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | PERF-002 | Skalierungsstufen | MUSS | 0.8.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| PERF-003 | Hintergrundarbeit | MUSS | 0.8.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| PERF-003 | Hintergrundarbeit | MUSS | 0.8.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-crawl-work-queue/ |
 | PERF-004 | Ressourcenlimits | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| REL-001 | Einzeldateifehler isolieren | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| REL-001 | Einzeldateifehler isolieren | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-crawl-work-queue/ |
 | REL-002 | Netzwerkfehler isolieren | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| REL-003 | Wiederanlauf | MUSS | 0.8.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| REL-004 | Keine Massendeletion bei Unsicherheit | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| REL-003 | Wiederanlauf | MUSS | 0.8.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-crawl-work-queue/ |
+| REL-004 | Keine Massendeletion bei Unsicherheit | MUSS | 0.2.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-crawl-work-queue/ |
 | REL-005 | Checkpoint | SOLL | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SEC-001 | Least Privilege | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SEC-002 | Parserisolation | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |

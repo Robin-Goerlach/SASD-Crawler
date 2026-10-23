@@ -81,24 +81,26 @@ The canonical C#/.NET 8 production tree has started without declaring G0 complet
 
 - `Sasd.Crawler.Domain` with strong source identity and infrastructure-neutral source state;
 - `Sasd.Crawler.Application` with the UI-neutral source-catalog use-case boundary;
-- `Sasd.Crawler.Persistence.Sqlite` with centralized control-store migrations, schema v2, WAL, sources, scan runs, document registry and atomic reconciliation;
+- `Sasd.Crawler.Persistence.Sqlite` with centralized control-store migrations, schema v3, WAL, sources, scan runs, document registry, durable crawl jobs/work items and atomic reconciliation;
 - `Sasd.Crawler.Indexer.LocalFileSystem` with streaming recursive traversal, maximum-depth control and fail-closed handling of incomplete scans;
 - `Sasd.Crawler.Application` with a UI-neutral `LocalSourceScanService`, `IDocumentRegistry` and `ILocalFileSystemConnector`;
 - `Sasd.Crawler.Domain` with strong `DocumentId`/`ScanRunId` identities and durable document metadata;
+- `Sasd.Crawler.Indexer.Workers` with a durable one-item processor and Generic Host background worker;
 - `Sasd.Crawler.Frontend` with a testable MVP presenter;
-- `Sasd.Crawler.WinForms` with the first production source-management shell;
+- `Sasd.Crawler.WinForms` with the production source-management shell and a `Scan now` command that only queues work;
 - architecture tests that guard frontend/shared/indexer dependency direction;
 - dedicated Frontend and Indexer solution filters in addition to the canonical `Sasd.Crawler.sln`.
 
-The first foundation slice was verified by CI #22. CI #25 verified the Local Scan / Document Registry code head with restore, format, Release build and **69 passing tests** (32 production tests plus 37 spike tests; 0 failed, 0 skipped).
+The first foundation slice was verified by CI #22, Local Scan / Document Registry by CI #25, and the durable queue/background-worker code head by CI #28. The current branch has restore, format, Release build and **83 passing tests** (46 production/architecture/E2E tests plus 37 spike tests; 0 failed, 0 skipped).
 
-The local metadata crawl, durable Document Registry, ScanRun identity and fail-closed reconciliation path are now implemented. An incomplete scan is never deletion authority: only `Succeeded` can mark unseen registry entries missing.
+The local metadata crawl, durable Document Registry, ScanRun identity and fail-closed reconciliation path are implemented. Crawl requests can now be stored as durable CrawlJobs/WorkItems and executed by a Generic Host BackgroundService; the WinForms **Scan now** command never performs filesystem traversal itself.
 
-This remains deliberately **pre-G0 work**, not a claim that milestone 0.1 has passed. Background CrawlJob/WorkItem execution, Lucene product integration, TXT/HTML content indexing and the search UI still remain.
+This remains deliberately **pre-G0 work**, not a claim that milestone 0.1 has passed. Automatic crashed-lease recovery is still deferred, and Lucene product integration, TXT/HTML content indexing and the search UI remain.
 
 Evidence:
 - [`docs/evidence/pre-g0-production-foundation/SUMMARY.md`](docs/evidence/pre-g0-production-foundation/SUMMARY.md)
 - [`docs/evidence/pre-g0-local-scan-document-registry/SUMMARY.md`](docs/evidence/pre-g0-local-scan-document-registry/SUMMARY.md)
+- [`docs/evidence/pre-g0-crawl-work-queue/SUMMARY.md`](docs/evidence/pre-g0-crawl-work-queue/SUMMARY.md)
 
 ### A1 architecture spike
 

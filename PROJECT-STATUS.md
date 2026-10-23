@@ -1,6 +1,6 @@
 # SASD-Crawler – Projektstatus
 
-**Stichtag:** 22. Oktober 2026  
+**Stichtag:** 23. Oktober 2026  
 **Gesamtstatus:** 🟡 Architekturvalidierung; A2 technisch erfolgreich, A3–A5 mit belastbarer Teil-Evidence, G0 noch nicht freigegeben  
 **Aktueller Arbeitsblock:** **G0-Rest-Evidence plus verifizierte Pre-G0-C#-Produktionsbasis**  
 **Nächstes Gate:** **G0 – Architecture Feasibility Review**  
@@ -22,8 +22,8 @@
 | A4 Media Identity | 🟡 CONDITIONAL GO | Windows-API-/Matching-Modell + 13 Tests; physische Wechselmedien-/Letter-Wechsel-Smokes offen |
 | A5 Tika vs. Toxy | 🟡 CONDITIONAL / DECISION CLEAR | Tika bleibt Default; kein Toxy-Fast-Path. Real-/Legacy-DOC/PPT-/verschlüsselter Korpus offen |
 | G0 | 🔴 NOT READY | technische PoCs weit fortgeschritten, aber Rest-Evidence, ADR-Reviews und .NET-8-Lifecycle-Entscheidung offen |
-| C# Produktionsbasis | 🟢 FOUNDATION VERIFIED | Source Catalog plus Local Full Scan, Document Registry und fail-closed Reconciliation; 32 Produktionstests grün; zählt noch nicht als G0-/0.1-Gate |
-| CI | 🟢 BASELINE VERIFIED | PR #8 Code-Head: Restore/Format/Release-Build/Tests grün; 69 Tests gesamt |
+| C# Produktionsbasis | 🟢 FOUNDATION VERIFIED | Source Catalog, Local Full Scan, Document Registry, durable CrawlJob/WorkItem Queue und Generic-Host Background Worker; 46 Produktionstests grün; zählt noch nicht als G0-/0.1-Gate |
+| CI | 🟢 BASELINE VERIFIED | PR #9 Code-Head: Restore/Format/Release-Build/Tests grün; 83 Tests gesamt |
 | Milestone 0.1 | ⬜ BLOCKED | darf erst nach G0-GO beginnen |
 
 ## 2. Verifizierte Pre-G0-Produktionsbasis
@@ -34,22 +34,28 @@ Implementiert und automatisiert verifiziert:
 
 - `src/shared/Sasd.Crawler.Domain`: `SourceId`, `SourceKind`, `SourceDefinition`;
 - `src/shared/Sasd.Crawler.Application`: `ISourceCatalog`, `ISourceRepository`, Source-Use-Cases und lokale Canonical-Location-Normalisierung;
-- `src/indexer/Sasd.Crawler.Persistence.Sqlite`: zentraler SQLite-Control-Store, Schema v2, WAL, Source-/Scan-/Document-Persistenz und atomare Reconciliation;
+- `src/indexer/Sasd.Crawler.Persistence.Sqlite`: zentraler SQLite-Control-Store, Schema v3, WAL, Source-/Scan-/Document-Persistenz, durable CrawlJob/WorkItem Queue und atomare Reconciliation;
 - `src/indexer/Sasd.Crawler.Indexer.LocalFileSystem`: streamingbasierte lokale Traversierung mit Tiefenbegrenzung, Reparse-Point-Schutz und nicht-fatalen Scan-Issues;
 - `src/shared/Sasd.Crawler.Application`: `LocalSourceScanService`, `IDocumentRegistry` und `ILocalFileSystemConnector` als UI-neutrale Scan-Grenzen;
 - `src/shared/Sasd.Crawler.Domain`: zusätzlich `DocumentId`, `ScanRunId`, `DocumentRecord` und explizite Scan-Outcomes;
 - `src/frontend/Sasd.Crawler.Frontend`: UI-neutraler MVP Presenter;
-- `src/frontend/Sasd.Crawler.WinForms`: produktiver .NET-8-WinForms-Shell für Quellenliste, lokale Quelle registrieren und Aktiv/Inaktiv;
+- `src/indexer/Sasd.Crawler.Indexer.Workers`: `CrawlWorkItemProcessor` + Generic-Host-`BackgroundService` für durable Queue-Ausführung außerhalb des UI-Threads;
+- `src/frontend/Sasd.Crawler.WinForms`: produktiver .NET-8-WinForms-Shell für Quellenliste, lokale Quelle registrieren, Aktiv/Inaktiv und `Scan now` als reinen Queue-Befehl;
 - additive Developer-Views `Sasd.Crawler.Frontend.slnf` und `Sasd.Crawler.Indexer.slnf`;
 - Architekturtests sichern die Frontend/shared/Indexer-Grenzen ab.
 
-Der erste Foundation-Slice wurde durch CI #22 verifiziert. Der zweite Code-Slice wurde durch CI #25 auf Commit `4c8a4bf5a9ea0888b934c58cf6790e2482ea09da` verifiziert: Restore, Format, Release-Build und Tests erfolgreich; **69 Tests gesamt, 0 Fehler, 0 übersprungen**. Davon gehören 32 Tests zur Produktionsstruktur und 37 zu den Architekturspikes.
+Der erste Foundation-Slice wurde durch CI #22 verifiziert, der Local-Scan-/Registry-Slice durch CI #25. Der dritte Code-Slice wurde durch CI #28 auf Commit `dc4296caff07b70c7347bcd6e7202de20d16caf7` verifiziert: Restore, Format, Release-Build und Tests erfolgreich; **83 Tests gesamt, 0 Fehler, 0 übersprungen**. Davon gehören 46 Tests zur Produktionsstruktur und 37 zu den Architekturspikes.
 
-Die Registry-Anforderungen ID-001, ID-002, ID-003, ID-007 und ID-008 sind damit für den 0.1-Local-Scope vollständig implementiert und automatisiert verifiziert. Local-Crawl-Anforderungen bleiben teilweise, weil Volltextindexierung, CrawlJob/WorkItem und Search-End-to-End noch fehlen.
+Neu vorhanden sind `CrawlJob`, `WorkItem`, persistente Lease-Metadaten, eine SQLite-v3-Queue, `CrawlJobService`, `CrawlWorkItemProcessor`, ein Generic-Host-`BackgroundService` und ein WinForms-`Scan now`-Befehl, der ausschließlich durable Arbeit einreiht. Filesystem-I/O läuft nicht im UI-Thread.
+
+Automatisches Reclaim abgelaufener Leases ist bewusst noch nicht implementiert. Ein harter Prozessabbruch kann daher ein WorkItem in `Leased` zurücklassen; das ist fail-closed und verhindert Doppelverarbeitung, erfüllt aber noch keinen vollständigen Crash-Wiederanlauf.
+
+Die Registry-Anforderungen ID-001, ID-002, ID-003, ID-007 und ID-008 bleiben vollständig implementiert und verifiziert. Job-/Background-/Reliability-Anforderungen werden nur teilweise hochgestuft, soweit der aktuelle Slice ihre Semantik tatsächlich beweist.
 
 Evidence:
 - `docs/evidence/pre-g0-production-foundation/`
 - `docs/evidence/pre-g0-local-scan-document-registry/`
+- `docs/evidence/pre-g0-crawl-work-queue/`
 
 ## 3. Verifizierte Spike-Evidence
 
