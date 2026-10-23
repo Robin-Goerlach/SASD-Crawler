@@ -10,7 +10,7 @@ namespace Sasd.Crawler.Persistence.Sqlite.Tests;
 public sealed class SqliteControlStoreMigrationTests
 {
     [Fact]
-    public async Task ExistingVersion1Database_MigratesToVersion2WithoutLosingSource()
+    public async Task ExistingVersion1Database_MigratesToCurrentVersionWithoutLosingSource()
     {
         using var fixture = new LegacyVersion1Database();
         var sourceId = SourceId.New();
@@ -24,7 +24,7 @@ public sealed class SqliteControlStoreMigrationTests
 
         Assert.NotNull(source);
         Assert.Equal("Legacy", source.DisplayName);
-        Assert.Equal(2, fixture.ReadUserVersion());
+        Assert.Equal(3, fixture.ReadUserVersion());
     }
 
     private sealed class LegacyVersion1Database : IDisposable
