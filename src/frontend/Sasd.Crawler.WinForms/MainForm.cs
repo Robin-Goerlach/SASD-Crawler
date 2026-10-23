@@ -23,6 +23,7 @@ public sealed class MainForm : Form, IMainView
     private readonly MainPresenter presenter;
     private readonly ILogger<MainForm> logger;
     private readonly CancellationTokenSource lifetimeCancellation = new();
+    private bool isBusy;
 
     /// <summary>Creates the production source-catalog window.</summary>
     public MainForm(
@@ -97,12 +98,9 @@ public sealed class MainForm : Form, IMainView
     /// <inheritdoc />
     public void SetBusy(bool isBusy)
     {
+        this.isBusy = isBusy;
         UseWaitCursor = isBusy;
-        sourceList.Enabled = !isBusy;
-        addFolderButton.Enabled = !isBusy;
-        refreshButton.Enabled = !isBusy;
-        toggleEnabledButton.Enabled = !isBusy && SelectedSource is not null;
-        scanNowButton.Enabled = !isBusy && SelectedSource?.IsEnabled == true;
+        UpdateSelectionCommands();
     }
 
     /// <inheritdoc />
@@ -242,9 +240,15 @@ public sealed class MainForm : Form, IMainView
     private void UpdateSelectionCommands()
     {
         var selected = SelectedSource;
-        toggleEnabledButton.Enabled = selected is not null;
+
+        // ShowSources can run while a presenter operation still owns the busy state. Centralizing all enable/disable
+        // decisions here prevents a list refresh from accidentally re-enabling commands before that operation ends.
+        sourceList.Enabled = !isBusy;
+        addFolderButton.Enabled = !isBusy;
+        refreshButton.Enabled = !isBusy;
+        toggleEnabledButton.Enabled = !isBusy && selected is not null;
         toggleEnabledButton.Text = selected?.IsEnabled == true ? "Disable" : "Enable";
-        scanNowButton.Enabled = selected?.IsEnabled == true;
+        scanNowButton.Enabled = !isBusy && selected?.IsEnabled == true;
     }
 
     private async Task RunUiOperationAsync(Func<CancellationToken, Task> operation)
