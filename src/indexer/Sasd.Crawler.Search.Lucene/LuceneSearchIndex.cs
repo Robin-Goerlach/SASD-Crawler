@@ -86,7 +86,6 @@ public sealed class LuceneSearchIndex : ISearchIndex
 
             throw;
         }
-        ValidateAndStampAnalyzerVersion();
     }
 
     /// <summary>
