@@ -192,6 +192,13 @@ public sealed class LuceneSearchIndexTests : IAsyncLifetime
 
         Assert.Equal(defaults.Version, exception.PersistedAnalyzerVersion);
         Assert.Equal("changed-v2", exception.RequiredAnalyzerVersion);
+
+        // The rejected constructor must release Lucene's writer lock so the correct configuration can reopen the
+        // same physical index immediately.
+        await using var reopened = CreateIndex();
+        Assert.Single((await reopened.SearchAsync(
+            new SearchRequest("searchable"),
+            CancellationToken.None)).Hits);
     }
 
     [Fact]

@@ -65,7 +65,26 @@ public sealed class LuceneSearchIndex : ISearchIndex
         analyzer = CreateAnalyzer(analyzerConfiguration);
         writer = CreateWriter(directory, analyzer);
         AnalyzerConfigurationVersion = analyzerConfiguration.Version;
-        ValidateAndStampAnalyzerVersion();
+        try
+        {
+            ValidateAndStampAnalyzerVersion();
+        }
+        catch
+        {
+            // Constructor failure must release Lucene's write lock immediately. Otherwise a configuration mismatch
+            // would prevent the caller from rebuilding or reopening the same index until process termination.
+            try
+            {
+                writer.Rollback();
+            }
+            finally
+            {
+                analyzer.Dispose();
+                directory.Dispose();
+            }
+
+            throw;
+        }
         ValidateAndStampAnalyzerVersion();
     }
 
