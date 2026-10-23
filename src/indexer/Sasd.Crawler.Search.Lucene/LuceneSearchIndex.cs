@@ -13,6 +13,7 @@ using Lucene.Net.Util;
 using Sasd.Crawler.Application.Search;
 using Sasd.Crawler.Domain.Documents;
 using Sasd.Crawler.Domain.Sources;
+using LuceneDirectory = global::LuceneDirectory;
 
 namespace Sasd.Crawler.Search.Lucene;
 
@@ -43,7 +44,7 @@ public sealed class LuceneSearchIndex : ISearchIndex
         "title_other", "content_other",
     ];
 
-    private readonly Lucene.Net.Store.Directory directory;
+    private readonly LuceneDirectory directory;
     private readonly Analyzer analyzer;
     private readonly IndexWriter writer;
     private readonly SemaphoreSlim gate = new(1, 1);
@@ -92,7 +93,7 @@ public sealed class LuceneSearchIndex : ISearchIndex
     /// Creates an index over a caller-owned Lucene directory for deterministic tests.
     /// </summary>
     internal LuceneSearchIndex(
-        Lucene.Net.Store.Directory directory,
+        LuceneDirectory directory,
         SearchAnalyzerConfiguration analyzerConfiguration)
     {
         this.directory = directory ?? throw new ArgumentNullException(nameof(directory));
@@ -310,7 +311,7 @@ public sealed class LuceneSearchIndex : ISearchIndex
     }
 
     private static IndexWriter CreateWriter(
-        Lucene.Net.Store.Directory directory,
+        LuceneDirectory directory,
         Analyzer analyzer)
         => new(
             directory,
