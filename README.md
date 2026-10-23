@@ -168,6 +168,7 @@ The authoritative details and gates are in [`ROADMAP.md`](ROADMAP.md).
 | [`docs/baseline/CR-2026-002-SEARCH-DUPLICATES-POLYGLOT.md`](docs/baseline/CR-2026-002-SEARCH-DUPLICATES-POLYGLOT.md) | C#/.NET-8, search/duplicate and polyglot change record |
 | [`languages/README.md`](languages/README.md) | multi-language repository boundary |
 | [`src/README.md`](src/README.md) | production frontend/shared/indexer repository layout |
+| [`archive/spikes/README.md`](archive/spikes/README.md) | historical A1–A5 architecture spikes, tests and probes |
 | [`docs/baseline/CR-2026-003-FRONTEND-INDEXER-BOUNDARY.md`](docs/baseline/CR-2026-003-FRONTEND-INDEXER-BOUNDARY.md) | frontend/indexer repository change record |
 | [`docs/architecture/adr/ADR-0017-frontend-indexer-repository-boundary.md`](docs/architecture/adr/ADR-0017-frontend-indexer-repository-boundary.md) | accepted frontend/indexer dependency boundary |
 | [`docs/baseline/PFLICHTENHEFT.md`](docs/baseline/PFLICHTENHEFT.md) | active WinForms/.NET 8 technical baseline |
