@@ -25,7 +25,7 @@ namespace Sasd.Crawler.Search.Lucene;
 /// commits pending writes before opening a reader, which makes read-your-writes behavior deterministic. Near-real-
 /// time reader reuse and batching are optimization work and must not alter the public consistency semantics.
 /// </remarks>
-public sealed class LuceneSearchIndex : ISearchIndex
+public sealed class LuceneSearchIndex : ISearchIndex, IDisposable
 {
     private const LuceneVersion Version = LuceneVersion.LUCENE_48;
 
@@ -235,6 +235,10 @@ public sealed class LuceneSearchIndex : ISearchIndex
             gate.Release();
         }
     }
+
+    /// <inheritdoc />
+    public void Dispose()
+        => DisposeAsync().AsTask().GetAwaiter().GetResult();
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()

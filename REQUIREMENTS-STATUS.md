@@ -1,6 +1,6 @@
 # Requirements Status Register
 
-**Stand:** 23. Oktober 2026  
+**Stand:** 24. Oktober 2026  
 **Anforderungen:** 260
 
 ## Statusdefinition
@@ -16,13 +16,13 @@
 | Dimension | Stand |
 |---|---|
 | Fachlich spezifiziert | 260/260 |
-| Vollständig implementiert | 5/260 |
-| Vollständig verifiziert | 5/260 |
-| Teilimplementiert / Teilverifiziert | 12/260 |
+| Vollständig implementiert | 10/260 |
+| Vollständig verifiziert | 10/260 |
+| Teilimplementiert / Teilverifiziert | 14/260 |
 
 > Milestone 0.0.1 ist ein Architektur-Spike und implementiert keine Produktanforderung. Deshalb wurde trotz grüner A1-Tests kein Eintrag unten auf `DONE` gesetzt. Evidence: `docs/evidence/0.0.1/`.
 >
-> Am 22.10.2026 wurde eine verifizierte Pre-G0-Produktionsbasis begonnen. Der zweite Slice ergänzt Local Crawl, Document Registry, ScanRunId und fail-closed Reconciliation. Am 23.10.2026 ergänzt der dritte Slice durable CrawlJobs/WorkItems und einen Generic-Host-BackgroundWorker. ID-001/ID-002/ID-003/ID-007/ID-008 sind für den 0.1-Local-Scope vollständig implementiert und verifiziert. SRC-/LOC-/Job-/Reliability-Anforderungen bleiben dort `PARTIAL`, wo Volltextindexierung, Crash-Reclaim, Retry/Backoff, Administration oder spätere Verarbeitungsstufen noch fehlen. Evidence: `docs/evidence/pre-g0-production-foundation/`, `docs/evidence/pre-g0-local-scan-document-registry/` und `docs/evidence/pre-g0-crawl-work-queue/`.
+> Am 22.10.2026 wurde eine verifizierte Pre-G0-Produktionsbasis begonnen. Bis 24.10.2026 kamen Local Crawl/Registry, durable Multi-Stage WorkItems, der produktive Lucene-Adapter und die Native-TXT/HTML-Pipeline hinzu. ID-001/ID-002/ID-003/ID-007/ID-008 sowie EXT-001/EXT-002 und IDX-001/IDX-002/IDX-003 sind für den lokalen 0.1-Pfad implementiert und automatisiert verifiziert. SEA-001 bleibt bis zum user-facing SearchService/WinForms-Suchpfad PARTIAL; SEA-022 bleibt trotz verifizierter Analyzer-Semantik PARTIAL, solange die produktive Konfigurationsoberfläche/-persistenz fehlt. G0 bleibt formal offen. Evidence: `docs/evidence/pre-g0-*/`.
 
 ## Register
 
@@ -78,8 +78,8 @@
 | WEB-017 | Verlinkte Dokumente | MUSS | 0.3.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | WEB-018 | Authentisierte Websites | SOLL | 1.3.x | SPECIFIED | NOT STARTED | PENDING | – |
 | WEB-019 | JavaScript-renderte SPAs | KANN | 1.3.x | SPECIFIED | NOT STARTED | PENDING | – |
-| EXT-001 | Textdateien | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| EXT-002 | HTML | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| EXT-001 | Textdateien | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-native-text-html-indexing/ |
+| EXT-002 | HTML | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-native-text-html-indexing/ |
 | EXT-003 | PDF | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | EXT-004 | DOCX | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | EXT-005 | DOC | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -130,15 +130,15 @@
 | META-006 | EXIF | SOLL | 1.2.x | SPECIFIED | NOT STARTED | PENDING | – |
 | META-007 | GPS | KANN | 1.2.x | SPECIFIED | NOT STARTED | PENDING | – |
 | META-008 | Benutzerdefinierte Felder | SOLL | 1.2.x | SPECIFIED | NOT STARTED | PENDING | – |
-| IDX-001 | Persistenter Inhaltsindex | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| IDX-002 | Inkrementelle Updates | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| IDX-003 | Löschung | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| IDX-001 | Persistenter Inhaltsindex | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-native-text-html-indexing/ |
+| IDX-002 | Inkrementelle Updates | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-native-text-html-indexing/ |
+| IDX-003 | Löschung | MUSS | 0.1.0 | SPECIFIED | IMPLEMENTED | VERIFIED | docs/evidence/pre-g0-native-text-html-indexing/ |
 | IDX-004 | Offline versus gelöscht | MUSS | 0.2.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | IDX-005 | Indexversion | MUSS | 0.4.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | IDX-006 | Reindex nach Parserupgrade | MUSS | 0.7.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | IDX-007 | Konsistenzprüfung | MUSS | 0.8.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | IDX-008 | Recovery | MUSS | 0.9.0 | SPECIFIED | NOT STARTED | PENDING | – |
-| SEA-001 | Stichwortsuche | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
+| SEA-001 | Stichwortsuche | MUSS | 0.1.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-native-text-html-indexing/ |
 | SEA-002 | Phrase Search | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SEA-003 | AND | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | SEA-004 | OR | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
@@ -159,7 +159,7 @@
 | SEA-019 | Related/Similar | SOLL | 1.5.x | SPECIFIED | NOT STARTED | PENDING | – |
 | SEA-020 | Result Pinning | SOLL | 1.4.x | SPECIFIED | NOT STARTED | PENDING | – |
 | SEA-021 | Learning to Rank | KANN | 1.5.x | SPECIFIED | NOT STARTED | PENDING | – |
-| SEA-022 | Stopwortfilterung | MUSS | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | Amendment 0.1b / CR-2026-002 |
+| SEA-022 | Stopwortfilterung | MUSS | 0.5.0 | SPECIFIED | PARTIAL | PARTIAL | docs/evidence/pre-g0-lucene-product-search-index/ |
 | UI-001 | Zentrales Suchfeld | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | UI-002 | Search-as-you-type Reaktion | SOLL | 0.5.0 | SPECIFIED | NOT STARTED | PENDING | – |
 | UI-003 | Treffername | MUSS | 0.1.0 | SPECIFIED | NOT STARTED | PENDING | – |

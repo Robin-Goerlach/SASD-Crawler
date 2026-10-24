@@ -81,26 +81,30 @@ The canonical C#/.NET 8 production tree has started without declaring G0 complet
 
 - `Sasd.Crawler.Domain` with strong source identity and infrastructure-neutral source state;
 - `Sasd.Crawler.Application` with the UI-neutral source-catalog use-case boundary;
-- `Sasd.Crawler.Persistence.Sqlite` with centralized control-store migrations, schema v3, WAL, sources, scan runs, document registry, durable crawl jobs/work items and atomic reconciliation;
+- `Sasd.Crawler.Persistence.Sqlite` with centralized control-store migrations, schema v4, WAL, sources, scan runs, document registry, durable multi-stage crawl jobs/work items and atomic reconciliation;
 - `Sasd.Crawler.Indexer.LocalFileSystem` with streaming recursive traversal, maximum-depth control and fail-closed handling of incomplete scans;
 - `Sasd.Crawler.Application` with a UI-neutral `LocalSourceScanService`, `IDocumentRegistry` and `ILocalFileSystemConnector`;
 - `Sasd.Crawler.Domain` with strong `DocumentId`/`ScanRunId` identities and durable document metadata;
-- `Sasd.Crawler.Indexer.Workers` with a durable one-item processor and Generic Host background worker;
+- `Sasd.Crawler.Indexer.Workers` with durable discovery/index/delete processing and a Generic Host background worker;
+- `Sasd.Crawler.Search.Lucene` with the production `ISearchIndex` adapter, persistent update/delete/search and versioned DE/EN analyzers;
+- `Sasd.Crawler.Extraction.Native` with bounded read-only TXT/HTML extraction and DOM-based HTML text handling;
 - `Sasd.Crawler.Frontend` with a testable MVP presenter;
 - `Sasd.Crawler.WinForms` with the production source-management shell and a `Scan now` command that only queues work;
 - architecture tests that guard frontend/shared/indexer dependency direction;
 - dedicated Frontend and Indexer solution filters in addition to the canonical `Sasd.Crawler.sln`.
 
-The first foundation slice was verified by CI #22, Local Scan / Document Registry by CI #25, and the durable queue/background-worker code head by CI #28. The current branch has restore, format, Release build and **83 passing tests** (46 production/architecture/E2E tests plus 37 spike tests; 0 failed, 0 skipped).
+The foundation slices were verified by CI #22/#25/#28. The production Lucene adapter was verified on merged main by CI #37 with **97 passing tests**. The current TXT/HTML processing slice is verified by CI #39 with **115 passing tests** (78 production/architecture/E2E tests plus 37 archived spike tests; 0 failed, 0 skipped).
 
-The local metadata crawl, durable Document Registry, ScanRun identity and fail-closed reconciliation path are implemented. Crawl requests can now be stored as durable CrawlJobs/WorkItems and executed by a Generic Host BackgroundService; the WinForms **Scan now** command never performs filesystem traversal itself.
+The local path now reaches from durable discovery through Document Registry and document-scoped WorkItems into native TXT/HTML extraction and persistent Lucene indexing. Rewriting a file updates the stable DocumentId entry, and search-index deletion is queued only from the same authoritative reconciliation decision that marks a document missing.
 
-This remains deliberately **pre-G0 work**, not a claim that milestone 0.1 has passed. Automatic crashed-lease recovery is still deferred, and Lucene product integration, TXT/HTML content indexing and the search UI remain.
+This remains deliberately **pre-G0 work**, not a claim that milestone 0.1 has passed. Automatic crashed-lease recovery and the user-facing SearchService/WinForms search workspace remain open.
 
 Evidence:
 - [`docs/evidence/pre-g0-production-foundation/SUMMARY.md`](docs/evidence/pre-g0-production-foundation/SUMMARY.md)
 - [`docs/evidence/pre-g0-local-scan-document-registry/SUMMARY.md`](docs/evidence/pre-g0-local-scan-document-registry/SUMMARY.md)
 - [`docs/evidence/pre-g0-crawl-work-queue/SUMMARY.md`](docs/evidence/pre-g0-crawl-work-queue/SUMMARY.md)
+- [`docs/evidence/pre-g0-lucene-product-search-index/SUMMARY.md`](docs/evidence/pre-g0-lucene-product-search-index/SUMMARY.md)
+- [`docs/evidence/pre-g0-native-text-html-indexing/SUMMARY.md`](docs/evidence/pre-g0-native-text-html-indexing/SUMMARY.md)
 
 ### A1 architecture spike
 

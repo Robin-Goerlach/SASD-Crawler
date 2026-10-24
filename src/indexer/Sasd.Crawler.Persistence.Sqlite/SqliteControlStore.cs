@@ -12,7 +12,7 @@ namespace Sasd.Crawler.Persistence.Sqlite;
 /// </remarks>
 public sealed class SqliteControlStore
 {
-    private const int CurrentSchemaVersion = 3;
+    private const int CurrentSchemaVersion = 4;
     private readonly string connectionString;
     private readonly SemaphoreSlim initializationGate = new(1, 1);
     private bool initialized;
@@ -86,6 +86,7 @@ public sealed class SqliteControlStore
                     0 => await ApplyVersion1Async(connection, cancellationToken).ConfigureAwait(false),
                     1 => await ApplyVersion2Async(connection, cancellationToken).ConfigureAwait(false),
                     2 => await ApplyVersion3Async(connection, cancellationToken).ConfigureAwait(false),
+                    3 => await ApplyVersion4Async(connection, cancellationToken).ConfigureAwait(false),
                     _ => throw new InvalidOperationException($"No migration path exists from schema version {version}."),
                 };
             }
@@ -280,6 +281,92 @@ public sealed class SqliteControlStore
         await SetUserVersionAsync(connection, transaction, 3, cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return 3;
+    }
+
+    private static async Task<int> ApplyVersion4Async(
+        SqliteConnection connection,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction =
+            (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        await using (var command = connection.CreateCommand())
+        {
+            command.Transaction = transaction;
+            command.CommandText = """
+                CREATE TABLE work_items_v4 (
+                    work_item_id TEXT PRIMARY KEY,
+                    crawl_job_id TEXT NOT NULL,
+                    source_id TEXT NOT NULL,
+                    document_id TEXT NULL,
+                    stage TEXT NOT NULL
+                        CHECK (stage IN ('LocalFullScan', 'IndexDocument', 'DeleteFromSearchIndex')),
+                    status TEXT NOT NULL CHECK (status IN ('Pending', 'Leased', 'Succeeded', 'Failed')),
+                    maximum_depth INTEGER NULL CHECK (maximum_depth IS NULL OR maximum_depth >= 0),
+                    attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts >= 0),
+                    next_attempt_utc TEXT NOT NULL,
+                    lease_owner TEXT NULL,
+                    lease_until_utc TEXT NULL,
+                    created_utc TEXT NOT NULL,
+                    updated_utc TEXT NOT NULL,
+                    last_error TEXT NULL,
+                    FOREIGN KEY (crawl_job_id) REFERENCES crawl_jobs(crawl_job_id) ON DELETE CASCADE,
+                    FOREIGN KEY (source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
+                    FOREIGN KEY (document_id) REFERENCES documents(document_id)
+                );
+
+                INSERT INTO work_items_v4 (
+                    work_item_id,
+                    crawl_job_id,
+                    source_id,
+                    document_id,
+                    stage,
+                    status,
+                    maximum_depth,
+                    attempts,
+                    next_attempt_utc,
+                    lease_owner,
+                    lease_until_utc,
+                    created_utc,
+                    updated_utc,
+                    last_error)
+                SELECT
+                    work_item_id,
+                    crawl_job_id,
+                    source_id,
+                    NULL,
+                    stage,
+                    status,
+                    maximum_depth,
+                    attempts,
+                    next_attempt_utc,
+                    lease_owner,
+                    lease_until_utc,
+                    created_utc,
+                    updated_utc,
+                    last_error
+                FROM work_items;
+
+                DROP TABLE work_items;
+                ALTER TABLE work_items_v4 RENAME TO work_items;
+
+                CREATE INDEX ix_work_items_ready
+                    ON work_items(status, next_attempt_utc, created_utc);
+
+                CREATE UNIQUE INDEX ux_work_items_full_scan_per_job
+                    ON work_items(crawl_job_id)
+                    WHERE stage = 'LocalFullScan';
+
+                CREATE UNIQUE INDEX ux_work_items_document_stage_per_job
+                    ON work_items(crawl_job_id, stage, document_id)
+                    WHERE document_id IS NOT NULL;
+                """;
+            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await SetUserVersionAsync(connection, transaction, 4, cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return 4;
     }
 
     private static async Task SetUserVersionAsync(

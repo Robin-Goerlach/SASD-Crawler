@@ -290,6 +290,16 @@ public sealed class LocalSourceScanServiceTests
             return Task.CompletedTask;
         }
 
+        public Task<DocumentRecord?> GetDocumentAsync(
+            DocumentId documentId,
+            CancellationToken cancellationToken)
+            => Task.FromResult<DocumentRecord?>(null);
+
+        public Task<IReadOnlyList<DocumentRecord>> ListDocumentsSeenInScanAsync(
+            ScanRunId scanRunId,
+            CancellationToken cancellationToken)
+            => Task.FromResult<IReadOnlyList<DocumentRecord>>([]);
+
         public Task<IReadOnlyList<DocumentRecord>> ListDocumentsAsync(
             SourceId sourceId,
             CancellationToken cancellationToken)

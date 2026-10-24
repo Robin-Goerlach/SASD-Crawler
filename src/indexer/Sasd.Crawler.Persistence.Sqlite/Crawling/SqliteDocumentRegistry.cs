@@ -178,11 +178,11 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
                 $"Scan '{scanRunId}' is not an active run for source '{sourceId}'.");
         }
 
-        var newlyMissing = 0;
+        var newlyMissingDocumentIds = new List<DocumentId>();
         if (outcome == ScanRunOutcome.Succeeded)
         {
-            // This statement is the delete-authority boundary. It is impossible to reach for Partial/Failed/
-            // Cancelled runs through this implementation, so an incomplete traversal cannot become mass deletion.
+            // This statement is the delete-authority boundary. RETURNING captures exactly the documents whose
+            // lifecycle changed in this transaction, so downstream search cleanup does not need a second heuristic.
             await using var reconcile = connection.CreateCommand();
             reconcile.Transaction = transaction;
             reconcile.CommandText = """
@@ -190,17 +190,25 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
                 SET missing_since_utc = $completedUtc
                 WHERE source_id = $sourceId
                   AND last_seen_scan_run_id <> $scanRunId
-                  AND missing_since_utc IS NULL;
+                  AND missing_since_utc IS NULL
+                RETURNING document_id;
                 """;
             reconcile.Parameters.AddWithValue("$completedUtc", FormatTimestamp(completedAtUtc));
             reconcile.Parameters.AddWithValue("$sourceId", sourceId.ToString());
             reconcile.Parameters.AddWithValue("$scanRunId", scanRunId.ToString());
 
-            newlyMissing = await reconcile.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            await using var reader = await reconcile.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                newlyMissingDocumentIds.Add(DocumentId.Parse(reader.GetString(0)));
+            }
         }
 
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-        return new ScanCompletionResult(newlyMissing);
+        return new ScanCompletionResult(newlyMissingDocumentIds.Count)
+        {
+            NewlyMissingDocumentIds = newlyMissingDocumentIds,
+        };
     }
 
     /// <inheritdoc />
@@ -249,6 +257,73 @@ public sealed class SqliteDocumentRegistry : IDocumentRegistry
 
         // No document UPDATE appears in this code path by design.
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<DocumentRecord?> GetDocumentAsync(
+        DocumentId documentId,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT
+                document_id,
+                source_id,
+                canonical_locator,
+                display_name,
+                file_size,
+                created_utc,
+                modified_utc,
+                last_seen_utc,
+                last_seen_scan_run_id,
+                missing_since_utc
+            FROM documents
+            WHERE document_id = $documentId
+            LIMIT 1;
+            """;
+        command.Parameters.AddWithValue("$documentId", documentId.ToString());
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
+            ? ReadDocument(reader)
+            : null;
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<DocumentRecord>> ListDocumentsSeenInScanAsync(
+        ScanRunId scanRunId,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT
+                document_id,
+                source_id,
+                canonical_locator,
+                display_name,
+                file_size,
+                created_utc,
+                modified_utc,
+                last_seen_utc,
+                last_seen_scan_run_id,
+                missing_since_utc
+            FROM documents
+            WHERE last_seen_scan_run_id = $scanRunId
+            ORDER BY canonical_locator COLLATE NOCASE;
+            """;
+        command.Parameters.AddWithValue("$scanRunId", scanRunId.ToString());
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        var documents = new List<DocumentRecord>();
+
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            documents.Add(ReadDocument(reader));
+        }
+
+        return documents;
     }
 
     /// <inheritdoc />

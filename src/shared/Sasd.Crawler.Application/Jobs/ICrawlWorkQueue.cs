@@ -7,10 +7,6 @@ namespace Sasd.Crawler.Application.Jobs;
 /// <summary>
 /// Durable queue boundary used by application services and background workers.
 /// </summary>
-/// <remarks>
-/// The queue owns persistence and lease transitions but does not perform filesystem I/O itself. That separation
-/// keeps job scheduling independent from the concrete connector and makes restart/error behavior testable.
-/// </remarks>
 public interface ICrawlWorkQueue
 {
     /// <summary>Ensures durable queue schema/state is ready.</summary>
@@ -23,9 +19,7 @@ public interface ICrawlWorkQueue
         DateTimeOffset requestedAtUtc,
         CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Atomically leases the oldest ready pending work item, or returns <see langword="null"/> when none is ready.
-    /// </summary>
+    /// <summary>Atomically leases the oldest ready pending work item, or returns null when none is ready.</summary>
     Task<LeasedCrawlWorkItem?> TryLeaseNextAsync(
         string leaseOwner,
         DateTimeOffset nowUtc,
@@ -33,11 +27,20 @@ public interface ICrawlWorkQueue
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// Persists successful/partial scan output and finalizes the owned work item.
+    /// Completes discovery and atomically attaches any document-processing follow-up work to the same crawl job.
     /// </summary>
-    Task MarkCompletedAsync(
+    Task CompleteFullScanAsync(
         LeasedCrawlWorkItem workItem,
         LocalSourceScanResult result,
+        IReadOnlyCollection<DocumentWorkRequest> followUpWork,
+        DateTimeOffset completedAtUtc,
+        CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Completes one document-processing stage and finalizes the job when no pending/leased work remains.
+    /// </summary>
+    Task CompleteProcessingAsync(
+        LeasedCrawlWorkItem workItem,
         DateTimeOffset completedAtUtc,
         CancellationToken cancellationToken);
 
@@ -48,9 +51,7 @@ public interface ICrawlWorkQueue
         DateTimeOffset completedAtUtc,
         CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Releases an owned lease back to Pending, for example when the desktop host shuts down cooperatively.
-    /// </summary>
+    /// <summary>Releases an owned lease back to Pending, for example during cooperative host shutdown.</summary>
     Task ReleaseLeaseAsync(
         LeasedCrawlWorkItem workItem,
         DateTimeOffset nextAttemptUtc,

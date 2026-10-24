@@ -9,18 +9,13 @@ namespace Sasd.Crawler.Application.Crawling;
 /// </summary>
 public interface IDocumentRegistry
 {
-    /// <summary>Ensures document-registry schema/state is ready.</summary>
     Task InitializeAsync(CancellationToken cancellationToken);
 
-    /// <summary>Starts a new full scan in a non-authoritative running state.</summary>
     Task<ScanRunId> BeginFullScanAsync(
         SourceId sourceId,
         DateTimeOffset startedAtUtc,
         CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Upserts an observed file and binds its LastSeen marker to the active scan.
-    /// </summary>
     Task RecordSeenAsync(
         ScanRunId scanRunId,
         SourceId sourceId,
@@ -28,11 +23,6 @@ public interface IDocumentRegistry
         DateTimeOffset observedAtUtc,
         CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Completes a scan. Missing-document reconciliation is permitted only for <see cref="ScanRunOutcome.Succeeded"/>.
-    /// </summary>
-    /// <param name="outcome">Only <see cref="ScanRunOutcome.Succeeded"/> or <see cref="ScanRunOutcome.Partial"/>.</param>
-    /// <returns>Counts describing the atomic completion/reconciliation step.</returns>
     Task<ScanCompletionResult> CompleteFullScanAsync(
         ScanRunId scanRunId,
         SourceId sourceId,
@@ -41,9 +31,6 @@ public interface IDocumentRegistry
         DateTimeOffset completedAtUtc,
         CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Marks a running scan failed or cancelled. This operation never performs missing reconciliation.
-    /// </summary>
     Task AbortFullScanAsync(
         ScanRunId scanRunId,
         SourceId sourceId,
@@ -53,7 +40,16 @@ public interface IDocumentRegistry
         DateTimeOffset completedAtUtc,
         CancellationToken cancellationToken);
 
-    /// <summary>Returns durable documents known for one source.</summary>
+    /// <summary>Returns one durable document by identity, or null when it no longer exists.</summary>
+    Task<DocumentRecord?> GetDocumentAsync(
+        DocumentId documentId,
+        CancellationToken cancellationToken);
+
+    /// <summary>Returns documents observed by one specific scan run.</summary>
+    Task<IReadOnlyList<DocumentRecord>> ListDocumentsSeenInScanAsync(
+        ScanRunId scanRunId,
+        CancellationToken cancellationToken);
+
     Task<IReadOnlyList<DocumentRecord>> ListDocumentsAsync(
         SourceId sourceId,
         CancellationToken cancellationToken);
@@ -62,4 +58,8 @@ public interface IDocumentRegistry
 /// <summary>
 /// Describes the durable effects of completing a full scan.
 /// </summary>
-public sealed record ScanCompletionResult(int NewlyMissingDocuments);
+public sealed record ScanCompletionResult(int NewlyMissingDocuments)
+{
+    /// <summary>Gets stable IDs newly classified missing by this authoritative scan.</summary>
+    public IReadOnlyList<DocumentId> NewlyMissingDocumentIds { get; init; } = [];
+}

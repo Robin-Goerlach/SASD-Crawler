@@ -129,9 +129,16 @@ public sealed class CrawlJobServiceTests
             CancellationToken cancellationToken)
             => Task.FromResult<LeasedCrawlWorkItem?>(null);
 
-        public Task MarkCompletedAsync(
+        public Task CompleteFullScanAsync(
             LeasedCrawlWorkItem workItem,
             LocalSourceScanResult result,
+            IReadOnlyCollection<DocumentWorkRequest> followUpWork,
+            DateTimeOffset completedAtUtc,
+            CancellationToken cancellationToken)
+            => Task.CompletedTask;
+
+        public Task CompleteProcessingAsync(
+            LeasedCrawlWorkItem workItem,
             DateTimeOffset completedAtUtc,
             CancellationToken cancellationToken)
             => Task.CompletedTask;

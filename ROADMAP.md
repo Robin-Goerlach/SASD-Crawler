@@ -399,14 +399,14 @@ Tika bleibt Default, solange Toxy nicht für einen konkreten MIME-Typ überzeuge
 
 ---
 
-## Pre-G0 Produktionsfundament – Status 22.10.2026
+## Pre-G0 Produktionsfundament – Status 24.10.2026
 
 Auf ausdrückliche Entwicklungsanweisung wurde bereits ein begrenztes C#-Produktionsfundament unter der für 0.1 vorgesehenen Repository-Struktur angelegt und per CI verifiziert.
 
 Vorhanden:
 
 - Domain/Application Source Catalog;
-- zentraler SQLite Control Store Schema v3 mit v1→v2→v3-Migration;
+- zentraler SQLite Control Store Schema v4 mit v1→v2→v3→v4-Migration;
 - `DocumentId`, `ScanRunId`, Document Registry und LastSeen;
 - LocalFileSystemConnector mit Streaming-Rekursion und Maximaltiefe;
 - fail-closed Full-Scan/Reconciliation: nur `Succeeded` besitzt Missing-Autorität;
@@ -415,6 +415,10 @@ Vorhanden:
 - Generic-Host Background Worker;
 - realer Background-Queue-E2E-Test;
 - WinForms/MVP Source-Management-Shell mit `Scan now` als Queue-Befehl;
+- produktiver Lucene.NET-Adapter hinter `ISearchIndex` mit versionierter Stopwort-/Analyzer-Konfiguration;
+- Native TXT/HTML Extraction hinter `IContentExtractor`;
+- dokumentbezogene durable `IndexDocument`-/`DeleteFromSearchIndex`-WorkItems;
+- realer E2E-Nachweis für Initialindex, Inhaltsupdate und autoritative Search-Löschung;
 - Architekturgrenzentests;
 - Frontend-/Indexer-Solution-Filter.
 
@@ -447,7 +451,7 @@ Ein Benutzer kann:
 - [x] `Sasd.Crawler.sln` als Integrations-Solution plus additive Frontend-/Indexer-Developer-Views.
 - [ ] WinForms Search Shell.
 - [x] MVP Presenters.
-- [x] SQLite Control-Schema (aktuell v3; v1→v2→v3 Migration).
+- [x] SQLite Control-Schema (aktuell v4; v1→v2→v3→v4 Migration).
 - [x] `Source`.
 - [x] `Document`.
 - [x] `CrawlJob`.
@@ -457,14 +461,14 @@ Ein Benutzer kann:
 - [x] ScanRunId.
 - [x] Reconciliation.
 - [ ] SHA-256 bei Änderung.
-- [ ] gewähltes Search Backend.
+- [x] produktiver Lucene.NET-Adapter hinter `ISearchIndex` (ADR-0005 formal weiterhin Proposed bis G0-Review).
 - [ ] SearchService.
-- [ ] einfache Query.
+- [x] einfache Backend-Stichwortquery inkl. SourceId-Filter; UI-SearchService noch offen.
 - [ ] Snippet.
 - [ ] Open Original.
 - [ ] structured logging.
-- [ ] Unit-/Integrationtests.
-- [ ] Smoke E2E.
+- [x] Unit-/Integrationtests für bisher implementierten 0.1-Unterbau; UI-Slice bleibt offen.
+- [x] Backend-E2E: Local Crawl → TXT/HTML → Lucene → Update/Delete; WinForms-Suche bleibt offen.
 
 ## 12.3 Bewusst nicht enthalten
 

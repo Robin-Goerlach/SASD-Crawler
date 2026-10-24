@@ -3,12 +3,14 @@ namespace Sasd.Crawler.Domain.Jobs;
 /// <summary>
 /// Identifies the processing stage represented by a durable work item.
 /// </summary>
-/// <remarks>
-/// Version 0.1 starts with source discovery as one stage. Later extraction/index stages can be added without
-/// changing the job-vs-work-item distinction.
-/// </remarks>
 public enum WorkItemStage
 {
     /// <summary>Enumerate one local source and update the durable document registry.</summary>
     LocalFullScan = 1,
+
+    /// <summary>Extract one current document and upsert it into the search index.</summary>
+    IndexDocument = 2,
+
+    /// <summary>Remove one confirmed-missing document from the current search index.</summary>
+    DeleteFromSearchIndex = 3,
 }

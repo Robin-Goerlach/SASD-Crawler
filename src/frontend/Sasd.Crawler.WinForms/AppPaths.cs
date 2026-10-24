@@ -17,4 +17,7 @@ internal static class AppPaths
 
     /// <summary>Gets the SQLite control-store path.</summary>
     public static string ControlDatabasePath => Path.Combine(DataDirectory, "crawler.db");
+
+    /// <summary>Gets the rebuildable per-user Lucene search-index directory.</summary>
+    public static string SearchIndexDirectory => Path.Combine(DataDirectory, "search-index");
 }
