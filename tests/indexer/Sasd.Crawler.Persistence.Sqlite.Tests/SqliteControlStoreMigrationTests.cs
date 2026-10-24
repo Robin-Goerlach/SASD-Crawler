@@ -24,7 +24,7 @@ public sealed class SqliteControlStoreMigrationTests
 
         Assert.NotNull(source);
         Assert.Equal("Legacy", source.DisplayName);
-        Assert.Equal(3, fixture.ReadUserVersion());
+        Assert.Equal(4, fixture.ReadUserVersion());
     }
 
     private sealed class LegacyVersion1Database : IDisposable
