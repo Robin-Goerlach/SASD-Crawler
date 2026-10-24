@@ -1,4 +1,5 @@
 using Sasd.Crawler.Domain.Crawling;
+using Sasd.Crawler.Domain.Documents;
 
 namespace Sasd.Crawler.Application.Crawling;
 
@@ -10,4 +11,8 @@ public sealed record LocalSourceScanResult(
     ScanRunOutcome Outcome,
     int ObservedDocuments,
     int NonFatalIssues,
-    int NewlyMissingDocuments);
+    int NewlyMissingDocuments)
+{
+    /// <summary>Gets documents newly classified missing by this scan.</summary>
+    public IReadOnlyList<DocumentId> NewlyMissingDocumentIds { get; init; } = [];
+}

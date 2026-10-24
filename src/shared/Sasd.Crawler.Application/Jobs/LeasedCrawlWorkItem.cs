@@ -1,3 +1,4 @@
+using Sasd.Crawler.Domain.Documents;
 using Sasd.Crawler.Domain.Jobs;
 using Sasd.Crawler.Domain.Sources;
 
@@ -7,14 +8,15 @@ namespace Sasd.Crawler.Application.Jobs;
 /// Represents one queue item currently leased to a background worker.
 /// </summary>
 /// <remarks>
-/// Lease ownership is carried through completion/failure calls so a stale worker cannot finalize work it no longer
-/// owns if stronger lease-recovery semantics are added later.
+/// Document-processing stages carry only stable identity. Paths/content are re-read from the durable Document
+/// Registry so queue payloads cannot become a competing lifecycle source of truth.
 /// </remarks>
 public sealed record LeasedCrawlWorkItem(
     WorkItemId WorkItemId,
     CrawlJobId CrawlJobId,
     SourceId SourceId,
     WorkItemStage Stage,
+    DocumentId? DocumentId,
     int? MaximumDepth,
     int Attempt,
     string LeaseOwner,
