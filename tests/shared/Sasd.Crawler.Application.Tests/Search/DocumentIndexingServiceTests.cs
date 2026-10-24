@@ -46,7 +46,7 @@ public sealed class DocumentIndexingServiceTests
         await service.IndexAsync(document, CancellationToken.None);
 
         Assert.Equal("Seitentitel", index.Upserted?.Title);
-        Assert.Equal("de-DE", index.Upserted?.Language);
+        Assert.Equal("de-de", index.Upserted?.Language);
     }
 
     [Fact]
