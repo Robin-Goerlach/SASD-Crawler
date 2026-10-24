@@ -1,6 +1,6 @@
 # Current Checklist
 
-**Stichtag:** 23. Oktober 2026  
+**Stichtag:** 24. Oktober 2026  
 **Aktueller Fokus:** **G0-Rest-Evidence schließen und Baseline 0.1b konsistent halten**
 
 ## Baseline / Governance
@@ -30,7 +30,7 @@
 
 - [x] Domain-Projekt mit stabiler `SourceId` und `SourceDefinition`
 - [x] Application-Projekt mit UI-neutralem `ISourceCatalog`
-- [x] SQLite-Control-Store Schema v3 mit WAL, vorwärtskompatibler v1→v2→v3-Migration und Schema-Versionsschutz
+- [x] SQLite-Control-Store Schema v4 mit WAL, vorwärtskompatibler v1→v2→v3→v4-Migration und Schema-Versionsschutz
 - [x] UI-neutraler MVP Presenter
 - [x] produktive .NET-8-WinForms-Shell für Quellenverwaltung
 - [x] Frontend-/Indexer-Solution-Filter
@@ -49,11 +49,19 @@
 - [x] `CrawlWorkItemProcessor` und Generic-Host-`CrawlWorkBackgroundService`
 - [x] WinForms `Scan now` reiht nur durable Arbeit ein; kein Crawl auf dem UI-Thread
 - [x] Background-E2E: durable Job → echter BackgroundService → Local Scan → Document Registry
-- [x] CI #28: Restore / Format / Release-Build / Tests grün
-- [x] 83 Tests gesamt, 0 Fehler, 0 übersprungen
+- [x] produktiver `ISearchIndex`-Lucene-Adapter: persistentes Upsert/Delete/Search + SourceId-Filter
+- [x] versionierte, symmetrische DE/EN-Analyzer-/Stopwortkonfiguration; geänderte Version verlangt kontrollierten Rebuild
+- [x] Native `IContentExtractor` für TXT/HTML/HTM mit Größenlimit und DOM-basierter HTML-Textextraktion
+- [x] SQLite-v4-WorkItems tragen optional `DocumentId` und unterstützen `IndexDocument` / `DeleteFromSearchIndex`
+- [x] CrawlJob bleibt bis zum Abschluss aller Dokument-WorkItems `Running`
+- [x] autoritative Reconciliation liefert exakt die neu Missing gewordenen DocumentIds für Search-Delete
+- [x] echter E2E: TXT/HTML crawlen → Lucene suchen → TXT ändern → alten Treffer entfernen → HTML löschen → Treffer nach vollständigem Scan entfernen
+- [x] CI #39: Restore / Format / Release-Build / Tests grün
+- [x] 115 Tests gesamt, 0 Fehler, 0 übersprungen
+- [x] EXT-001/EXT-002 sowie IDX-001/IDX-002/IDX-003 für den lokalen 0.1-Pfad implementiert und automatisiert verifiziert
 - [x] ID-001/ID-002/ID-003/ID-007/ID-008 vollständig implementiert und automatisiert verifiziert
 - [ ] Crash-Reclaim/Retry-Backoff für abgelaufene Leases erst mit expliziter Recovery-/Single-Instance-Policy
-- [ ] nächster kontrollierter Produktionsslice: Lucene-Produktadapter und einfache TXT/HTML-Indexierung
+- [ ] nächster kontrollierter Produktionsslice: SearchService + WinForms Search Shell + Treffer öffnen
 
 ## Architektur-Spikes
 

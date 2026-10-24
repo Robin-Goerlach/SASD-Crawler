@@ -1,6 +1,6 @@
 # SASD-Crawler – Projektstatus
 
-**Stichtag:** 23. Oktober 2026  
+**Stichtag:** 24. Oktober 2026  
 **Gesamtstatus:** 🟡 Architekturvalidierung; A2 technisch erfolgreich, A3–A5 mit belastbarer Teil-Evidence, G0 noch nicht freigegeben  
 **Aktueller Arbeitsblock:** **G0-Rest-Evidence plus verifizierte Pre-G0-C#-Produktionsbasis**  
 **Nächstes Gate:** **G0 – Architecture Feasibility Review**  
@@ -22,8 +22,8 @@
 | A4 Media Identity | 🟡 CONDITIONAL GO | Windows-API-/Matching-Modell + 13 Tests; physische Wechselmedien-/Letter-Wechsel-Smokes offen |
 | A5 Tika vs. Toxy | 🟡 CONDITIONAL / DECISION CLEAR | Tika bleibt Default; kein Toxy-Fast-Path. Real-/Legacy-DOC/PPT-/verschlüsselter Korpus offen |
 | G0 | 🔴 NOT READY | technische PoCs weit fortgeschritten, aber Rest-Evidence, ADR-Reviews und .NET-8-Lifecycle-Entscheidung offen |
-| C# Produktionsbasis | 🟢 FOUNDATION VERIFIED | Source Catalog, Local Full Scan, Document Registry, durable CrawlJob/WorkItem Queue und Generic-Host Background Worker; 46 Produktionstests grün; zählt noch nicht als G0-/0.1-Gate |
-| CI | 🟢 BASELINE VERIFIED | PR #9 Code-Head: Restore/Format/Release-Build/Tests grün; 83 Tests gesamt |
+| C# Produktionsbasis | 🟢 FOUNDATION VERIFIED | Local Crawl + Registry + durable Multi-Stage Queue + Native TXT/HTML Extraction + produktiver Lucene-Adapter; 78 Produktions-/Architektur-/E2E-Tests grün; zählt noch nicht als G0-/0.1-Gate |
+| CI | 🟢 BASELINE VERIFIED | PR #12 Code-Head: Restore/Format/Release-Build/Tests grün; 115 Tests gesamt |
 | Milestone 0.1 | ⬜ BLOCKED | darf erst nach G0-GO beginnen |
 
 ## 2. Verifizierte Pre-G0-Produktionsbasis
@@ -34,15 +34,21 @@ Implementiert und automatisiert verifiziert:
 
 - `src/shared/Sasd.Crawler.Domain`: `SourceId`, `SourceKind`, `SourceDefinition`;
 - `src/shared/Sasd.Crawler.Application`: `ISourceCatalog`, `ISourceRepository`, Source-Use-Cases und lokale Canonical-Location-Normalisierung;
-- `src/indexer/Sasd.Crawler.Persistence.Sqlite`: zentraler SQLite-Control-Store, Schema v3, WAL, Source-/Scan-/Document-Persistenz, durable CrawlJob/WorkItem Queue und atomare Reconciliation;
+- `src/indexer/Sasd.Crawler.Persistence.Sqlite`: zentraler SQLite-Control-Store, Schema v4, WAL, Source-/Scan-/Document-Persistenz, durable Multi-Stage CrawlJob/WorkItem Queue und atomare Reconciliation;
 - `src/indexer/Sasd.Crawler.Indexer.LocalFileSystem`: streamingbasierte lokale Traversierung mit Tiefenbegrenzung, Reparse-Point-Schutz und nicht-fatalen Scan-Issues;
 - `src/shared/Sasd.Crawler.Application`: `LocalSourceScanService`, `IDocumentRegistry` und `ILocalFileSystemConnector` als UI-neutrale Scan-Grenzen;
 - `src/shared/Sasd.Crawler.Domain`: zusätzlich `DocumentId`, `ScanRunId`, `DocumentRecord` und explizite Scan-Outcomes;
 - `src/frontend/Sasd.Crawler.Frontend`: UI-neutraler MVP Presenter;
-- `src/indexer/Sasd.Crawler.Indexer.Workers`: `CrawlWorkItemProcessor` + Generic-Host-`BackgroundService` für durable Queue-Ausführung außerhalb des UI-Threads;
+- `src/indexer/Sasd.Crawler.Indexer.Workers`: `CrawlWorkItemProcessor` + Generic-Host-`BackgroundService` für Discovery sowie durable Dokument-Index/Delete-Stufen außerhalb des UI-Threads;
+- `src/indexer/Sasd.Crawler.Search.Lucene`: produktiver `ISearchIndex`-Adapter mit persistentem Upsert/Delete/Search, DE/EN-Analyzer und versionierter Stopwortkonfiguration;
+- `src/indexer/Sasd.Crawler.Extraction.Native`: read-only Native-Extraction für TXT/HTML mit Größenlimit und DOM-basierter HTML-Textextraktion;
 - `src/frontend/Sasd.Crawler.WinForms`: produktiver .NET-8-WinForms-Shell für Quellenliste, lokale Quelle registrieren, Aktiv/Inaktiv und `Scan now` als reinen Queue-Befehl;
 - additive Developer-Views `Sasd.Crawler.Frontend.slnf` und `Sasd.Crawler.Indexer.slnf`;
 - Architekturtests sichern die Frontend/shared/Indexer-Grenzen ab.
+
+Der Lucene-Produktadapter wurde mit Post-Merge-CI #37 verifiziert: **97 Tests gesamt, 0 Fehler, 0 übersprungen** (60 Produktion/Architektur/E2E + 37 archivierte Spike-Tests). Er implementiert persistentes Upsert/Delete/Search hinter `ISearchIndex`, Source-Filter sowie symmetrische, versionierte DE/EN-Analyzer. `ja` und `nein` bleiben bewusst außerhalb der konservativen Default-Stopwortliste.
+
+Der aktuelle TXT/HTML-Slice wurde mit CI #39 auf Commit `6ba0fcd2f1b24d18c647da64f15a6e1e14be3a9f` verifiziert: **115 Tests gesamt, 0 Fehler, 0 übersprungen** (78 Produktion/Architektur/E2E + 37 archivierte Spike-Tests). Der reale E2E-Pfad beweist TXT/HTML → durable WorkItems → Native Extraction → Lucene sowie Update und Löschung erst nach autoritativer Reconciliation.
 
 Der erste Foundation-Slice wurde durch CI #22 verifiziert, der Local-Scan-/Registry-Slice durch CI #25. Der dritte Code-Slice wurde durch CI #28 auf Commit `dc4296caff07b70c7347bcd6e7202de20d16caf7` verifiziert: Restore, Format, Release-Build und Tests erfolgreich; **83 Tests gesamt, 0 Fehler, 0 übersprungen**. Davon gehören 46 Tests zur Produktionsstruktur und 37 zu den Architekturspikes.
 
@@ -56,6 +62,8 @@ Evidence:
 - `docs/evidence/pre-g0-production-foundation/`
 - `docs/evidence/pre-g0-local-scan-document-registry/`
 - `docs/evidence/pre-g0-crawl-work-queue/`
+- `docs/evidence/pre-g0-lucene-product-search-index/`
+- `docs/evidence/pre-g0-native-text-html-indexing/`
 
 ## 3. Verifizierte Spike-Evidence
 
