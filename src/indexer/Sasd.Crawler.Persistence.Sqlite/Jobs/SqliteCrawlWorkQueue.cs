@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 using Sasd.Crawler.Application.Crawling;
 using Sasd.Crawler.Application.Jobs;
 using Sasd.Crawler.Domain.Crawling;
+using Sasd.Crawler.Domain.Documents;
 using Sasd.Crawler.Domain.Jobs;
 using Sasd.Crawler.Domain.Sources;
 
@@ -12,9 +13,9 @@ namespace Sasd.Crawler.Persistence.Sqlite.Jobs;
 /// SQLite implementation of the durable crawl job/work-item queue.
 /// </summary>
 /// <remarks>
-/// The queue uses explicit ownership checks for terminal transitions. A worker can complete, fail or release only
-/// the lease it currently owns. Version 0.1 intentionally does not reclaim expired leases automatically because
-/// doing so without a completed single-instance/worker-heartbeat policy could create concurrent full scans.
+/// The queue owns state transitions only. Filesystem scanning, extraction and Lucene access remain outside this
+/// persistence adapter. One crawl job can now contain one discovery item followed by multiple document-processing
+/// items; the job becomes terminal only when every queued processing item has completed or one fails.
 /// </remarks>
 public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
 {
@@ -71,7 +72,6 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
             jobCommand.Parameters.AddWithValue("$jobId", jobId.ToString());
             jobCommand.Parameters.AddWithValue("$sourceId", sourceId.ToString());
             jobCommand.Parameters.AddWithValue("$requestedUtc", requested);
-
             await jobCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -83,6 +83,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
                     work_item_id,
                     crawl_job_id,
                     source_id,
+                    document_id,
                     stage,
                     status,
                     maximum_depth,
@@ -97,6 +98,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
                     $workItemId,
                     $jobId,
                     $sourceId,
+                    NULL,
                     'LocalFullScan',
                     'Pending',
                     $maximumDepth,
@@ -115,7 +117,6 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
                 "$maximumDepth",
                 options.MaximumDepth.HasValue ? (object)options.MaximumDepth.Value : DBNull.Value);
             workCommand.Parameters.AddWithValue("$requestedUtc", requested);
-
             await workCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -152,9 +153,6 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
         await using (var leaseCommand = connection.CreateCommand())
         {
             leaseCommand.Transaction = transaction;
-
-            // UPDATE ... RETURNING makes selection and ownership transition one SQLite statement. Two workers cannot
-            // both observe the same Pending row and successfully lease it.
             leaseCommand.CommandText = """
                 UPDATE work_items
                 SET
@@ -176,6 +174,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
                     crawl_job_id,
                     source_id,
                     stage,
+                    document_id,
                     maximum_depth,
                     attempts,
                     lease_owner,
@@ -208,7 +207,8 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
                     started_utc = COALESCE(started_utc, $startedUtc),
                     completed_utc = NULL,
                     last_error = NULL
-                WHERE crawl_job_id = $jobId;
+                WHERE crawl_job_id = $jobId
+                  AND status IN ('Queued', 'Running');
                 """;
             jobCommand.Parameters.AddWithValue("$startedUtc", now);
             jobCommand.Parameters.AddWithValue("$jobId", leased.CrawlJobId.ToString());
@@ -216,7 +216,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
             if (await jobCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
             {
                 throw new InvalidOperationException(
-                    $"Crawl job '{leased.CrawlJobId}' disappeared while its work item was being leased.");
+                    $"Crawl job '{leased.CrawlJobId}' is not runnable while work item '{leased.WorkItemId}' is leased.");
             }
         }
 
@@ -225,51 +225,63 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
     }
 
     /// <inheritdoc />
-    public async Task MarkCompletedAsync(
+    public async Task CompleteFullScanAsync(
         LeasedCrawlWorkItem workItem,
         LocalSourceScanResult result,
+        IReadOnlyCollection<DocumentWorkRequest> followUpWork,
         DateTimeOffset completedAtUtc,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(workItem);
         ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(followUpWork);
+
+        if (workItem.Stage != WorkItemStage.LocalFullScan)
+        {
+            throw new ArgumentException("Only a LocalFullScan work item can complete discovery.", nameof(workItem));
+        }
 
         if (result.Outcome is not (ScanRunOutcome.Succeeded or ScanRunOutcome.Partial))
         {
             throw new ArgumentException(
-                "A completed crawl work item must carry a Succeeded or Partial scan outcome.",
+                "A completed discovery scan must carry Succeeded or Partial outcome.",
                 nameof(result));
         }
 
-        var jobStatus = result.Outcome == ScanRunOutcome.Succeeded
-            ? CrawlJobStatus.Succeeded
-            : CrawlJobStatus.Partial;
+        var uniqueFollowUps = followUpWork
+            .DistinctBy(item => (item.Stage, item.DocumentId))
+            .ToArray();
 
         await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction =
             (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        await EnsureOwnedTransitionAsync(
+        await TransitionOwnedWorkItemAsync(
                 connection,
                 transaction,
                 workItem,
-                """
-                UPDATE work_items
-                SET
-                    status = 'Succeeded',
-                    lease_owner = NULL,
-                    lease_until_utc = NULL,
-                    updated_utc = $completedUtc,
-                    last_error = NULL
-                WHERE work_item_id = $workItemId
-                  AND crawl_job_id = $jobId
-                  AND status = 'Leased'
-                  AND lease_owner = $leaseOwner;
-                """,
+                WorkItemStatus.Succeeded,
                 completedAtUtc,
                 errorSummary: null,
                 cancellationToken)
             .ConfigureAwait(false);
+
+        foreach (var followUp in uniqueFollowUps)
+        {
+            await InsertDocumentWorkAsync(
+                    connection,
+                    transaction,
+                    workItem,
+                    followUp,
+                    completedAtUtc,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        var finalStatus = result.Outcome == ScanRunOutcome.Partial
+            ? CrawlJobStatus.Partial
+            : CrawlJobStatus.Succeeded;
+        var hasFollowUpWork = uniqueFollowUps.Length > 0;
 
         await using var jobCommand = connection.CreateCommand();
         jobCommand.Transaction = transaction;
@@ -285,8 +297,12 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
             WHERE crawl_job_id = $jobId
               AND status = 'Running';
             """;
-        jobCommand.Parameters.AddWithValue("$status", jobStatus.ToString());
-        jobCommand.Parameters.AddWithValue("$completedUtc", FormatTimestamp(completedAtUtc));
+        jobCommand.Parameters.AddWithValue(
+            "$status",
+            hasFollowUpWork ? CrawlJobStatus.Running.ToString() : finalStatus.ToString());
+        jobCommand.Parameters.AddWithValue(
+            "$completedUtc",
+            hasFollowUpWork ? DBNull.Value : FormatTimestamp(completedAtUtc));
         jobCommand.Parameters.AddWithValue("$observedDocuments", result.ObservedDocuments);
         jobCommand.Parameters.AddWithValue("$nonFatalIssues", result.NonFatalIssues);
         jobCommand.Parameters.AddWithValue("$newlyMissingDocuments", result.NewlyMissingDocuments);
@@ -295,7 +311,79 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
         if (await jobCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
         {
             throw new InvalidOperationException(
-                $"Crawl job '{workItem.CrawlJobId}' is not Running while its leased work item completes.");
+                $"Crawl job '{workItem.CrawlJobId}' is not Running while discovery completes.");
+        }
+
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task CompleteProcessingAsync(
+        LeasedCrawlWorkItem workItem,
+        DateTimeOffset completedAtUtc,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(workItem);
+
+        if (workItem.Stage == WorkItemStage.LocalFullScan || !workItem.DocumentId.HasValue)
+        {
+            throw new ArgumentException(
+                "Processing completion requires a document-processing work item.",
+                nameof(workItem));
+        }
+
+        await using var connection = await controlStore.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction =
+            (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        await TransitionOwnedWorkItemAsync(
+                connection,
+                transaction,
+                workItem,
+                WorkItemStatus.Succeeded,
+                completedAtUtc,
+                errorSummary: null,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        await using var remainingCommand = connection.CreateCommand();
+        remainingCommand.Transaction = transaction;
+        remainingCommand.CommandText = """
+            SELECT COUNT(*)
+            FROM work_items
+            WHERE crawl_job_id = $jobId
+              AND status IN ('Pending', 'Leased');
+            """;
+        remainingCommand.Parameters.AddWithValue("$jobId", workItem.CrawlJobId.ToString());
+
+        var remaining = Convert.ToInt32(
+            await remainingCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false),
+            CultureInfo.InvariantCulture);
+
+        if (remaining == 0)
+        {
+            await using var finalizeCommand = connection.CreateCommand();
+            finalizeCommand.Transaction = transaction;
+            finalizeCommand.CommandText = """
+                UPDATE crawl_jobs
+                SET
+                    status = CASE
+                        WHEN COALESCE(non_fatal_issues, 0) > 0 THEN 'Partial'
+                        ELSE 'Succeeded'
+                    END,
+                    completed_utc = $completedUtc,
+                    last_error = NULL
+                WHERE crawl_job_id = $jobId
+                  AND status = 'Running';
+                """;
+            finalizeCommand.Parameters.AddWithValue("$completedUtc", FormatTimestamp(completedAtUtc));
+            finalizeCommand.Parameters.AddWithValue("$jobId", workItem.CrawlJobId.ToString());
+
+            if (await finalizeCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
+            {
+                throw new InvalidOperationException(
+                    $"Crawl job '{workItem.CrawlJobId}' is not Running while its final processing item completes.");
+            }
         }
 
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -320,23 +408,11 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
         await using var transaction =
             (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        await EnsureOwnedTransitionAsync(
+        await TransitionOwnedWorkItemAsync(
                 connection,
                 transaction,
                 workItem,
-                """
-                UPDATE work_items
-                SET
-                    status = 'Failed',
-                    lease_owner = NULL,
-                    lease_until_utc = NULL,
-                    updated_utc = $completedUtc,
-                    last_error = $errorSummary
-                WHERE work_item_id = $workItemId
-                  AND crawl_job_id = $jobId
-                  AND status = 'Leased'
-                  AND lease_owner = $leaseOwner;
-                """,
+                WorkItemStatus.Failed,
                 completedAtUtc,
                 boundedError,
                 cancellationToken)
@@ -351,7 +427,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
                 completed_utc = $completedUtc,
                 last_error = $errorSummary
             WHERE crawl_job_id = $jobId
-              AND status = 'Running';
+              AND status IN ('Queued', 'Running');
             """;
         jobCommand.Parameters.AddWithValue("$completedUtc", FormatTimestamp(completedAtUtc));
         jobCommand.Parameters.AddWithValue("$errorSummary", boundedError);
@@ -360,7 +436,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
         if (await jobCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
         {
             throw new InvalidOperationException(
-                $"Crawl job '{workItem.CrawlJobId}' is not Running while its leased work item fails.");
+                $"Crawl job '{workItem.CrawlJobId}' is not active while its work item fails.");
         }
 
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -378,27 +454,31 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
         await using var transaction =
             (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        await EnsureOwnedTransitionAsync(
-                connection,
-                transaction,
-                workItem,
-                """
-                UPDATE work_items
-                SET
-                    status = 'Pending',
-                    next_attempt_utc = $completedUtc,
-                    lease_owner = NULL,
-                    lease_until_utc = NULL,
-                    updated_utc = $completedUtc
-                WHERE work_item_id = $workItemId
-                  AND crawl_job_id = $jobId
-                  AND status = 'Leased'
-                  AND lease_owner = $leaseOwner;
-                """,
-                nextAttemptUtc,
-                errorSummary: null,
-                cancellationToken)
-            .ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            UPDATE work_items
+            SET
+                status = 'Pending',
+                next_attempt_utc = $nextAttemptUtc,
+                lease_owner = NULL,
+                lease_until_utc = NULL,
+                updated_utc = $nextAttemptUtc
+            WHERE work_item_id = $workItemId
+              AND crawl_job_id = $jobId
+              AND status = 'Leased'
+              AND lease_owner = $leaseOwner;
+            """;
+        command.Parameters.AddWithValue("$nextAttemptUtc", FormatTimestamp(nextAttemptUtc));
+        command.Parameters.AddWithValue("$workItemId", workItem.WorkItemId.ToString());
+        command.Parameters.AddWithValue("$jobId", workItem.CrawlJobId.ToString());
+        command.Parameters.AddWithValue("$leaseOwner", workItem.LeaseOwner);
+
+        if (await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
+        {
+            throw new InvalidOperationException(
+                $"Work item '{workItem.WorkItemId}' is no longer leased by '{workItem.LeaseOwner}'.");
+        }
 
         await using var jobCommand = connection.CreateCommand();
         jobCommand.Transaction = transaction;
@@ -406,8 +486,7 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
             UPDATE crawl_jobs
             SET
                 status = 'Queued',
-                completed_utc = NULL,
-                last_error = NULL
+                completed_utc = NULL
             WHERE crawl_job_id = $jobId
               AND status = 'Running';
             """;
@@ -453,27 +532,88 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
             : null;
     }
 
-    private static async Task EnsureOwnedTransitionAsync(
+    private static async Task InsertDocumentWorkAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        LeasedCrawlWorkItem parentWorkItem,
+        DocumentWorkRequest request,
+        DateTimeOffset createdAtUtc,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            INSERT OR IGNORE INTO work_items (
+                work_item_id,
+                crawl_job_id,
+                source_id,
+                document_id,
+                stage,
+                status,
+                maximum_depth,
+                attempts,
+                next_attempt_utc,
+                lease_owner,
+                lease_until_utc,
+                created_utc,
+                updated_utc,
+                last_error)
+            VALUES (
+                $workItemId,
+                $jobId,
+                $sourceId,
+                $documentId,
+                $stage,
+                'Pending',
+                NULL,
+                0,
+                $createdUtc,
+                NULL,
+                NULL,
+                $createdUtc,
+                $createdUtc,
+                NULL);
+            """;
+        command.Parameters.AddWithValue("$workItemId", WorkItemId.New().ToString());
+        command.Parameters.AddWithValue("$jobId", parentWorkItem.CrawlJobId.ToString());
+        command.Parameters.AddWithValue("$sourceId", parentWorkItem.SourceId.ToString());
+        command.Parameters.AddWithValue("$documentId", request.DocumentId.ToString());
+        command.Parameters.AddWithValue("$stage", request.Stage.ToString());
+        command.Parameters.AddWithValue("$createdUtc", FormatTimestamp(createdAtUtc));
+
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task TransitionOwnedWorkItemAsync(
         SqliteConnection connection,
         SqliteTransaction transaction,
         LeasedCrawlWorkItem workItem,
-        string sql,
-        DateTimeOffset transitionAtUtc,
+        WorkItemStatus targetStatus,
+        DateTimeOffset completedAtUtc,
         string? errorSummary,
         CancellationToken cancellationToken)
     {
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
-        command.CommandText = sql;
-        command.Parameters.AddWithValue("$completedUtc", FormatTimestamp(transitionAtUtc));
+        command.CommandText = """
+            UPDATE work_items
+            SET
+                status = $targetStatus,
+                lease_owner = NULL,
+                lease_until_utc = NULL,
+                updated_utc = $completedUtc,
+                last_error = $errorSummary
+            WHERE work_item_id = $workItemId
+              AND crawl_job_id = $jobId
+              AND status = 'Leased'
+              AND lease_owner = $leaseOwner;
+            """;
+        command.Parameters.AddWithValue("$targetStatus", targetStatus.ToString());
+        command.Parameters.AddWithValue("$completedUtc", FormatTimestamp(completedAtUtc));
+        command.Parameters.AddWithValue("$errorSummary", (object?)errorSummary ?? DBNull.Value);
         command.Parameters.AddWithValue("$workItemId", workItem.WorkItemId.ToString());
         command.Parameters.AddWithValue("$jobId", workItem.CrawlJobId.ToString());
         command.Parameters.AddWithValue("$leaseOwner", workItem.LeaseOwner);
-
-        if (sql.Contains("$errorSummary", StringComparison.Ordinal))
-        {
-            command.Parameters.AddWithValue("$errorSummary", (object?)errorSummary ?? DBNull.Value);
-        }
 
         if (await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) != 1)
         {
@@ -495,10 +635,11 @@ public sealed class SqliteCrawlWorkQueue : ICrawlWorkQueue
             CrawlJobId.Parse(reader.GetString(1)),
             SourceId.Parse(reader.GetString(2)),
             stage,
-            reader.IsDBNull(4) ? null : reader.GetInt32(4),
-            reader.GetInt32(5),
-            reader.GetString(6),
-            ParseTimestamp(reader.GetString(7)));
+            reader.IsDBNull(4) ? null : DocumentId.Parse(reader.GetString(4)),
+            reader.IsDBNull(5) ? null : reader.GetInt32(5),
+            reader.GetInt32(6),
+            reader.GetString(7),
+            ParseTimestamp(reader.GetString(8)));
     }
 
     private static CrawlJobSnapshot ReadJob(SqliteDataReader reader)
