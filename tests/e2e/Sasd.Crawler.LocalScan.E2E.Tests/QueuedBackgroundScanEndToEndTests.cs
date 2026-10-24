@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Sasd.Crawler.Application.Crawling;
 using Sasd.Crawler.Application.Jobs;
+using Sasd.Crawler.Application.Search;
 using Sasd.Crawler.Application.Sources;
+using Sasd.Crawler.Domain.Documents;
 using Sasd.Crawler.Domain.Jobs;
 using Sasd.Crawler.Domain.Sources;
 using Sasd.Crawler.Indexer.LocalFileSystem;
@@ -47,6 +49,8 @@ public sealed class QueuedBackgroundScanEndToEndTests
         var processor = new CrawlWorkItemProcessor(
             queue,
             scanner,
+            documents,
+            new NoOpIndexingService(),
             TimeProvider.System,
             NullLogger<CrawlWorkItemProcessor>.Instance);
         var worker = new CrawlWorkBackgroundService(
@@ -109,6 +113,17 @@ public sealed class QueuedBackgroundScanEndToEndTests
         }
 
         throw new TimeoutException($"Crawl job '{jobId}' did not reach a terminal state within {timeout}.");
+    }
+
+    private sealed class NoOpIndexingService : IDocumentIndexingService
+    {
+        public bool CanIndex(DocumentRecord document) => false;
+
+        public Task IndexAsync(DocumentRecord document, CancellationToken cancellationToken)
+            => Task.CompletedTask;
+
+        public Task DeleteAsync(DocumentId documentId, CancellationToken cancellationToken)
+            => Task.CompletedTask;
     }
 
     private sealed class TemporaryEnvironment : IDisposable
