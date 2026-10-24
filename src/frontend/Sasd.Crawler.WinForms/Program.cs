@@ -1,14 +1,18 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sasd.Crawler.Application.Crawling;
+using Sasd.Crawler.Application.Extraction;
 using Sasd.Crawler.Application.Jobs;
+using Sasd.Crawler.Application.Search;
 using Sasd.Crawler.Application.Sources;
+using Sasd.Crawler.Extraction.Native;
 using Sasd.Crawler.Indexer.LocalFileSystem;
 using Sasd.Crawler.Indexer.Workers;
 using Sasd.Crawler.Persistence.Sqlite;
 using Sasd.Crawler.Persistence.Sqlite.Crawling;
 using Sasd.Crawler.Persistence.Sqlite.Jobs;
 using Sasd.Crawler.Persistence.Sqlite.Sources;
+using Sasd.Crawler.Search.Lucene;
 
 namespace Sasd.Crawler.WinForms;
 
@@ -51,6 +55,18 @@ internal static class Program
                 // enumeration never becomes UI-thread work.
                 services.AddSingleton<ILocalFileSystemConnector, LocalFileSystemConnector>();
                 services.AddSingleton<ILocalSourceScanner, LocalSourceScanService>();
+
+                // Native TXT/HTML extraction is the first 0.1 processing profile. Rich formats later add isolated
+                // Tika implementations behind the same IContentExtractor boundary.
+                services.AddSingleton(new NativeContentExtractionOptions());
+                services.AddSingleton<IContentExtractor, NativeTextHtmlContentExtractor>();
+
+                services.AddSingleton(SearchAnalyzerConfiguration.CreateDefault());
+                services.AddSingleton<ISearchIndex>(
+                    provider => new LuceneSearchIndex(
+                        AppPaths.SearchIndexDirectory,
+                        provider.GetRequiredService<SearchAnalyzerConfiguration>()));
+                services.AddSingleton<IDocumentIndexingService, DocumentIndexingService>();
 
                 // The hosted worker is the only production path that executes queued crawl work. Keeping it behind
                 // Generic Host ensures WinForms remains presentation-only and shutdown cancellation flows through

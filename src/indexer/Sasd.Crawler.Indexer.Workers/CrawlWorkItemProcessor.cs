@@ -1,21 +1,25 @@
 using Microsoft.Extensions.Logging;
 using Sasd.Crawler.Application.Crawling;
 using Sasd.Crawler.Application.Jobs;
+using Sasd.Crawler.Application.Search;
+using Sasd.Crawler.Domain.Documents;
 using Sasd.Crawler.Domain.Jobs;
 
 namespace Sasd.Crawler.Indexer.Workers;
 
 /// <summary>
-/// Executes at most one durable crawl work item per call.
+/// Executes at most one durable crawl/index work item per call.
 /// </summary>
 /// <remarks>
-/// Separating one-item processing from the infinite BackgroundService loop makes ownership transitions and
-/// cancellation behavior unit-testable without running a timed host loop.
+/// Discovery and document processing are separate durable stages. This keeps parser/search failures from changing
+/// scan reconciliation authority and makes the pending work visible across process restarts.
 /// </remarks>
 public sealed class CrawlWorkItemProcessor
 {
     private readonly ICrawlWorkQueue workQueue;
     private readonly ILocalSourceScanner scanner;
+    private readonly IDocumentRegistry documentRegistry;
+    private readonly IDocumentIndexingService indexingService;
     private readonly TimeProvider timeProvider;
     private readonly ILogger<CrawlWorkItemProcessor> logger;
 
@@ -23,19 +27,20 @@ public sealed class CrawlWorkItemProcessor
     public CrawlWorkItemProcessor(
         ICrawlWorkQueue workQueue,
         ILocalSourceScanner scanner,
+        IDocumentRegistry documentRegistry,
+        IDocumentIndexingService indexingService,
         TimeProvider timeProvider,
         ILogger<CrawlWorkItemProcessor> logger)
     {
         this.workQueue = workQueue ?? throw new ArgumentNullException(nameof(workQueue));
         this.scanner = scanner ?? throw new ArgumentNullException(nameof(scanner));
+        this.documentRegistry = documentRegistry ?? throw new ArgumentNullException(nameof(documentRegistry));
+        this.indexingService = indexingService ?? throw new ArgumentNullException(nameof(indexingService));
         this.timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <summary>
-    /// Leases and executes one ready item.
-    /// </summary>
-    /// <returns><see langword="true"/> when an item was leased; otherwise <see langword="false"/>.</returns>
+    /// <summary>Leases and executes one ready durable item.</summary>
     public async Task<bool> ProcessNextAsync(
         string leaseOwner,
         TimeSpan leaseDuration,
@@ -52,41 +57,29 @@ public sealed class CrawlWorkItemProcessor
 
         try
         {
-            if (workItem.Stage != WorkItemStage.LocalFullScan)
+            switch (workItem.Stage)
             {
-                throw new NotSupportedException(
-                    $"Work-item stage '{workItem.Stage}' is not supported by the local crawl processor.");
+                case WorkItemStage.LocalFullScan:
+                    await ProcessFullScanAsync(workItem, cancellationToken).ConfigureAwait(false);
+                    break;
+
+                case WorkItemStage.IndexDocument:
+                    await ProcessIndexDocumentAsync(workItem, cancellationToken).ConfigureAwait(false);
+                    break;
+
+                case WorkItemStage.DeleteFromSearchIndex:
+                    await ProcessSearchDeleteAsync(workItem, cancellationToken).ConfigureAwait(false);
+                    break;
+
+                default:
+                    throw new NotSupportedException(
+                        $"Work-item stage '{workItem.Stage}' is not supported by the crawl processor.");
             }
-
-            var result = await scanner
-                .RunFullScanAsync(
-                    workItem.SourceId,
-                    new LocalScanOptions(workItem.MaximumDepth),
-                    cancellationToken)
-                .ConfigureAwait(false);
-
-            await workQueue
-                .MarkCompletedAsync(
-                    workItem,
-                    result,
-                    timeProvider.GetUtcNow(),
-                    cancellationToken)
-                .ConfigureAwait(false);
-
-            logger.LogInformation(
-                "Crawl job {CrawlJobId} completed as {Outcome}; observed {ObservedDocuments} documents with {IssueCount} scan issues.",
-                workItem.CrawlJobId,
-                result.Outcome,
-                result.ObservedDocuments,
-                result.NonFatalIssues);
 
             return true;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            // A cooperative host shutdown happens after LocalSourceScanService has already made its ScanRun
-            // non-authoritative. Releasing the queue lease lets the same requested job be attempted again after a
-            // later startup without inventing a terminal failure for normal application shutdown.
             await ReleaseAfterCancellationAsync(workItem).ConfigureAwait(false);
             throw;
         }
@@ -94,8 +87,6 @@ public sealed class CrawlWorkItemProcessor
         {
             var errorSummary = BuildErrorSummary(exception);
 
-            // Persist failure with an independent token. If cancellation races a real I/O failure, leaving the row
-            // silently Leased is less useful than recording the terminal error that already occurred.
             await workQueue
                 .MarkFailedAsync(
                     workItem,
@@ -106,13 +97,108 @@ public sealed class CrawlWorkItemProcessor
 
             logger.LogError(
                 exception,
-                "Crawl job {CrawlJobId} failed while executing work item {WorkItemId}.",
+                "Crawl job {CrawlJobId} failed while executing {Stage} work item {WorkItemId}.",
                 workItem.CrawlJobId,
+                workItem.Stage,
                 workItem.WorkItemId);
 
             return true;
         }
     }
+
+    private async Task ProcessFullScanAsync(
+        LeasedCrawlWorkItem workItem,
+        CancellationToken cancellationToken)
+    {
+        var result = await scanner
+            .RunFullScanAsync(
+                workItem.SourceId,
+                new LocalScanOptions(workItem.MaximumDepth),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        var observedDocuments = await documentRegistry
+            .ListDocumentsSeenInScanAsync(result.ScanRunId, cancellationToken)
+            .ConfigureAwait(false);
+
+        var followUps = new List<DocumentWorkRequest>();
+
+        foreach (var document in observedDocuments)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (indexingService.CanIndex(document))
+            {
+                followUps.Add(new DocumentWorkRequest(document.Id, WorkItemStage.IndexDocument));
+            }
+        }
+
+        // Missing IDs originate from the authoritative reconciliation transaction itself. A partial/failed scan
+        // never returns deletion IDs, so parser/index cleanup cannot accidentally turn uncertainty into deletion.
+        foreach (var documentId in result.NewlyMissingDocumentIds)
+        {
+            followUps.Add(new DocumentWorkRequest(documentId, WorkItemStage.DeleteFromSearchIndex));
+        }
+
+        await workQueue
+            .CompleteFullScanAsync(
+                workItem,
+                result,
+                followUps,
+                timeProvider.GetUtcNow(),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        logger.LogInformation(
+            "Discovery for crawl job {CrawlJobId} completed as {Outcome}; observed {ObservedDocuments} documents and queued {FollowUpCount} processing items.",
+            workItem.CrawlJobId,
+            result.Outcome,
+            result.ObservedDocuments,
+            followUps.Count);
+    }
+
+    private async Task ProcessIndexDocumentAsync(
+        LeasedCrawlWorkItem workItem,
+        CancellationToken cancellationToken)
+    {
+        var documentId = RequireDocumentId(workItem);
+        var document = await documentRegistry
+            .GetDocumentAsync(documentId, cancellationToken)
+            .ConfigureAwait(false)
+            ?? throw new KeyNotFoundException($"Document '{documentId}' no longer exists in the registry.");
+
+        if (document.IsMissing || !indexingService.CanIndex(document))
+        {
+            // The document may have disappeared or extraction policy may have changed after the work item was
+            // planned. Removing any stale index entry is safer than re-indexing obsolete content.
+            await indexingService.DeleteAsync(documentId, cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            await indexingService.IndexAsync(document, cancellationToken).ConfigureAwait(false);
+        }
+
+        await workQueue
+            .CompleteProcessingAsync(workItem, timeProvider.GetUtcNow(), cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task ProcessSearchDeleteAsync(
+        LeasedCrawlWorkItem workItem,
+        CancellationToken cancellationToken)
+    {
+        var documentId = RequireDocumentId(workItem);
+        await indexingService.DeleteAsync(documentId, cancellationToken).ConfigureAwait(false);
+
+        await workQueue
+            .CompleteProcessingAsync(workItem, timeProvider.GetUtcNow(), cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private static DocumentId RequireDocumentId(LeasedCrawlWorkItem workItem)
+        => workItem.DocumentId
+            ?? throw new InvalidDataException(
+                $"Work item '{workItem.WorkItemId}' stage '{workItem.Stage}' requires a DocumentId.");
 
     private async Task ReleaseAfterCancellationAsync(LeasedCrawlWorkItem workItem)
     {
@@ -127,8 +213,6 @@ public sealed class CrawlWorkItemProcessor
         }
         catch (Exception exception)
         {
-            // Do not replace the caller's cancellation with a cleanup exception. The row remains Leased and,
-            // because this milestone does not auto-reclaim leases, fails closed rather than running concurrently.
             logger.LogError(
                 exception,
                 "Could not release crawl work item {WorkItemId} during host shutdown.",
