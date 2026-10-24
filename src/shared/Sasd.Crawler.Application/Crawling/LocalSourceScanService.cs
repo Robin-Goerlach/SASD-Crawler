@@ -119,7 +119,10 @@ public sealed class LocalSourceScanService : ILocalSourceScanner
                 outcome,
                 observedDocuments,
                 nonFatalIssues,
-                completion.NewlyMissingDocuments);
+                completion.NewlyMissingDocuments)
+            {
+                NewlyMissingDocumentIds = completion.NewlyMissingDocumentIds,
+            };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
